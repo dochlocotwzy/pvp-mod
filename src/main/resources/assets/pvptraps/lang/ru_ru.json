@@ -1,0 +1,16 @@
+{
+  "item.pvptraps.trap": "Ловушка",
+  "itemGroup.pvptraps": "PvP Traps",
+
+  "text.autoconfig.pvptraps.title": "Настройки PvP Traps",
+  "text.autoconfig.pvptraps.category.general": "Общее",
+  "text.autoconfig.pvptraps.category.traps": "Типы ловушек",
+
+  "text.autoconfig.pvptraps.option.general.debugLogging": "Отладочные логи",
+
+  "text.autoconfig.pvptraps.option.traps.trapTypeId": "ID типа ловушки",
+  "text.autoconfig.pvptraps.option.traps.enemyVisibilitySeconds": "Сек. видимости для чужих",
+  "text.autoconfig.pvptraps.option.traps.ignoreWholeOwnerTeam": "Игнорировать всю команду ставившего",
+  "text.autoconfig.pvptraps.option.traps.potionEffects": "Эффекты зелий",
+  "text.autoconfig.pvptraps.option.traps.attributeModifiers": "Модификаторы атрибутов"
+}

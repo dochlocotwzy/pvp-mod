@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "pvptraps",
+  "version": "${version}",
+  "name": "PvP Traps",
+  "description": "Настраиваемые ловушки для PvP-сервера: видимость по командам, эффекты и атрибуты из конфига.",
+  "authors": ["you"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.pvptraps.PvpTraps"],
+    "client": ["com.pvptraps.PvpTrapsClient"],
+    "modmenu": ["com.pvptraps.config.PvpTrapsModMenuIntegration"]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*",
+    "cloth-config2": "*"
+  }
+}
