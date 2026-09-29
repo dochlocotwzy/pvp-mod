@@ -5,6 +5,10 @@ on:
     branches: [ "**" ]
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +27,28 @@ jobs:
           gradle-version: '8.12'
 
       - name: Build
-        run: gradle build --no-daemon
+        run: gradle build --no-daemon 2>&1 | tee build_output.log
+        continue-on-error: true
+        id: build
+
+      - name: Report build failure as an issue
+        if: steps.build.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tail -c 60000 build_output.log > trimmed_log.txt
+          {
+            echo '```'
+            cat trimmed_log.txt
+            echo '```'
+          } > issue_body.txt
+          gh issue create \
+            --title "Build failed: ${GITHUB_SHA}" \
+            --body-file issue_body.txt
+
+      - name: Fail job if build failed
+        if: steps.build.outcome == 'failure'
+        run: exit 1
 
       - name: Upload built jar
         uses: actions/upload-artifact@v4
