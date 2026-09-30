@@ -1,16 +1,16 @@
 # PvP Traps
 
 Мод для Fabric (Minecraft 1.21.11). Ловушка без коллизии, видимость по scoreboard-командам,
-конфиг на Cloth Config (JSON5-файл + in-game GUI).
+конфиг на Cloth Config.
+
+**Сборка проверена и проходит: [![Build mod](https://github.com/dochlocotwzy/pvp-mod/actions/workflows/build.yml/badge.svg)](https://github.com/dochlocotwzy/pvp-mod/actions/workflows/build.yml)**
 
 ## Как забрать готовый .jar (сборка идёт на GitHub, не у тебя на компьютере)
 
 1. Открой вкладку **Actions** в этом репозитории на github.com.
-2. Найди последний запуск workflow **"Build mod"** (запускается автоматически при каждом пуше).
-3. Дождись зелёной галочки (обычно 3-7 минут).
-4. Открой этот запуск → внизу страницы раздел **Artifacts** → скачай **pvp-traps-jar**
-   (это zip, внутри будет несколько jar — нужен файл **без** суффиксов `-sources`/`-dev`,
-   то есть `pvp-traps-0.1.0.jar`).
+2. Найди последний запуск workflow **"Build mod"** с зелёной галочкой.
+3. Открой этот запуск → внизу страницы раздел **Artifacts** → скачай **pvp-traps-jar**.
+4. Это zip, внутри два файла — нужен `pvp-traps-0.1.0.jar` (без суффикса `-sources`).
 5. Закинь этот jar в папку `mods/` на сервере (и клиентам, если хочешь, чтобы они видели предмет
    в инвентаре без крашей — мод общий, `environment: "*"`).
 
@@ -24,13 +24,40 @@
 
 ## Конфиг
 
-После первого запуска появится `config/pvptraps.json5` — там список эффектов зелий и
+После первого запуска появится `config/pvptraps.json` — там список эффектов зелий и
 временных attribute-модификаторов, накладываемых при срабатывании. Плюс отдельный
 in-game экран настроек, если поставить Mod Menu (кнопка в списке модов).
 
-## Известные места, которые могут потребовать правки при сборке
+(Изначально планировался формат JSON5 через `Json5ConfigSerializer`, но в актуальной версии
+Cloth Config под 1.21.11 этот класс недоступен под тем именем/пакетом — используется
+`GsonConfigSerializer`, обычный `.json`. Функционально разницы нет.)
 
-Если Actions покажет ошибку компиляции — скорее всего дело в одной строке:
-`TrapEntity.applyTeamVisibility()`, вызов `this.getNameForScoreboard()`. Это метод интерфейса
-`ScoreHolder`, которым должен реализовываться `Entity` в Yarn-мэппингах 1.21.11 — если имя
-отличается, в логе сборки будет видно точную ошибку с номером строки.
+## Как собрали (для истории/будущих правок)
+
+Minecraft 1.21.11 принёс несколько крупных изменений API по сравнению с более старыми версиями,
+из-за которых потребовалось несколько итераций правок:
+
+- **Fabric Loom**: версия `1.9-SNAPSHOT` несовместима с форматом unpick актуальных Yarn-мэппингов
+  1.21.11 (`Unsupported unpick version`). Версия `1.18-SNAPSHOT` требует Java 25. Рабочая версия —
+  **`1.17-SNAPSHOT`** (последняя перед переходом на Java 25), которая требует Gradle с
+  `plugin-api-version` **9.5.0**.
+- **Cloth Config**: правильная Maven-версия — `21.11.153` (без суффикса `+fabric`, это просто
+  отображаемая метка на Modrinth/CurseForge, не часть реальной версии артефакта).
+- **Регистрация EntityType**: `FabricEntityTypeBuilder...build()` теперь требует явный
+  `RegistryKey<EntityType<?>>` аргументом.
+- **Рендер сущностей**: система рендера в 1.21.x перешла на модель с отдельным объектом
+  `EntityRenderState` (снимок состояния для рендера) и очередью команд рендера:
+  `EntityRenderer<T, S extends EntityRenderState>`, метод
+  `render(S state, MatrixStack, OrderedRenderCommandQueue, CameraRenderState)` —
+  без прямого `VertexConsumerProvider`, как в старых версиях.
+- **`World.isClient`** стало приватным полем — нужно вызывать `world.isClient()` как метод.
+- **`Entity.getWorld()`** переименован в `getEntityWorld()`.
+- **`StatusEffectInstance` / `LivingEntity#getAttributeInstance`** теперь принимают
+  `RegistryEntry<StatusEffect>` / `RegistryEntry<EntityAttribute>`, а не сырые объекты —
+  получаются через `Registries.XXX.getEntry(id)` (возвращает `Optional`).
+- Кастомное сохранение сущности в NBT (`writeCustomDataToNbt`/`readCustomDataFromNbt`) убрано:
+  сигнатуры базового класса изменились на новую read/write view абстракцию, а поскольку ловушка
+  живёт considerably недолго (секунды до срабатывания), персистентность через рестарт сервера
+  не является необходимой — это единственное отступление от первоначального поведения.
+
+Финальные версии зависимостей — в `gradle.properties` и `.github/workflows/build.yml`.
