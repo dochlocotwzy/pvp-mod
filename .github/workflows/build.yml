@@ -34,8 +34,56 @@ jobs:
         continue-on-error: true
         id: build
 
+      - name: Diagnose Minecraft API via javap
+        if: steps.build.outcome == 'failure'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          {
+            echo "Searching for a jar containing net.minecraft.client.render.entity.EntityRenderer ..."
+            FOUND=""
+            for j in $(find ~/.gradle/caches/fabric-loom "$GITHUB_WORKSPACE/.gradle" -iname "*.jar" 2>/dev/null); do
+              out=$(javap -p -classpath "$j" net.minecraft.client.render.entity.EntityRenderer 2>&1)
+              if ! echo "$out" | grep -q "class not found"; then
+                echo "=== Found in: $j ==="
+                echo "$out"
+                echo
+                echo "=== EntityRenderState in same jar ==="
+                javap -p -classpath "$j" net.minecraft.client.render.entity.state.EntityRenderState 2>&1
+                FOUND=1
+                break
+              fi
+            done
+            if [ -z "$FOUND" ]; then
+              echo "EntityRenderer not found in any jar. All jars searched:"
+              find ~/.gradle/caches/fabric-loom "$GITHUB_WORKSPACE/.gradle" -iname "*.jar" 2>/dev/null
+            fi
+          } > javap_output.txt 2>&1
+          exit 0
+
+      - name: Report javap diagnostics as an issue
+        if: steps.build.outcome == 'failure'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          if [ -f javap_output.txt ]; then
+            {
+              echo '```'
+              cat javap_output.txt
+              echo '```'
+            } > javap_issue_body.txt
+            gh issue create \
+              --title "javap diagnostics: ${GITHUB_SHA}" \
+              --body-file javap_issue_body.txt
+          fi
+          exit 0
+
       - name: Report build failure as an issue
         if: steps.build.outcome == 'failure'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
