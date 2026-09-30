@@ -34,41 +34,6 @@ jobs:
         continue-on-error: true
         id: build
 
-      - name: Diagnose Minecraft API via javap
-        if: always()
-        shell: bash
-        run: |
-          set +e
-          JAR=$(find ~/.gradle/caches/fabric-loom -iname "*.jar" 2>/dev/null -exec du -b {} \; 2>/dev/null | sort -rn | head -1 | awk '{print $2}')
-          {
-            echo "Largest jar found in fabric-loom cache: $JAR"
-            echo
-            if [ -n "$JAR" ]; then
-              echo "=== EntityRenderer ==="
-              javap -p -classpath "$JAR" net.minecraft.client.render.entity.EntityRenderer 2>&1
-              echo
-              echo "=== EntityRenderState ==="
-              javap -p -classpath "$JAR" net.minecraft.client.render.entity.state.EntityRenderState 2>&1
-            else
-              echo "No jar found. Full file listing of fabric-loom cache:"
-              find ~/.gradle/caches/fabric-loom -iname "*.jar" 2>/dev/null
-            fi
-          } > javap_output.txt
-
-      - name: Report javap diagnostics as an issue
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          {
-            echo '```'
-            cat javap_output.txt
-            echo '```'
-          } > javap_issue_body.txt
-          gh issue create \
-            --title "javap diagnostics: ${GITHUB_SHA}" \
-            --body-file javap_issue_body.txt
-
       - name: Report build failure as an issue
         if: steps.build.outcome == 'failure'
         env:
