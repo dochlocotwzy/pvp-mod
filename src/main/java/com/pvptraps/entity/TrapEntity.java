@@ -4,7 +4,6 @@ import com.pvptraps.config.ConfigManager;
 import com.pvptraps.config.TrapConfig;
 import com.pvptraps.util.TrapEffects;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -133,11 +132,6 @@ public class TrapEntity extends MobEntity {
                 return false;
             }
         }
-        return true;
-    }
-
-    @Override
-    public boolean canSpawn(net.minecraft.world.WorldView world, SpawnReason spawnReason) {
         return true;
     }
 }
