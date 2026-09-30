@@ -24,7 +24,7 @@ public class TrapItem extends Item {
     public ActionResult useOnBlock(ItemUsageContext context) {
         World world = context.getWorld();
         PlayerEntity player = context.getPlayer();
-        if (world.isClient || player == null) {
+        if (world.isClient() || player == null) {
             return ActionResult.SUCCESS;
         }
 

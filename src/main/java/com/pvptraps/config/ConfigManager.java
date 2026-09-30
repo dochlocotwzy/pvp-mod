@@ -1,7 +1,7 @@
 package com.pvptraps.config;
 
 import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.Json5ConfigSerializer;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
 public final class ConfigManager {
 
@@ -9,7 +9,10 @@ public final class ConfigManager {
     }
 
     public static void init() {
-        AutoConfig.register(TrapConfig.class, Json5ConfigSerializer::new);
+        // GsonConfigSerializer вместо Json5 - в актуальной версии Cloth Config
+        // класс Json5-сериализатора недоступен под этим именем/пакетом.
+        // Даёт обычный config/pvptraps.json (не .json5), функционально то же самое.
+        AutoConfig.register(TrapConfig.class, GsonConfigSerializer::new);
     }
 
     public static TrapConfig get() {

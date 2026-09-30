@@ -3,6 +3,7 @@ package com.pvptraps.util;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public final class TrapEffectScheduler {
 
-    private record Pending(UUID playerId, EntityAttribute attribute, Identifier modifierId, long removeAtTick) {
+    private record Pending(UUID playerId, RegistryEntry<EntityAttribute> attribute, Identifier modifierId, long removeAtTick) {
     }
 
     private static final List<Pending> PENDING = new ArrayList<>();
@@ -40,7 +41,7 @@ public final class TrapEffectScheduler {
         });
     }
 
-    public static void scheduleRemoval(UUID playerId, EntityAttribute attribute, Identifier modifierId, int durationTicks) {
+    public static void scheduleRemoval(UUID playerId, RegistryEntry<EntityAttribute> attribute, Identifier modifierId, int durationTicks) {
         PENDING.add(new Pending(playerId, attribute, modifierId, currentTick + durationTicks));
     }
 }

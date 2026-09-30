@@ -9,7 +9,10 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+
+import java.util.Optional;
 
 public final class TrapEffects {
 
@@ -31,12 +34,12 @@ public final class TrapEffects {
             PvpTraps.LOGGER.warn("Некорректный id эффекта в конфиге: {}", entry.effectId);
             return;
         }
-        StatusEffect effect = Registries.STATUS_EFFECT.get(id);
-        if (effect == null) {
+        Optional<RegistryEntry.Reference<StatusEffect>> effectEntry = Registries.STATUS_EFFECT.getEntry(id);
+        if (effectEntry.isEmpty()) {
             PvpTraps.LOGGER.warn("Неизвестный эффект зелья в конфиге: {}", entry.effectId);
             return;
         }
-        target.addStatusEffect(new StatusEffectInstance(effect, entry.durationTicks, entry.amplifier, false, true));
+        target.addStatusEffect(new StatusEffectInstance(effectEntry.get(), entry.durationTicks, entry.amplifier, false, true));
     }
 
     private static void applyAttributeModifier(PlayerEntity target, TrapConfig.AttributeModifierEntry entry) {
@@ -45,11 +48,12 @@ public final class TrapEffects {
             PvpTraps.LOGGER.warn("Некорректный id атрибута в конфиге: {}", entry.attributeId);
             return;
         }
-        EntityAttribute attribute = Registries.ATTRIBUTE.get(attrId);
-        if (attribute == null) {
+        Optional<RegistryEntry.Reference<EntityAttribute>> attributeEntry = Registries.ATTRIBUTE.getEntry(attrId);
+        if (attributeEntry.isEmpty()) {
             PvpTraps.LOGGER.warn("Неизвестный атрибут в конфиге: {}", entry.attributeId);
             return;
         }
+        RegistryEntry<EntityAttribute> attribute = attributeEntry.get();
         EntityAttributeInstance instance = target.getAttributeInstance(attribute);
         if (instance == null) {
             return;

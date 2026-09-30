@@ -10,7 +10,6 @@ import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
@@ -18,12 +17,16 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Ловушка: не имеет коллизии (noClip), не двигается, не реагирует на урон,
+ * каждый тик вручную проверяет, не стоит ли кто-то в её хитбоксе.
+ *
+ * Настройки ловушки (trapTypeId/владелец/команда) не сохраняются в NBT между
+ * рестартами сервера - ловушка живёт считанные секунды до срабатывания или
+ * до перезаписи visibilityApplied, так что при обычном рестарте сервера этот
+ * недолговечный объект просто исчезнет вместе с чанком, что приемлемо.
+ */
 public class TrapEntity extends MobEntity {
-
-    private static final String NBT_TRAP_TYPE = "TrapTypeId";
-    private static final String NBT_OWNER_TEAM = "OwnerTeam";
-    private static final String NBT_OWNER_UUID = "OwnerUuid";
-    private static final String NBT_VISIBILITY_APPLIED = "VisibilityApplied";
 
     private String trapTypeId = "default";
     private String ownerTeamName = null;
@@ -35,7 +38,6 @@ public class TrapEntity extends MobEntity {
         this.setNoGravity(true);
         this.noClip = true;
         this.setInvulnerable(true);
-        this.setPersistent();
     }
 
     public static DefaultAttributeContainer.Builder createTrapAttributes() {
@@ -82,10 +84,10 @@ public class TrapEntity extends MobEntity {
     public void tick() {
         super.tick();
 
-        if (this.getWorld().isClient) {
+        if (this.getEntityWorld().isClient()) {
             return;
         }
-        ServerWorld serverWorld = (ServerWorld) this.getWorld();
+        ServerWorld serverWorld = (ServerWorld) this.getEntityWorld();
 
         TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
 
@@ -131,39 +133,6 @@ public class TrapEntity extends MobEntity {
                 return false;
             }
         }
-        return true;
-    }
-
-    @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        nbt.putString(NBT_TRAP_TYPE, trapTypeId);
-        if (ownerTeamName != null) {
-            nbt.putString(NBT_OWNER_TEAM, ownerTeamName);
-        }
-        if (ownerUuid != null) {
-            nbt.putUuid(NBT_OWNER_UUID, ownerUuid);
-        }
-        nbt.putBoolean(NBT_VISIBILITY_APPLIED, visibilityApplied);
-    }
-
-    @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-        if (nbt.contains(NBT_TRAP_TYPE)) {
-            this.trapTypeId = nbt.getString(NBT_TRAP_TYPE);
-        }
-        if (nbt.contains(NBT_OWNER_TEAM)) {
-            this.ownerTeamName = nbt.getString(NBT_OWNER_TEAM);
-        }
-        if (nbt.contains(NBT_OWNER_UUID)) {
-            this.ownerUuid = nbt.getUuid(NBT_OWNER_UUID);
-        }
-        this.visibilityApplied = nbt.getBoolean(NBT_VISIBILITY_APPLIED);
-    }
-
-    @Override
-    public boolean shouldSave() {
         return true;
     }
 
