@@ -16,6 +16,9 @@ import java.util.Optional;
 
 public final class TrapEffects {
 
+    // Avoid overlapping triggers removing a newer temporary modifier too early.
+    private static long modifierSequence = 0;
+
     private TrapEffects() {
     }
 
@@ -69,7 +72,8 @@ public final class TrapEffects {
         }
 
         Identifier modifierId = Identifier.of(PvpTraps.MOD_ID,
-                "trap_" + attrId.getPath().replace('.', '_') + "_" + target.getUuidAsString());
+                "trap_" + attrId.getPath().replace('.', '_') + "_" + target.getUuidAsString()
+                        + "_" + (++modifierSequence));
 
         instance.removeModifier(modifierId);
 
