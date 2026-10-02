@@ -39,7 +39,10 @@ public class TrapItem extends Item {
         );
         trap.configure(trapTypeId, player);
 
-        ((ServerWorld) world).spawnEntity(trap);
+        boolean spawned = ((ServerWorld) world).spawnEntity(trap);
+        if (!spawned) {
+            return ActionResult.FAIL;
+        }
 
         if (!player.getAbilities().creativeMode) {
             ItemStack stack = context.getStack();
