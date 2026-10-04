@@ -23,7 +23,7 @@ public final class TrapEffects {
     private TrapEffects() {
     }
 
-    public static void apply(PlayerEntity target, TrapConfig.TrapTypeSettings settings) {
+    public static void apply(PlayerEntity target, TrapConfig.TrapTypeSettings settings) {\n        if ("fire".equals(settings.trapTypeId)) {\n            target.setOnFireFor(4);\n        }
         if (target == null || settings == null) {
             return;
         }
