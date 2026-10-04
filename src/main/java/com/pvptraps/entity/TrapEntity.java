@@ -93,12 +93,13 @@ public class TrapEntity extends MobEntity {
             applyTeamVisibility(serverWorld);
         }
 
-        double radius = Double.isFinite(settings.triggerRadius)
-                ? Math.max(0.0, settings.triggerRadius) : 0.0;
+        boolean stepMode = "step".equalsIgnoreCase(settings.activationMode);
+        double radius = stepMode ? 0.1 : (Double.isFinite(settings.triggerRadius)
+                ? Math.max(0.0, settings.triggerRadius) : 0.0);
         List<PlayerEntity> nearby = serverWorld.getEntitiesByClass(
                 PlayerEntity.class,
                 this.getBoundingBox().expand(radius),
-                this::canTrigger
+                player -> canTrigger(player) && (!stepMode || isStandingOnTrap(player))
         );
 
         PlayerEntity victim = nearby.stream()
@@ -145,6 +146,19 @@ public class TrapEntity extends MobEntity {
                 world.getScoreboard().addScoreHolderToTeam(this.getNameForScoreboard(), team);
             }
         }
+    }
+
+    /**
+     * Step activation is intentionally limited to players directly over the trap's footprint,
+     * with their feet no more than 1.1 blocks above the trap surface.
+     */
+    private boolean isStandingOnTrap(PlayerEntity player) {
+        double dx = Math.abs(player.getX() - this.getX());
+        double dz = Math.abs(player.getZ() - this.getZ());
+        double feetY = player.getBoundingBox().minY;
+        return dx <= 0.55 && dz <= 0.55
+                && feetY >= this.getY() - 0.05
+                && feetY <= this.getY() + 1.1;
     }
 
     private boolean canTrigger(PlayerEntity player) {
