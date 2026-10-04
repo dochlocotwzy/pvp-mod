@@ -29,7 +29,7 @@ public class TrapConfig implements ConfigData {
                 TrapTypeSettings.create("weakening", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 100))),
                 TrapTypeSettings.create("sticky", 0.0, List.of(new PotionEffectEntry("minecraft:slowness", 3, 60))),
                 TrapTypeSettings.create("fire", 2.0, List.of()),
-                TrapTypeSettings.create("exhaustion", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 80), new PotionEffectEntry("minecraft:slowness", 1, 80))
+                TrapTypeSettings.create("exhaustion", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 80), new PotionEffectEntry("minecraft:slowness", 1, 80)))
         ));
     }
 
