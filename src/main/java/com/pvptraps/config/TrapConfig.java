@@ -30,7 +30,6 @@ public class TrapConfig implements ConfigData {
         public String trapTypeId = "default";
 
         @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
         public double damage = 4.0;
 
         @ConfigEntry.Gui.Tooltip
