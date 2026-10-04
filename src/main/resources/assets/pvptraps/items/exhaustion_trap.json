@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/rotten_flesh"
+    "model": "pvptraps:item/exhaustion_trap"
   }
 }
