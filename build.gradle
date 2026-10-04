@@ -44,3 +44,23 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }
+
+def generateTrapIcons = tasks.register('generateTrapIcons') {
+    inputs.dir(layout.projectDirectory.dir('src/main/icon-data'))
+    outputs.dir(layout.buildDirectory.dir('generated/trapIcons'))
+    doLast {
+        def inputDir = file('src/main/icon-data')
+        def outputDir = layout.buildDirectory.dir('generated/trapIcons').get().asFile
+        fileTree(inputDir).matching { include '**/*.png.b64' }.each { source ->
+            def targetName = source.name.substring(0, source.name.length() - 4)
+            def target = new File(outputDir, "assets/pvptraps/textures/item/" + targetName)
+            target.parentFile.mkdirs()
+            target.bytes = java.util.Base64.getDecoder().decode(source.getText('UTF-8').trim())
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir(layout.buildDirectory.dir('generated/trapIcons'))
+tasks.named('processResources').configure {
+    dependsOn(generateTrapIcons)
+}
