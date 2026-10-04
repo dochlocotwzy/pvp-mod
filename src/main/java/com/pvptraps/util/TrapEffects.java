@@ -106,6 +106,6 @@ public final class TrapEffects {
         EntityAttributeModifier modifier = new EntityAttributeModifier(modifierId, entry.amount, operation);
         instance.addTemporaryModifier(modifier);
 
-        TrapEffectScheduler.scheduleRemoval(target.getUuid(), attribute, modifierId, entry.durationTicks);
+        TrapEffectScheduler.scheduleRemoval(target, attribute, modifierId, entry.durationTicks);
     }
 }
