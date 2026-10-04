@@ -1,5 +1,7 @@
 package com.pvptraps.item;
 
+import com.pvptraps.config.ConfigManager;
+import com.pvptraps.config.TrapConfig;
 import com.pvptraps.entity.ModEntities;
 import com.pvptraps.entity.TrapEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,6 +30,11 @@ public class TrapItem extends Item {
             return ActionResult.SUCCESS;
         }
 
+        TrapConfig.TrapTypeSettings config = ConfigManager.getTrapType(trapTypeId);
+        if (player.getItemCooldownManager().isCoolingDown(this)) {
+            return ActionResult.FAIL;
+        }
+
         BlockPos placePos = context.getBlockPos().offset(context.getSide());
 
         TrapEntity trap = new TrapEntity(ModEntities.TRAP, world);
@@ -47,6 +54,10 @@ public class TrapItem extends Item {
         if (!player.getAbilities().creativeMode) {
             ItemStack stack = context.getStack();
             stack.decrement(1);
+        }
+
+        if (config.cooldownSeconds > 0) {
+            player.getItemCooldownManager().set(this, config.cooldownSeconds * 20);
         }
 
         return ActionResult.SUCCESS;
