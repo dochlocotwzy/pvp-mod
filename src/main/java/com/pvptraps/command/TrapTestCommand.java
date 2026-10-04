@@ -30,7 +30,7 @@ public final class TrapTestCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(literal("pvptraps")
                         .then(literal("test")
-                                .requires(source -> source.hasPermissionLevel(2))
+                                .requires(source -> source.getPermissionLevel() >= 2)
                                 .then(argument("type", StringArgumentType.word())
                                         .then(argument("x", DoubleArgumentType.doubleArg())
                                                 .then(argument("y", DoubleArgumentType.doubleArg())
@@ -60,7 +60,7 @@ public final class TrapTestCommand {
         if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)
                 || Math.abs(x) > 30_000_000 || Math.abs(z) > 30_000_000
                 || y < source.getWorld().getBottomY()
-                || y >= source.getWorld().getTopY()) {
+                || Math.abs(y) > 30_000_000) {
             source.sendError(Text.literal("Координаты вне допустимых границ мира."));
             return 0;
         }
