@@ -48,7 +48,7 @@ public final class TrapEffects {
         }
     }
 
-    private static void applyPotionEffect(PlayerEntity target, TrapConfig.PotionEffectEntry entry) {
+    private static void applyPotionEffect(LivingEntity target, TrapConfig.PotionEffectEntry entry) {
         if (entry.effectId == null || entry.effectId.isBlank() || entry.durationTicks <= 0) {
             return;
         }
@@ -66,7 +66,7 @@ public final class TrapEffects {
                 Math.max(0, entry.amplifier), false, true));
     }
 
-    private static void applyAttributeModifier(PlayerEntity target, TrapConfig.AttributeModifierEntry entry) {
+    private static void applyAttributeModifier(LivingEntity target, TrapConfig.AttributeModifierEntry entry) {
         if (entry.attributeId == null || entry.attributeId.isBlank() || entry.durationTicks <= 0
                 || !Double.isFinite(entry.amount)) {
             return;
