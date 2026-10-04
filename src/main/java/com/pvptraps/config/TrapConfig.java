@@ -29,6 +29,25 @@ public class TrapConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public String trapTypeId = "default";
 
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+        public double damage = 4.0;
+
+        @ConfigEntry.Gui.Tooltip
+        public double triggerRadius = 1.0;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 3600)
+        public int cooldownSeconds = 10;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 3600)
+        public int trapLifetimeSeconds = 30;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 64)
+        public int maxStackSize = 16;
+
         @ConfigEntry.Gui.Tooltip(count = 1)
         @ConfigEntry.BoundedDiscrete(min = 1, max = 60)
         public int enemyVisibilitySeconds = 5;
