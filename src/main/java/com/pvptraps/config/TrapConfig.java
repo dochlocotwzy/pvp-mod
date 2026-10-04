@@ -17,7 +17,21 @@ public class TrapConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Category("traps")
     @ConfigEntry.Gui.CollapsibleObject
-    public List<TrapTypeSettings> trapTypes = new ArrayList<>(List.of(TrapTypeSettings.createDefault()));
+    public List<TrapTypeSettings> trapTypes = createDefaultTrapTypes();
+
+    private static List<TrapTypeSettings> createDefaultTrapTypes() {
+        return new ArrayList<>(List.of(
+                TrapTypeSettings.create("spike", 6.0, List.of()),
+                TrapTypeSettings.create("ice", 1.0, List.of(new PotionEffectEntry("minecraft:slowness", 1, 100))),
+                TrapTypeSettings.create("poison", 1.0, List.of(new PotionEffectEntry("minecraft:poison", 0, 100))),
+                TrapTypeSettings.create("electric", 3.0, List.of(new PotionEffectEntry("minecraft:slowness", 1, 60), new PotionEffectEntry("minecraft:weakness", 0, 60))),
+                TrapTypeSettings.create("smoke", 0.0, List.of(new PotionEffectEntry("minecraft:blindness", 0, 50))),
+                TrapTypeSettings.create("weakening", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 100))),
+                TrapTypeSettings.create("sticky", 0.0, List.of(new PotionEffectEntry("minecraft:slowness", 3, 60))),
+                TrapTypeSettings.create("fire", 2.0, List.of()),
+                TrapTypeSettings.create("exhaustion", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 80), new PotionEffectEntry("minecraft:slowness", 1, 80))
+        ));
+    }
 
     public static class GeneralSettings {
         @ConfigEntry.Gui.Tooltip
