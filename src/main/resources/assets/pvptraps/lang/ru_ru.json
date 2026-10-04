@@ -1,13 +1,10 @@
 {
   "item.pvptraps.trap": "Ловушка",
   "itemGroup.pvptraps": "PvP Traps",
-
   "text.autoconfig.pvptraps.title": "Настройки PvP Traps",
   "text.autoconfig.pvptraps.category.general": "Общее",
   "text.autoconfig.pvptraps.category.traps": "Типы ловушек",
-
   "text.autoconfig.pvptraps.option.general.debugLogging": "Отладочные логи",
-
   "text.autoconfig.pvptraps.option.traps.trapTypeId": "ID типа ловушки",
   "text.autoconfig.pvptraps.option.traps.damage": "Урон ловушки",
   "text.autoconfig.pvptraps.option.traps.triggerRadius": "Радиус срабатывания (блоки)",
@@ -17,5 +14,14 @@
   "text.autoconfig.pvptraps.option.traps.enemyVisibilitySeconds": "Сек. видимости для чужих",
   "text.autoconfig.pvptraps.option.traps.ignoreWholeOwnerTeam": "Игнорировать всю команду ставившего",
   "text.autoconfig.pvptraps.option.traps.potionEffects": "Эффекты зелий",
-  "text.autoconfig.pvptraps.option.traps.attributeModifiers": "Модификаторы атрибутов"
+  "text.autoconfig.pvptraps.option.traps.attributeModifiers": "Модификаторы атрибутов",
+  "item.pvptraps.spike_trap": "Шиповая ловушка",
+  "item.pvptraps.ice_trap": "Ледяная ловушка",
+  "item.pvptraps.poison_trap": "Ядовитая ловушка",
+  "item.pvptraps.electric_trap": "Электрическая ловушка",
+  "item.pvptraps.smoke_trap": "Дымовая ловушка",
+  "item.pvptraps.weakening_trap": "Ослабляющая ловушка",
+  "item.pvptraps.sticky_trap": "Липкая ловушка",
+  "item.pvptraps.fire_trap": "Огненная ловушка",
+  "item.pvptraps.exhaustion_trap": "Ловушка истощения"
 }
