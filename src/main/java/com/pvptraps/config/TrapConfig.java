@@ -54,6 +54,10 @@ public class TrapConfig implements ConfigData {
         TrapTypeSettings settings = new TrapTypeSettings();
         settings.trapTypeId = id == null || id.isBlank() ? "default" : id;
         settings.damage = damage;
+        settings.activationMode = switch (settings.trapTypeId) {
+            case "spike", "sticky", "fire" -> "step";
+            default -> "proximity";
+        };
         settings.potionEffects = new ArrayList<>(effects);
         settings.attributeModifiers = new ArrayList<>();
         return settings;
