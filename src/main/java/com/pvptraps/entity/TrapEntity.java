@@ -67,10 +67,19 @@ public class TrapEntity extends MobEntity {
     }
 
     public void configure(String trapTypeId, PlayerEntity owner) {
+        configure(trapTypeId);
+        if (owner != null) {
+            this.ownerUuid = owner.getUuid();
+            Team team = owner.getScoreboardTeam();
+            this.ownerTeamName = team != null ? team.getName() : null;
+        }
+    }
+
+    /** Configures a command-spawned test trap without an owning player or team. */
+    public void configure(String trapTypeId) {
         this.trapTypeId = trapTypeId == null ? "default" : trapTypeId;
-        this.ownerUuid = owner.getUuid();
-        Team team = owner.getScoreboardTeam();
-        this.ownerTeamName = team != null ? team.getName() : null;
+        this.ownerUuid = null;
+        this.ownerTeamName = null;
     }
 
     @Override
