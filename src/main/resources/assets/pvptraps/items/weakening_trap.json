@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/chain"
+    "model": "pvptraps:item/weakening_trap"
   }
 }
