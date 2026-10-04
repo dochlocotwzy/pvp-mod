@@ -75,6 +75,10 @@ public class TrapConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double triggerRadius = 1.0;
 
+        /** Activation mode: "step" triggers when a player stands on the trap; "proximity" uses triggerRadius. */
+        @ConfigEntry.Gui.Tooltip
+        public String activationMode = "proximity";
+
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 0, max = 3600)
         public int cooldownSeconds = 10;
@@ -106,6 +110,19 @@ public class TrapConfig implements ConfigData {
         public List<AttributeModifierEntry> attributeModifiers = new ArrayList<>(List.of(
                 new AttributeModifierEntry("minecraft:generic.jump_strength", -0.4, "ADD_MULTIPLIED_TOTAL", 100)
         ));
+
+        public static TrapTypeSettings create(String id, double damage, List<PotionEffectEntry> effects) {
+            TrapTypeSettings settings = new TrapTypeSettings();
+            settings.trapTypeId = id;
+            settings.damage = damage;
+            settings.potionEffects = new ArrayList<>(effects);
+            settings.attributeModifiers = new ArrayList<>();
+            settings.activationMode = switch (id) {
+                case "spike", "sticky", "fire" -> "step";
+                default -> "proximity";
+            };
+            return settings;
+        }
 
         public static TrapTypeSettings createDefault() {
             return new TrapTypeSettings();
