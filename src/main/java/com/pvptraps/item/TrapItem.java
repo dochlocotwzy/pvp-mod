@@ -32,10 +32,10 @@ public class TrapItem extends Item {
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> tooltip, TooltipType type) {
         TrapConfig.TrapTypeSettings config = ConfigManager.getTrapType(trapTypeId);
         tooltip.accept(Text.translatable("tooltip.pvptraps.effect." + trapTypeId).formatted(net.minecraft.util.Formatting.GRAY));
-        tooltip.add(Text.translatable("tooltip.pvptraps.damage", config.damage).formatted(net.minecraft.util.Formatting.GRAY));
-        tooltip.add(Text.translatable("tooltip.pvptraps.radius", config.triggerRadius).formatted(net.minecraft.util.Formatting.GRAY));
-        tooltip.add(Text.translatable("tooltip.pvptraps.cooldown", config.cooldownSeconds).formatted(net.minecraft.util.Formatting.GRAY));
-        tooltip.add(Text.translatable("tooltip.pvptraps.lifetime", config.trapLifetimeSeconds).formatted(net.minecraft.util.Formatting.GRAY));
+        tooltip.accept(Text.translatable("tooltip.pvptraps.damage", config.damage).formatted(net.minecraft.util.Formatting.GRAY));
+        tooltip.accept(Text.translatable("tooltip.pvptraps.radius", config.triggerRadius).formatted(net.minecraft.util.Formatting.GRAY));
+        tooltip.accept(Text.translatable("tooltip.pvptraps.cooldown", config.cooldownSeconds).formatted(net.minecraft.util.Formatting.GRAY));
+        tooltip.accept(Text.translatable("tooltip.pvptraps.lifetime", config.trapLifetimeSeconds).formatted(net.minecraft.util.Formatting.GRAY));
     }
 
     @Override
