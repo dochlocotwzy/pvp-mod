@@ -9,6 +9,11 @@
   "text.autoconfig.pvptraps.option.general.debugLogging": "Отладочные логи",
 
   "text.autoconfig.pvptraps.option.traps.trapTypeId": "ID типа ловушки",
+  "text.autoconfig.pvptraps.option.traps.damage": "Урон ловушки",
+  "text.autoconfig.pvptraps.option.traps.triggerRadius": "Радиус срабатывания (блоки)",
+  "text.autoconfig.pvptraps.option.traps.cooldownSeconds": "Перезарядка (секунды)",
+  "text.autoconfig.pvptraps.option.traps.trapLifetimeSeconds": "Время существования (секунды)",
+  "text.autoconfig.pvptraps.option.traps.maxStackSize": "Размер стака",
   "text.autoconfig.pvptraps.option.traps.enemyVisibilitySeconds": "Сек. видимости для чужих",
   "text.autoconfig.pvptraps.option.traps.ignoreWholeOwnerTeam": "Игнорировать всю команду ставившего",
   "text.autoconfig.pvptraps.option.traps.potionEffects": "Эффекты зелий",
