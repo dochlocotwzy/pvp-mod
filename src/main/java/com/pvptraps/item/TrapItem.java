@@ -31,7 +31,8 @@ public class TrapItem extends Item {
         }
 
         TrapConfig.TrapTypeSettings config = ConfigManager.getTrapType(trapTypeId);
-        if (player.getItemCooldownManager().isCoolingDown(this)) {
+        ItemStack stack = context.getStack();
+        if (player.getItemCooldownManager().isCoolingDown(stack)) {
             return ActionResult.FAIL;
         }
 
@@ -51,13 +52,12 @@ public class TrapItem extends Item {
             return ActionResult.FAIL;
         }
 
-        if (!player.getAbilities().creativeMode) {
-            ItemStack stack = context.getStack();
-            stack.decrement(1);
+        if (config.cooldownSeconds > 0) {
+            player.getItemCooldownManager().set(stack, config.cooldownSeconds * 20);
         }
 
-        if (config.cooldownSeconds > 0) {
-            player.getItemCooldownManager().set(this, config.cooldownSeconds * 20);
+        if (!player.getAbilities().creativeMode) {
+            stack.decrement(1);
         }
 
         return ActionResult.SUCCESS;
