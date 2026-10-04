@@ -23,9 +23,12 @@ public final class TrapEffects {
     private TrapEffects() {
     }
 
-    public static void apply(PlayerEntity target, TrapConfig.TrapTypeSettings settings) {\n        if ("fire".equals(settings.trapTypeId)) {\n            target.setOnFireFor(4);\n        }
+    public static void apply(PlayerEntity target, TrapConfig.TrapTypeSettings settings) {
         if (target == null || settings == null) {
             return;
+        }
+        if ("fire".equals(settings.trapTypeId)) {
+            target.setOnFireFor(4);
         }
         List<TrapConfig.PotionEffectEntry> potionEffects = settings.potionEffects;
         if (potionEffects != null) {
