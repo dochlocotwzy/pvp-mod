@@ -30,18 +30,6 @@ public final class ConfigManager {
         }
 
         if (trapTypeId != null) {
-            for (TrapConfig.TrapTypeSettings settings : trapTypes) {
-                if (settings != null && Objects.equals(settings.trapTypeId, trapTypeId)) {
-                    return settings;
-                }
-            }
-        }
-
-        for (TrapConfig.TrapTypeSettings settings : trapTypes) {
-            if (settings != null) {
-                return settings;
-            }
-        }
-        return TrapConfig.TrapTypeSettings.createDefault();
+            return TrapConfig.presetFor(trapTypeId);
     }
 }
