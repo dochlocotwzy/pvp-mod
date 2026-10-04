@@ -16,13 +16,6 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Ловушка: не имеет коллизии (noClip), не двигается, не реагирует на урон,
- * каждый тик вручную проверяет, не стоит ли кто-то в радиусе срабатывания.
- *
- * Настройки ловушки (trapTypeId/владелец/команда) не сохраняются в NBT между
- * рестартами сервера - ловушка недолговечна, так что при рестарте исчезает.
- */
 public class TrapEntity extends MobEntity {
 
     private String trapTypeId = "default";
@@ -71,7 +64,7 @@ public class TrapEntity extends MobEntity {
     }
 
     public void configure(String trapTypeId, PlayerEntity owner) {
-        this.trapTypeId = trapTypeId;
+        this.trapTypeId = trapTypeId == null ? "default" : trapTypeId;
         this.ownerUuid = owner.getUuid();
         Team team = owner.getScoreboardTeam();
         this.ownerTeamName = team != null ? team.getName() : null;
@@ -87,26 +80,35 @@ public class TrapEntity extends MobEntity {
         ServerWorld serverWorld = (ServerWorld) this.getEntityWorld();
         TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
 
-        if (this.age >= Math.max(1, settings.trapLifetimeSeconds) * 20) {
+        int lifetime = Math.max(1, settings.trapLifetimeSeconds);
+        if (this.age >= lifetime * 20L) {
             this.discard();
             return;
         }
 
-        if (!visibilityApplied && this.age >= settings.enemyVisibilitySeconds * 20) {
+        int visibilitySeconds = Math.max(0, settings.enemyVisibilitySeconds);
+        if (!visibilityApplied && this.age >= visibilitySeconds * 20L) {
             applyTeamVisibility(serverWorld);
         }
 
-        double radius = Math.max(0.0, settings.triggerRadius);
+        double radius = Double.isFinite(settings.triggerRadius)
+                ? Math.max(0.0, settings.triggerRadius) : 0.0;
         List<PlayerEntity> nearby = serverWorld.getEntitiesByClass(
                 PlayerEntity.class,
                 this.getBoundingBox().expand(radius),
                 this::canTrigger
         );
 
-        if (!nearby.isEmpty()) {
-            PlayerEntity victim = nearby.get(0);
-            if (settings.damage > 0.0) {
-                victim.damage(serverWorld, serverWorld.getDamageSources().generic(), (float) settings.damage);
+        PlayerEntity victim = nearby.stream()
+                .min((a, b) -> Double.compare(
+                        this.getPos().squaredDistanceTo(a.getPos()),
+                        this.getPos().squaredDistanceTo(b.getPos())))
+                .orElse(null);
+
+        if (victim != null) {
+            double damage = Double.isFinite(settings.damage) ? Math.max(0.0, settings.damage) : 0.0;
+            if (damage > 0.0) {
+                victim.damage(serverWorld, serverWorld.getDamageSources().generic(), (float) damage);
             }
             TrapEffects.apply(victim, settings);
             this.discard();
