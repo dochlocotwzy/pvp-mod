@@ -108,7 +108,7 @@ jobs:
           set +e
           mkdir -p server-run
           # Accept Minecraft EULA for this temporary CI-only test server.
-          echo "eula=true" > server-run/eula.txt
+          echo "eula=true" > eula.txt
           timeout --signal=INT --kill-after=15s 90s gradle runServer --no-daemon > server-run/server.log 2>&1
           status=$?
           cat server-run/server.log
