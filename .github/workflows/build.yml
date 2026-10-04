@@ -101,6 +101,35 @@ jobs:
         if: steps.build.outcome == 'failure'
         run: exit 1
 
+      - name: Start dedicated Minecraft server with the mod
+        if: steps.build.outcome == 'success'
+        shell: bash
+        run: |
+          set +e
+          mkdir -p server-run
+          # Accept Minecraft EULA for this temporary CI-only test server.
+          echo "eula=true" > server-run/eula.txt
+          timeout --signal=INT --kill-after=15s 90s gradle runServer --no-daemon > server-run/server.log 2>&1
+          status=$?
+          cat server-run/server.log
+          if ! grep -q "Done (" server-run/server.log; then
+            echo "Dedicated server did not reach the ready state."
+            exit 1
+          fi
+          # timeout's 124/130 are expected after the server has booted; INT asks it to stop.
+          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ] && [ "$status" -ne 130 ]; then
+            echo "Server exited unexpectedly with status $status."
+            exit "$status"
+          fi
+
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: minecraft-server-log
+          path: server-run/server.log
+          if-no-files-found: ignore
+
       - name: Upload built jar
         uses: actions/upload-artifact@v4
         with:
