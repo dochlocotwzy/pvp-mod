@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
@@ -30,7 +31,9 @@ public final class TrapTestCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(literal("pvptraps")
                         .then(literal("test")
-                                .requires(source -> source.getPermissionLevel() >= 2)
+                                .requires(source -> source.getEntity() == null
+                                        || (source.getEntity() instanceof ServerPlayerEntity player
+                                        && source.getServer().getPlayerManager().isOperator(player.getGameProfile())))
                                 .then(argument("type", StringArgumentType.word())
                                         .then(argument("x", DoubleArgumentType.doubleArg())
                                                 .then(argument("y", DoubleArgumentType.doubleArg())
