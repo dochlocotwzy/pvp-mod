@@ -100,6 +100,12 @@ public class TrapConfig implements ConfigData {
         public int enemyVisibilitySeconds = 5;
 
         @ConfigEntry.Gui.Tooltip
+        public boolean affectPlayers = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean affectMobs = true;
+
+        @ConfigEntry.Gui.Tooltip
         public boolean ignoreWholeOwnerTeam = true;
 
         @ConfigEntry.Gui.Tooltip
