@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "pvptraps:item/trap"
+    "model": "minecraft:item/amethyst_shard"
   }
 }
