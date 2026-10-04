@@ -23,5 +23,18 @@
   "item.pvptraps.weakening_trap": "Weakening Trap",
   "item.pvptraps.sticky_trap": "Sticky Trap",
   "item.pvptraps.fire_trap": "Fire Trap",
-  "item.pvptraps.exhaustion_trap": "Exhaustion Trap"
+  "item.pvptraps.exhaustion_trap": "Exhaustion Trap",
+  "tooltip.pvptraps.damage": "Damage: %s",
+  "tooltip.pvptraps.radius": "Trigger radius: %s blocks",
+  "tooltip.pvptraps.cooldown": "Cooldown: %s sec.",
+  "tooltip.pvptraps.lifetime": "Lifetime: %s sec.",
+  "tooltip.pvptraps.effect.spike": "Deals direct damage",
+  "tooltip.pvptraps.effect.ice": "Slows the target",
+  "tooltip.pvptraps.effect.poison": "Poisons the target",
+  "tooltip.pvptraps.effect.electric": "Slows and weakens the target",
+  "tooltip.pvptraps.effect.smoke": "Blinds the target",
+  "tooltip.pvptraps.effect.weakening": "Weakens the target's attacks",
+  "tooltip.pvptraps.effect.sticky": "Heavily slows the target",
+  "tooltip.pvptraps.effect.fire": "Sets the target on fire",
+  "tooltip.pvptraps.effect.exhaustion": "Slows and weakens the target"
 }
