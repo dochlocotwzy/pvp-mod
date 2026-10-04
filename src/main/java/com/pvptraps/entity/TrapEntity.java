@@ -104,8 +104,7 @@ public class TrapEntity extends MobEntity {
 
         PlayerEntity victim = nearby.stream()
                 .min((a, b) -> Double.compare(
-                        this.getPos().squaredDistanceTo(a.getPos()),
-                        this.getPos().squaredDistanceTo(b.getPos())))
+                        squaredDistanceTo(a), squaredDistanceTo(b)))
                 .orElse(null);
 
         if (victim != null) {
@@ -117,6 +116,13 @@ public class TrapEntity extends MobEntity {
             TrapEffects.apply(victim, settings);
             this.discard();
         }
+    }
+
+    private double squaredDistanceTo(PlayerEntity player) {
+        double dx = this.getX() - player.getX();
+        double dy = this.getY() - player.getY();
+        double dz = this.getZ() - player.getZ();
+        return dx * dx + dy * dy + dz * dz;
     }
 
     private void spawnActivationParticles(ServerWorld world, PlayerEntity victim) {
