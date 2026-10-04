@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -96,13 +97,13 @@ public class TrapEntity extends MobEntity {
         boolean stepMode = "step".equalsIgnoreCase(settings.activationMode);
         double radius = stepMode ? 0.1 : (Double.isFinite(settings.triggerRadius)
                 ? Math.max(0.0, settings.triggerRadius) : 0.0);
-        List<PlayerEntity> nearby = serverWorld.getEntitiesByClass(
-                PlayerEntity.class,
+        List<LivingEntity> nearby = serverWorld.getEntitiesByClass(
+                LivingEntity.class,
                 this.getBoundingBox().expand(radius),
-                player -> canTrigger(player) && (!stepMode || isStandingOnTrap(player))
+                target -> canTrigger(target, settings) && (!stepMode || isStandingOnTrap(target))
         );
 
-        PlayerEntity victim = nearby.stream()
+        LivingEntity victim = nearby.stream()
                 .min((a, b) -> Double.compare(
                         squaredDistanceTo(a), squaredDistanceTo(b)))
                 .orElse(null);
@@ -118,14 +119,14 @@ public class TrapEntity extends MobEntity {
         }
     }
 
-    private double squaredDistanceTo(PlayerEntity player) {
+    private double squaredDistanceTo(LivingEntity player) {
         double dx = this.getX() - player.getX();
         double dy = this.getY() - player.getY();
         double dz = this.getZ() - player.getZ();
         return dx * dx + dy * dy + dz * dz;
     }
 
-    private void spawnActivationParticles(ServerWorld world, PlayerEntity victim) {
+    private void spawnActivationParticles(ServerWorld world, LivingEntity victim) {
         ParticleEffect particle = switch (trapTypeId) {
             case "ice" -> ParticleTypes.SNOWFLAKE;
             case "poison" -> ParticleTypes.WITCH;
@@ -158,7 +159,7 @@ public class TrapEntity extends MobEntity {
      * Step activation is intentionally limited to players directly over the trap's footprint,
      * with their feet no more than 1.1 blocks above the trap surface.
      */
-    private boolean isStandingOnTrap(PlayerEntity player) {
+    private boolean isStandingOnTrap(LivingEntity player) {
         double dx = Math.abs(player.getX() - this.getX());
         double dz = Math.abs(player.getZ() - this.getZ());
         double feetY = player.getBoundingBox().minY;
@@ -167,20 +168,25 @@ public class TrapEntity extends MobEntity {
                 && feetY <= this.getY() + 1.1;
     }
 
-    private boolean canTrigger(PlayerEntity player) {
-        if (player.isSpectator()) {
+    private boolean canTrigger(LivingEntity target, TrapConfig.TrapTypeSettings settings) {
+        if (!target.isAlive() || target == this) {
             return false;
         }
-        if (ownerUuid != null && player.getUuid().equals(ownerUuid)) {
-            return false;
-        }
-        TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
-        if (settings.ignoreWholeOwnerTeam && ownerTeamName != null) {
-            Team playerTeam = player.getScoreboardTeam();
-            if (playerTeam != null && playerTeam.getName().equals(ownerTeamName)) {
+        if (target instanceof PlayerEntity player) {
+            if (!settings.affectPlayers || player.isSpectator()) {
                 return false;
             }
+            if (ownerUuid != null && player.getUuid().equals(ownerUuid)) {
+                return false;
+            }
+            if (settings.ignoreWholeOwnerTeam && ownerTeamName != null) {
+                Team playerTeam = player.getScoreboardTeam();
+                if (playerTeam != null && playerTeam.getName().equals(ownerTeamName)) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
+        return settings.affectMobs;
     }
 }
