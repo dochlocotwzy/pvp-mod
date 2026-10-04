@@ -1,13 +1,10 @@
 {
   "item.pvptraps.trap": "Trap",
   "itemGroup.pvptraps": "PvP Traps",
-
   "text.autoconfig.pvptraps.title": "PvP Traps Settings",
   "text.autoconfig.pvptraps.category.general": "General",
   "text.autoconfig.pvptraps.category.traps": "Trap Types",
-
   "text.autoconfig.pvptraps.option.general.debugLogging": "Debug logging",
-
   "text.autoconfig.pvptraps.option.traps.trapTypeId": "Trap type ID",
   "text.autoconfig.pvptraps.option.traps.damage": "Trap damage",
   "text.autoconfig.pvptraps.option.traps.triggerRadius": "Trigger radius (blocks)",
@@ -17,5 +14,14 @@
   "text.autoconfig.pvptraps.option.traps.enemyVisibilitySeconds": "Visibility to enemies (seconds)",
   "text.autoconfig.pvptraps.option.traps.ignoreWholeOwnerTeam": "Ignore owner's whole team",
   "text.autoconfig.pvptraps.option.traps.potionEffects": "Potion effects",
-  "text.autoconfig.pvptraps.option.traps.attributeModifiers": "Attribute modifiers"
+  "text.autoconfig.pvptraps.option.traps.attributeModifiers": "Attribute modifiers",
+  "item.pvptraps.spike_trap": "Spike Trap",
+  "item.pvptraps.ice_trap": "Ice Trap",
+  "item.pvptraps.poison_trap": "Poison Trap",
+  "item.pvptraps.electric_trap": "Electric Trap",
+  "item.pvptraps.smoke_trap": "Smoke Trap",
+  "item.pvptraps.weakening_trap": "Weakening Trap",
+  "item.pvptraps.sticky_trap": "Sticky Trap",
+  "item.pvptraps.fire_trap": "Fire Trap",
+  "item.pvptraps.exhaustion_trap": "Exhaustion Trap"
 }
