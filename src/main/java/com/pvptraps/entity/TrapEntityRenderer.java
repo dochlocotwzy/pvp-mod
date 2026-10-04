@@ -1,30 +1,46 @@
 package com.pvptraps.entity;
 
+import com.pvptraps.item.ModItems;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.scoreboard.Team;
 
 /**
- * Controls per-viewer visibility. The entity remains tracked by all clients;
- * after the reveal period, only members of the owner's scoreboard team render it.
- *
- * The actual model draw is implemented separately from this visibility gate.
+ * Renders the trap's registered item model in the world and applies the
+ * server-synchronized visibility window for each viewer.
  */
-public class TrapEntityRenderer extends EntityRenderer<TrapEntity, EntityRenderState> {
+public class TrapEntityRenderer extends EntityRenderer<TrapEntity, TrapEntityRenderer.TrapRenderState> {
+
+    private final net.minecraft.client.item.ItemModelManager itemModelManager;
 
     public TrapEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
+        this.itemModelManager = ctx.itemModelManager;
     }
 
     @Override
-    public EntityRenderState createRenderState() {
-        return new EntityRenderState();
+    public TrapRenderState createRenderState() {
+        return new TrapRenderState();
+    }
+
+    @Override
+    public void updateRenderState(TrapEntity entity, TrapRenderState state, float tickProgress) {
+        super.updateRenderState(entity, state, tickProgress);
+        itemModelManager.updateForNonLivingEntity(
+                state.itemState,
+                new ItemStack(ModItems.TRAP_ITEM),
+                ModelTransformationMode.GROUND,
+                entity
+        );
     }
 
     @Override
@@ -46,8 +62,16 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, EntityRenderS
     }
 
     @Override
-    public void render(EntityRenderState state, MatrixStack matrices,
-                        OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState) {
-        // Model rendering is intentionally kept separate from the visibility rule.
+    public void render(TrapRenderState state, MatrixStack matrices,
+                       OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState) {
+        matrices.push();
+        // The model is a flat one-block footprint, centered on the entity.
+        matrices.translate(0.0, 0.001, 0.0);
+        state.itemState.render(matrices, queue, state.light, 0, state.outlineColor);
+        matrices.pop();
+    }
+
+    public static class TrapRenderState extends EntityRenderState {
+        public final ItemRenderState itemState = new ItemRenderState();
     }
 }
