@@ -9,6 +9,8 @@ import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
@@ -106,6 +108,7 @@ public class TrapEntity extends MobEntity {
                 .orElse(null);
 
         if (victim != null) {
+            spawnActivationParticles(serverWorld, victim);
             double damage = Double.isFinite(settings.damage) ? Math.max(0.0, settings.damage) : 0.0;
             if (damage > 0.0) {
                 victim.damage(serverWorld, serverWorld.getDamageSources().generic(), (float) damage);
@@ -113,6 +116,24 @@ public class TrapEntity extends MobEntity {
             TrapEffects.apply(victim, settings);
             this.discard();
         }
+    }
+
+    private void spawnActivationParticles(ServerWorld world, PlayerEntity victim) {
+        ParticleEffect particle = switch (trapTypeId) {
+            case "ice" -> ParticleTypes.SNOWFLAKE;
+            case "poison" -> ParticleTypes.WITCH;
+            case "electric" -> ParticleTypes.ELECTRIC_SPARK;
+            case "smoke" -> ParticleTypes.SMOKE;
+            case "weakening" -> ParticleTypes.DAMAGE_INDICATOR;
+            case "sticky" -> ParticleTypes.CLOUD;
+            case "fire" -> ParticleTypes.FLAME;
+            case "exhaustion" -> ParticleTypes.POOF;
+            default -> ParticleTypes.CRIT;
+        };
+        world.spawnParticles(particle,
+                victim.getX(), victim.getY() + 0.8, victim.getZ(),
+                trapTypeId.equals("electric") ? 18 : 10,
+                0.35, 0.45, 0.35, 0.04);
     }
 
     private void applyTeamVisibility(ServerWorld world) {
