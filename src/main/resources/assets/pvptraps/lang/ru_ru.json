@@ -8,6 +8,7 @@
   "text.autoconfig.pvptraps.option.traps.trapTypeId": "ID типа ловушки",
   "text.autoconfig.pvptraps.option.traps.damage": "Урон ловушки",
   "text.autoconfig.pvptraps.option.traps.triggerRadius": "Радиус срабатывания (блоки)",
+  "text.autoconfig.pvptraps.option.traps.activationMode": "Режим активации (step / proximity)",
   "text.autoconfig.pvptraps.option.traps.cooldownSeconds": "Перезарядка (секунды)",
   "text.autoconfig.pvptraps.option.traps.trapLifetimeSeconds": "Время существования (секунды)",
   "text.autoconfig.pvptraps.option.traps.maxStackSize": "Размер стака",
