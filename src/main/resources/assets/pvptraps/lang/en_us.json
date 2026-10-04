@@ -8,6 +8,7 @@
   "text.autoconfig.pvptraps.option.traps.trapTypeId": "Trap type ID",
   "text.autoconfig.pvptraps.option.traps.damage": "Trap damage",
   "text.autoconfig.pvptraps.option.traps.triggerRadius": "Trigger radius (blocks)",
+  "text.autoconfig.pvptraps.option.traps.activationMode": "Activation mode (step / proximity)",
   "text.autoconfig.pvptraps.option.traps.cooldownSeconds": "Cooldown (seconds)",
   "text.autoconfig.pvptraps.option.traps.trapLifetimeSeconds": "Trap lifetime (seconds)",
   "text.autoconfig.pvptraps.option.traps.maxStackSize": "Stack size",
