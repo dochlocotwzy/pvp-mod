@@ -18,12 +18,10 @@ import java.util.UUID;
 
 /**
  * Ловушка: не имеет коллизии (noClip), не двигается, не реагирует на урон,
- * каждый тик вручную проверяет, не стоит ли кто-то в её хитбоксе.
+ * каждый тик вручную проверяет, не стоит ли кто-то в радиусе срабатывания.
  *
  * Настройки ловушки (trapTypeId/владелец/команда) не сохраняются в NBT между
- * рестартами сервера - ловушка живёт считанные секунды до срабатывания или
- * до перезаписи visibilityApplied, так что при обычном рестарте сервера этот
- * недолговечный объект просто исчезнет вместе с чанком, что приемлемо.
+ * рестартами сервера - ловушка недолговечна, так что при рестарте исчезает.
  */
 public class TrapEntity extends MobEntity {
 
@@ -87,21 +85,29 @@ public class TrapEntity extends MobEntity {
             return;
         }
         ServerWorld serverWorld = (ServerWorld) this.getEntityWorld();
-
         TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
+
+        if (this.age >= Math.max(1, settings.trapLifetimeSeconds) * 20) {
+            this.discard();
+            return;
+        }
 
         if (!visibilityApplied && this.age >= settings.enemyVisibilitySeconds * 20) {
             applyTeamVisibility(serverWorld);
         }
 
+        double radius = Math.max(0.0, settings.triggerRadius);
         List<PlayerEntity> nearby = serverWorld.getEntitiesByClass(
                 PlayerEntity.class,
-                this.getBoundingBox(),
+                this.getBoundingBox().expand(radius),
                 this::canTrigger
         );
 
         if (!nearby.isEmpty()) {
             PlayerEntity victim = nearby.get(0);
+            if (settings.damage > 0.0) {
+                victim.damage(serverWorld, serverWorld.getDamageSources().generic(), (float) settings.damage);
+            }
             TrapEffects.apply(victim, settings);
             this.discard();
         }
