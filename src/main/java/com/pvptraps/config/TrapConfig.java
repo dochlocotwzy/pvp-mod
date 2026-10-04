@@ -33,6 +33,32 @@ public class TrapConfig implements ConfigData {
         ));
     }
 
+    public static TrapTypeSettings presetFor(String id) {
+        List<PotionEffectEntry> effects = switch (id == null ? "" : id) {
+            case "ice" -> List.of(new PotionEffectEntry("minecraft:slowness", 1, 100));
+            case "poison" -> List.of(new PotionEffectEntry("minecraft:poison", 0, 100));
+            case "electric" -> List.of(new PotionEffectEntry("minecraft:slowness", 1, 60), new PotionEffectEntry("minecraft:weakness", 0, 60));
+            case "smoke" -> List.of(new PotionEffectEntry("minecraft:blindness", 0, 50));
+            case "weakening" -> List.of(new PotionEffectEntry("minecraft:weakness", 0, 100));
+            case "sticky" -> List.of(new PotionEffectEntry("minecraft:slowness", 3, 60));
+            case "exhaustion" -> List.of(new PotionEffectEntry("minecraft:weakness", 0, 80), new PotionEffectEntry("minecraft:slowness", 1, 80));
+            default -> List.of();
+        };
+        double damage = switch (id == null ? "" : id) {
+            case "spike" -> 6.0;
+            case "electric" -> 3.0;
+            case "weakening", "fire", "exhaustion" -> 2.0;
+            case "ice", "poison" -> 1.0;
+            default -> 0.0;
+        };
+        TrapTypeSettings settings = new TrapTypeSettings();
+        settings.trapTypeId = id == null || id.isBlank() ? "default" : id;
+        settings.damage = damage;
+        settings.potionEffects = new ArrayList<>(effects);
+        settings.attributeModifiers = new ArrayList<>();
+        return settings;
+    }
+
     public static class GeneralSettings {
         @ConfigEntry.Gui.Tooltip
         public boolean debugLogging = false;
