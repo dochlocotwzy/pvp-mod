@@ -12,9 +12,6 @@ public final class ConfigManager {
     }
 
     public static void init() {
-        // GsonConfigSerializer вместо Json5 - в актуальной версии Cloth Config
-        // класс Json5-сериализатора недоступен под этим именем/пакетом.
-        // Даёт обычный config/pvptraps.json (не .json5), функционально то же самое.
         AutoConfig.register(TrapConfig.class, GsonConfigSerializer::new);
     }
 
@@ -25,11 +22,15 @@ public final class ConfigManager {
     public static TrapConfig.TrapTypeSettings getTrapType(String trapTypeId) {
         TrapConfig config = get();
         List<TrapConfig.TrapTypeSettings> trapTypes = config.trapTypes;
-        if (trapTypes == null || trapTypes.isEmpty()) {
-            return TrapConfig.TrapTypeSettings.createDefault();
+        if (trapTypes != null) {
+            for (TrapConfig.TrapTypeSettings settings : trapTypes) {
+                if (settings != null && Objects.equals(settings.trapTypeId, trapTypeId)) {
+                    return settings;
+                }
+            }
         }
-
-        if (trapTypeId != null) {
-            return TrapConfig.presetFor(trapTypeId);
+        return trapTypeId == null
+                ? TrapConfig.TrapTypeSettings.createDefault()
+                : TrapConfig.presetFor(trapTypeId);
     }
 }
