@@ -15,16 +15,6 @@ repositories {
     maven { url = "https://maven.terraformersmc.com/releases/" } // Mod Menu
 }
 
-fabricApi {
-    configureTests {
-        createSourceSet = true
-        modId = "pvptraps-test"
-        enableGameTests = true
-        enableClientGameTests = false
-        eula = true
-    }
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
