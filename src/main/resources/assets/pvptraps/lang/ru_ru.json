@@ -23,5 +23,18 @@
   "item.pvptraps.weakening_trap": "Ослабляющая ловушка",
   "item.pvptraps.sticky_trap": "Липкая ловушка",
   "item.pvptraps.fire_trap": "Огненная ловушка",
-  "item.pvptraps.exhaustion_trap": "Ловушка истощения"
+  "item.pvptraps.exhaustion_trap": "Ловушка истощения",
+  "tooltip.pvptraps.damage": "Урон: %s",
+  "tooltip.pvptraps.radius": "Радиус: %s блока",
+  "tooltip.pvptraps.cooldown": "Перезарядка: %s сек.",
+  "tooltip.pvptraps.lifetime": "Время жизни: %s сек.",
+  "tooltip.pvptraps.effect.spike": "Наносит прямой урон",
+  "tooltip.pvptraps.effect.ice": "Замедляет противника",
+  "tooltip.pvptraps.effect.poison": "Отравляет противника",
+  "tooltip.pvptraps.effect.electric": "Замедляет и ослабляет противника",
+  "tooltip.pvptraps.effect.smoke": "Ослепляет противника",
+  "tooltip.pvptraps.effect.weakening": "Ослабляет атаки противника",
+  "tooltip.pvptraps.effect.sticky": "Сильно замедляет противника",
+  "tooltip.pvptraps.effect.fire": "Поджигает противника",
+  "tooltip.pvptraps.effect.exhaustion": "Замедляет и ослабляет противника"
 }
