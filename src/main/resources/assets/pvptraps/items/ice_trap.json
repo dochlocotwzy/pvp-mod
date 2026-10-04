@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/packed_ice"
+    "model": "pvptraps:item/ice_trap"
   }
 }
