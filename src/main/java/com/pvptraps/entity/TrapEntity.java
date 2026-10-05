@@ -214,14 +214,23 @@ public class TrapEntity extends MobEntity {
     }
 
     /**
-     * Step activation is intentionally limited to players directly over the trap's footprint,
-     * with their feet no more than 1.1 blocks above the trap surface.
+     * Step activation uses the trap's full one-block footprint instead of requiring the
+     * target's center to be close to the trap center. Any horizontal overlap with the
+     * block footprint counts as stepping on the trap.
      */
-    private boolean isStandingOnTrap(LivingEntity player) {
-        double dx = Math.abs(player.getX() - this.getX());
-        double dz = Math.abs(player.getZ() - this.getZ());
-        double feetY = player.getBoundingBox().minY;
-        return dx <= 0.55 && dz <= 0.55
+    private boolean isStandingOnTrap(LivingEntity target) {
+        var targetBox = target.getBoundingBox();
+        double trapMinX = this.getX() - 0.5;
+        double trapMaxX = this.getX() + 0.5;
+        double trapMinZ = this.getZ() - 0.5;
+        double trapMaxZ = this.getZ() + 0.5;
+        double feetY = targetBox.minY;
+
+        boolean overlapsFootprint = targetBox.maxX > trapMinX
+                && targetBox.minX < trapMaxX
+                && targetBox.maxZ > trapMinZ
+                && targetBox.minZ < trapMaxZ;
+        return overlapsFootprint
                 && feetY >= this.getY() - 0.05
                 && feetY <= this.getY() + 1.1;
     }
