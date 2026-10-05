@@ -108,24 +108,21 @@ jobs:
           set -euo pipefail
           mkdir -p run server-run
           echo "eula=true" > run/eula.txt
-          mkfifo server-run/commands
 
-          # Open the FIFO writer before starting Gradle so the server process
-          # cannot block while opening its stdin for reading.
-          exec 3>server-run/commands
-          server_pid=""
+          # Bash coprocess gives the server a real stdin pipe without FIFO
+          # open-order deadlocks. The coprocess PID is waitable directly.
+          coproc MC_SERVER { gradle runServer --no-daemon > server-run/server.log 2>&1; }
+          server_pid=$MC_SERVER_PID
+          server_stdin=${MC_SERVER[1]}
+
           cleanup() {
             if [ -n "$server_pid" ] && kill -0 "$server_pid" 2>/dev/null; then
-              printf '%s\n' 'stop' >&3 || true
+              printf '%s\n' 'stop' >&"$server_stdin" || true
               wait "$server_pid" || true
             fi
-            exec 3>&- || true
-            rm -f server-run/commands
+            exec {server_stdin}>&- 2>/dev/null || true
           }
           trap cleanup EXIT
-
-          gradle runServer --no-daemon < server-run/commands > server-run/server.log 2>&1 &
-          server_pid=$!
 
           for i in {1..90}; do
             if grep -q "Done (" server-run/server.log 2>/dev/null; then
@@ -146,14 +143,14 @@ jobs:
           fi
 
           for type in spike ice poison electric smoke weakening sticky fire exhaustion; do
-            printf '%s\n' "pvptraps test $type 0 64 0" >&3
+            printf '%s\n' "pvptraps test $type 0 64 0" >&"$server_stdin"
             sleep 1
           done
 
-          printf '%s\n' 'stop' >&3
+          printf '%s\n' 'stop' >&"$server_stdin"
+          exec {server_stdin}>&-
           wait "$server_pid"
           server_pid=""
-          exec 3>&-
           cat server-run/server.log
 
           for type in spike ice poison electric smoke weakening sticky fire exhaustion; do
