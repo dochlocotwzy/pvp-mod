@@ -3,9 +3,14 @@ package com.pvptraps.entity;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.ItemEntityRenderer;
+import net.minecraft.client.render.entity.state.ItemStackEntityRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.random.Random;
+import com.pvptraps.item.ModItems;
 
 /**
  * Ловушка не должна иметь видимой модели вообще (её "видимость/невидимость"
