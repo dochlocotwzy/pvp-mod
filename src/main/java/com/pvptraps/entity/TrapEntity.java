@@ -97,6 +97,24 @@ public class TrapEntity extends MobEntity {
         this.testVictim = victim;
     }
 
+    /** Executes the bound CI smoke-test victim immediately; normal gameplay never calls this. */
+    public void triggerTestVictim(ServerWorld serverWorld) {
+        if (!testTrap || testVictim == null || !canTrigger(testVictim, ConfigManager.getTrapType(trapTypeId))) {
+            return;
+        }
+        TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
+        spawnActivationParticles(serverWorld, testVictim);
+        double damage = Double.isFinite(settings.damage) ? Math.max(0.0, settings.damage) : 0.0;
+        if (damage > 0.0) {
+            testVictim.damage(serverWorld, serverWorld.getDamageSources().generic(), (float) damage);
+        }
+        TrapEffects.apply(testVictim, settings);
+        com.pvptraps.PvpTraps.LOGGER.info("Trap smoke test triggered: type={}, target={}",
+                trapTypeId, testVictim.getType().getTranslationKey());
+        this.discard();
+    }
+
+
     @Override
     public void tick() {
         super.tick();
