@@ -97,6 +97,10 @@ public class TrapEntity extends MobEntity {
         this.testVictim = victim;
     }
 
+    public String getTrapTypeId() {
+        return trapTypeId;
+    }
+
     /** Executes the bound CI smoke-test victim immediately; normal gameplay never calls this. */
     public void triggerTestVictim(ServerWorld serverWorld) {
         if (!testTrap || testVictim == null || !canTrigger(testVictim, ConfigManager.getTrapType(trapTypeId))) {
