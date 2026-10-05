@@ -30,7 +30,7 @@ public final class TrapTestCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(literal("pvptraps")
                         .then(literal("test")
-                                .requires(source -> source.getEntity() == null)
+                                .requires(source -> source.hasPermissionLevel(2))
                                 .then(argument("type", StringArgumentType.word())
                                         .then(argument("x", DoubleArgumentType.doubleArg())
                                                 .then(argument("y", DoubleArgumentType.doubleArg())
@@ -82,8 +82,6 @@ public final class TrapTestCommand {
             return 0;
         }
         zombie.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
-        // Keep the test victim exactly on the trap so step-activation traps cannot miss
-        // because the mob AI moves it away before the trap's next tick.
         zombie.setAiDisabled(true);
         if (!world.spawnEntity(zombie)) {
             trap.discard();
@@ -92,11 +90,10 @@ public final class TrapTestCommand {
         }
 
         trap.setTestVictim(zombie);
-        trap.triggerTestVictim((net.minecraft.server.world.ServerWorld) world);
 
         source.sendFeedback(() -> Text.literal("Тест: ловушка " + type + " создана в "
                 + pos.getX() + " " + pos.getY() + " " + pos.getZ()
-                + ", зомби — рядом. Подойди к ловушке или подведи к ней моба."), false);
+                + ", зомби — на ловушке. Срабатывание проверяется обычным тиком."), false);
         return 1;
     }
 }
