@@ -101,27 +101,55 @@ jobs:
         if: steps.build.outcome == 'failure'
         run: exit 1
 
-      - name: Start dedicated Minecraft server with the mod
+      - name: Start dedicated Minecraft server and run trap smoke tests
         if: steps.build.outcome == 'success'
         shell: bash
         run: |
-          set +e
+          set -e
           mkdir -p run server-run
-          # Loom runs the development server from its configured run directory.
-          # Accept the Minecraft EULA only for this temporary CI runner.
           echo "eula=true" > run/eula.txt
-          timeout --signal=INT --kill-after=15s 90s gradle runServer --no-daemon > server-run/server.log 2>&1
-          status=$?
-          cat server-run/server.log
+          mkfifo server-run/commands
+          gradle runServer --no-daemon < server-run/commands > server-run/server.log 2>&1 &
+          server_pid=$!
+
+          for i in {1..90}; do
+            if grep -q "Done (" server-run/server.log 2>/dev/null; then
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              cat server-run/server.log
+              echo "Dedicated server exited before reaching the ready state."
+              exit 1
+            fi
+            sleep 1
+          done
+
           if ! grep -q "Done (" server-run/server.log; then
+            cat server-run/server.log
             echo "Dedicated server did not reach the ready state."
+            kill "$server_pid" 2>/dev/null || true
             exit 1
           fi
-          # timeout's 124/130 are expected after the server has booted; INT asks it to stop.
-          if [ "$status" -ne 0 ] && [ "$status" -ne 124 ] && [ "$status" -ne 130 ]; then
-            echo "Server exited unexpectedly with status $status."
-            exit "$status"
-          fi
+
+          for type in spike ice poison electric smoke weakening sticky fire exhaustion; do
+            printf 'pvptraps test %s 0 64 0
+' "$type" > server-run/commands
+            sleep 1
+          done
+
+          printf 'stop
+' > server-run/commands
+          wait "$server_pid"
+          cat server-run/server.log
+
+          for type in spike ice poison electric smoke weakening sticky fire exhaustion; do
+            if ! grep -q "Trap smoke test triggered: type=$type," server-run/server.log; then
+              echo "Trap smoke test failed for type: $type"
+              exit 1
+            fi
+          done
+          echo "All nine trap gameplay smoke tests passed."
+
 
       - name: Upload server log
         if: always()
