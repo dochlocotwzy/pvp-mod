@@ -112,7 +112,11 @@ public class TrapEntity extends MobEntity {
         }
 
         boolean stepMode = "step".equalsIgnoreCase(settings.activationMode);
-        double radius = stepMode ? 0.1 : (Double.isFinite(settings.triggerRadius)
+        // Use a broad spatial query for step traps; the exact footprint is enforced by
+        // isStandingOnTrap below. A tiny expanded entity box can miss a mob whose body
+        // overlaps the trap footprint but whose entity box does not overlap the trap's
+        // thin vertical bounds enough for the world spatial index to return it.
+        double radius = stepMode ? 1.0 : (Double.isFinite(settings.triggerRadius)
                 ? Math.max(0.0, settings.triggerRadius) : 0.0);
         List<LivingEntity> nearby = serverWorld.getEntitiesByClass(
                 LivingEntity.class,
