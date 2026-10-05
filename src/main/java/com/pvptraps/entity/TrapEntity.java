@@ -26,6 +26,7 @@ public class TrapEntity extends MobEntity {
     private UUID ownerUuid = null;
     private boolean visibilityApplied = false;
     private boolean testTrap = false;
+    private LivingEntity testVictim = null;
 
     public TrapEntity(EntityType<? extends MobEntity> type, World world) {
         super(type, world);
@@ -82,12 +83,18 @@ public class TrapEntity extends MobEntity {
         this.ownerUuid = null;
         this.ownerTeamName = null;
         this.testTrap = false;
+        this.testVictim = null;
     }
 
     /** Marks a command-spawned trap so CI can verify that the gameplay trigger actually fired. */
     public void configureTest(String trapTypeId) {
         configure(trapTypeId);
         this.testTrap = true;
+    }
+
+    /** Binds the CI smoke test to its deterministic victim without affecting normal gameplay target selection. */
+    public void setTestVictim(LivingEntity victim) {
+        this.testVictim = victim;
     }
 
     @Override
@@ -128,6 +135,10 @@ public class TrapEntity extends MobEntity {
                 .min((a, b) -> Double.compare(
                         squaredDistanceTo(a), squaredDistanceTo(b)))
                 .orElse(null);
+        if (testTrap && testVictim != null && canTrigger(testVictim, settings)
+                && (!stepMode || isStandingOnTrap(testVictim))) {
+            victim = testVictim;
+        }
 
         if (victim != null) {
             spawnActivationParticles(serverWorld, victim);
