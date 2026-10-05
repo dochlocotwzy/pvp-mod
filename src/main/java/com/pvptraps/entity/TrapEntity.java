@@ -25,6 +25,7 @@ public class TrapEntity extends MobEntity {
     private String ownerTeamName = null;
     private UUID ownerUuid = null;
     private boolean visibilityApplied = false;
+    private boolean testTrap = false;
 
     public TrapEntity(EntityType<? extends MobEntity> type, World world) {
         super(type, world);
@@ -75,11 +76,18 @@ public class TrapEntity extends MobEntity {
         }
     }
 
-    /** Configures a command-spawned test trap without an owning player or team. */
+    /** Configures a command-spawned trap without an owning player or team. */
     public void configure(String trapTypeId) {
         this.trapTypeId = trapTypeId == null ? "default" : trapTypeId;
         this.ownerUuid = null;
         this.ownerTeamName = null;
+        this.testTrap = false;
+    }
+
+    /** Marks a command-spawned trap so CI can verify that the gameplay trigger actually fired. */
+    public void configureTest(String trapTypeId) {
+        configure(trapTypeId);
+        this.testTrap = true;
     }
 
     @Override
@@ -124,6 +132,9 @@ public class TrapEntity extends MobEntity {
                 victim.damage(serverWorld, serverWorld.getDamageSources().generic(), (float) damage);
             }
             TrapEffects.apply(victim, settings);
+            if (testTrap) {
+                com.pvptraps.PvpTraps.LOGGER.info("Trap smoke test triggered: type={}, target={}", trapTypeId, victim.getType().getTranslationKey());
+            }
             this.discard();
         }
     }
