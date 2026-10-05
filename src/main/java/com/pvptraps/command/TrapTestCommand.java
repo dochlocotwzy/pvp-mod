@@ -69,7 +69,7 @@ public final class TrapTestCommand {
         BlockPos pos = BlockPos.ofFloored(x, y, z);
         TrapEntity trap = new TrapEntity(ModEntities.TRAP, world);
         trap.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
-        trap.configure(type);
+        trap.configureTest(type);
         if (!world.spawnEntity(trap)) {
             source.sendError(Text.literal("Не удалось создать ловушку."));
             return 0;
@@ -81,7 +81,7 @@ public final class TrapTestCommand {
             source.sendError(Text.literal("Не удалось создать зомби."));
             return 0;
         }
-        zombie.refreshPositionAndAngles(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+        zombie.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
         if (!world.spawnEntity(zombie)) {
             trap.discard();
             source.sendError(Text.literal("Ловушка создана, но зомби заспавнить не удалось."));
