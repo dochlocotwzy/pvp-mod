@@ -16,20 +16,56 @@ import net.minecraft.client.util.math.MatrixStack;
  * (не VertexConsumerProvider напрямую, как в более старых версиях) - подтверждено
  * через javap по актуальному remapped jar.
  */
-public class TrapEntityRenderer extends EntityRenderer<TrapEntity, EntityRenderState> {
+public class TrapEntityRenderer extends EntityRenderer<TrapEntity, ItemStackEntityRenderState> {
+
+    private final net.minecraft.client.item.ItemModelManager itemModelManager;
+    private final Random random = Random.create();
 
     public TrapEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
+        this.itemModelManager = ctx.getItemModelManager();
+        this.shadowRadius = 0.0f;
+        this.shadowOpacity = 0.0f;
     }
 
     @Override
-    public EntityRenderState createRenderState() {
-        return new EntityRenderState();
+    public ItemStackEntityRenderState createRenderState() {
+        return new ItemStackEntityRenderState();
     }
 
     @Override
-    public void render(EntityRenderState state, MatrixStack matrices,
-                        OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState) {
-        // намеренно пусто - ловушка не рисуется сама, видимость управляется через team/invisible
+    public void updateRenderState(TrapEntity entity, ItemStackEntityRenderState state, float tickProgress) {
+        super.updateRenderState(entity, state, tickProgress);
+        Item item = getTrapItem(entity.getTrapTypeId());
+        if (item == null) {
+            state.itemRenderState.clear();
+            return;
+        }
+        state.update(entity, new ItemStack(item), itemModelManager);
+    }
+
+    @Override
+    public void render(ItemStackEntityRenderState state, MatrixStack matrices,
+                       OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState) {
+        matrices.push();
+        matrices.translate(0.0, 0.08, 0.0);
+        matrices.scale(0.65f, 0.65f, 0.65f);
+        ItemEntityRenderer.renderStack(matrices, queue, state.light, state, random);
+        matrices.pop();
+    }
+
+    private static Item getTrapItem(String trapTypeId) {
+        return switch (trapTypeId) {
+            case "spike" -> ModItems.SPIKE_TRAP;
+            case "ice" -> ModItems.ICE_TRAP;
+            case "poison" -> ModItems.POISON_TRAP;
+            case "electric" -> ModItems.ELECTRIC_TRAP;
+            case "smoke" -> ModItems.SMOKE_TRAP;
+            case "weakening" -> ModItems.WEAKENING_TRAP;
+            case "sticky" -> ModItems.STICKY_TRAP;
+            case "fire" -> ModItems.FIRE_TRAP;
+            case "exhaustion" -> ModItems.EXHAUSTION_TRAP;
+            default -> null;
+        };
     }
 }
