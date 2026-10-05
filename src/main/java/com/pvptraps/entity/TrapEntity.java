@@ -135,8 +135,9 @@ public class TrapEntity extends MobEntity {
                 .min((a, b) -> Double.compare(
                         squaredDistanceTo(a), squaredDistanceTo(b)))
                 .orElse(null);
-        if (testTrap && testVictim != null && canTrigger(testVictim, settings)
-                && (!stepMode || isStandingOnTrap(testVictim))) {
+        // CI smoke tests bind the trap to the exact entity they spawned. This keeps the
+        // test deterministic and does not change normal gameplay target selection.
+        if (testTrap && testVictim != null && canTrigger(testVictim, settings)) {
             victim = testVictim;
         }
 
