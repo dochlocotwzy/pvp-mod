@@ -91,6 +91,8 @@ public final class TrapTestCommand {
             return 0;
         }
 
+        trap.setTestVictim(zombie);
+
         source.sendFeedback(() -> Text.literal("Тест: ловушка " + type + " создана в "
                 + pos.getX() + " " + pos.getY() + " " + pos.getZ()
                 + ", зомби — рядом. Подойди к ловушке или подведи к ней моба."), false);
