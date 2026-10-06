@@ -31,8 +31,9 @@ public class TrapEntity extends MobEntity {
             TrapEntity.class, TrackedDataHandlerRegistry.STRING);
     private static final TrackedData<Boolean> VISIBILITY_APPLIED = DataTracker.registerData(
             TrapEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<String> TRAP_TYPE_ID = DataTracker.registerData(
+            TrapEntity.class, TrackedDataHandlerRegistry.STRING);
 
-    private String trapTypeId = "default";
     private String ownerTeamName = null;
     private UUID ownerUuid = null;
     private boolean visibilityApplied = false;
@@ -55,6 +56,7 @@ public class TrapEntity extends MobEntity {
         super.initDataTracker(builder);
         builder.add(OWNER_UUID, "");
         builder.add(VISIBILITY_APPLIED, false);
+        builder.add(TRAP_TYPE_ID, "default");
     }
 
     public static DefaultAttributeContainer.Builder createTrapAttributes() {
@@ -149,7 +151,7 @@ public class TrapEntity extends MobEntity {
 
     /** Configures a command-spawned trap without an owning player or team. */
     public void configure(String trapTypeId) {
-        this.trapTypeId = trapTypeId == null ? "default" : trapTypeId;
+        this.dataTracker.set(TRAP_TYPE_ID, trapTypeId == null ? "default" : trapTypeId);
         this.ownerUuid = null;
         this.ownerTeamName = null;
         this.dataTracker.set(OWNER_UUID, "");
@@ -170,12 +172,12 @@ public class TrapEntity extends MobEntity {
     }
 
     public String getTrapTypeId() {
-        return trapTypeId;
+        return this.dataTracker.get(TRAP_TYPE_ID);
     }
 
     /** Executes the bound CI smoke-test victim immediately; normal gameplay never calls this. */
     public void triggerTestVictim(ServerWorld serverWorld) {
-        if (!testTrap || testVictim == null || !canTrigger(testVictim, ConfigManager.getTrapType(trapTypeId))) {
+        if (!testTrap || testVictim == null || !canTrigger(testVictim, ConfigManager.getTrapType(getTrapTypeId()))) {
             return;
         }
         TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
@@ -272,7 +274,8 @@ public class TrapEntity extends MobEntity {
     }
 
     private void spawnActivationParticles(ServerWorld world, LivingEntity victim) {
-        ParticleEffect particle = switch (trapTypeId) {
+        String trapType = getTrapTypeId();
+        ParticleEffect particle = switch (trapType) {
             case "ice" -> ParticleTypes.SNOWFLAKE;
             case "poison" -> ParticleTypes.WITCH;
             case "electric" -> ParticleTypes.ELECTRIC_SPARK;
@@ -285,7 +288,7 @@ public class TrapEntity extends MobEntity {
         };
         world.spawnParticles(particle,
                 victim.getX(), victim.getY() + 0.8, victim.getZ(),
-                trapTypeId.equals("electric") ? 18 : 10,
+                trapType.equals("electric") ? 18 : 10,
                 0.35, 0.45, 0.35, 0.04);
     }
 
