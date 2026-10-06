@@ -30,7 +30,7 @@ public final class TrapTestCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(literal("pvptraps")
                         .then(literal("test")
-                                .requires(source -> source.hasPermissionLevel(2))
+                                .requires(source -> source.getEntity() != null)
                                 .then(argument("type", StringArgumentType.word())
                                         .then(argument("x", DoubleArgumentType.doubleArg())
                                                 .then(argument("y", DoubleArgumentType.doubleArg())
