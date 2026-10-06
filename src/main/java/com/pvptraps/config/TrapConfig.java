@@ -10,8 +10,8 @@ import java.util.List;
 @Config(name = "pvptraps")
 public class TrapConfig implements ConfigData {
 
-    @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Category("general")
+    @ConfigEntry.Gui.TransitiveObject
     public GeneralSettings general = new GeneralSettings();
 
     @ConfigEntry.Category("traps")
