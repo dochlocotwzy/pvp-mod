@@ -7,6 +7,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.Team;
@@ -17,26 +20,29 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Ловушка: не имеет коллизии (noClip), не двигается, не реагирует на урон,
- * каждый тик вручную проверяет, не стоит ли кто-то в её хитбоксе.
- *
- * Настройки ловушки (trapTypeId/владелец/команда) не сохраняются в NBT между
- * рестартами сервера - ловушка живёт считанные секунды до срабатывания или
- * до перезаписи visibilityApplied, так что при обычном рестарте сервера этот
- * недолговечный объект просто исчезнет вместе с чанком, что приемлемо.
+ * Stationary PvP trap. The server controls triggering and synchronizes when
+ * the initial all-player reveal period has ended.
  */
 public class TrapEntity extends MobEntity {
+
+    private static final TrackedData<Boolean> ENEMIES_CAN_SEE =
+            DataTracker.registerData(TrapEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     private String trapTypeId = "default";
     private String ownerTeamName = null;
     private UUID ownerUuid = null;
-    private boolean visibilityApplied = false;
 
     public TrapEntity(EntityType<? extends MobEntity> type, World world) {
         super(type, world);
         this.setNoGravity(true);
         this.noClip = true;
         this.setInvulnerable(true);
+    }
+
+    @Override
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(ENEMIES_CAN_SEE, true);
     }
 
     public static DefaultAttributeContainer.Builder createTrapAttributes() {
@@ -77,6 +83,17 @@ public class TrapEntity extends MobEntity {
         this.ownerUuid = owner.getUuid();
         Team team = owner.getScoreboardTeam();
         this.ownerTeamName = team != null ? team.getName() : null;
+
+        // Put the trap on the owner's team immediately, so that team data is
+        // available to clients when the entity starts being tracked.
+        if (team != null && !owner.getEntityWorld().isClient()) {
+            ((ServerWorld) owner.getEntityWorld()).getScoreboard()
+                    .addScoreHolderToTeam(this.getNameForScoreboard(), team);
+        }
+    }
+
+    public boolean areEnemiesAllowedToSee() {
+        return this.dataTracker.get(ENEMIES_CAN_SEE);
     }
 
     @Override
@@ -90,8 +107,9 @@ public class TrapEntity extends MobEntity {
 
         TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
 
-        if (!visibilityApplied && this.age >= settings.enemyVisibilitySeconds * 20) {
-            applyTeamVisibility(serverWorld);
+        if (this.age >= settings.enemyVisibilitySeconds * 20
+                && this.dataTracker.get(ENEMIES_CAN_SEE)) {
+            this.dataTracker.set(ENEMIES_CAN_SEE, false);
         }
 
         List<PlayerEntity> nearby = serverWorld.getEntitiesByClass(
@@ -104,17 +122,6 @@ public class TrapEntity extends MobEntity {
             PlayerEntity victim = nearby.get(0);
             TrapEffects.apply(victim, settings);
             this.discard();
-        }
-    }
-
-    private void applyTeamVisibility(ServerWorld world) {
-        visibilityApplied = true;
-        this.setInvisible(true);
-        if (ownerTeamName != null) {
-            Team team = world.getScoreboard().getTeam(ownerTeamName);
-            if (team != null) {
-                world.getScoreboard().addScoreHolderToTeam(this.getNameForScoreboard(), team);
-            }
         }
     }
 

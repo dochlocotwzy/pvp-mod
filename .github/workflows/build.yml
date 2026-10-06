@@ -51,6 +51,18 @@ jobs:
                 echo
                 echo "=== EntityRenderState in same jar ==="
                 javap -p -classpath "$j" net.minecraft.client.render.entity.state.EntityRenderState 2>&1
+                echo
+                echo "=== EntityRendererFactory\$Context in same jar ==="
+                javap -p -classpath "$j" 'net.minecraft.client.render.entity.EntityRendererFactory$Context' 2>&1
+                echo
+                echo "=== ItemModelManager in same jar ==="
+                javap -p -classpath "$j" net.minecraft.client.item.ItemModelManager 2>&1
+                echo
+                echo "=== ItemDisplayContext in same jar ==="
+                javap -p -classpath "$j" net.minecraft.item.ItemDisplayContext 2>&1
+                echo
+                echo "=== Searching jar for class names containing ModelTransformation ==="
+                unzip -l "$j" 2>/dev/null | grep -i ModelTransformation
                 FOUND=1
                 break
               fi
