@@ -216,7 +216,7 @@ public class TrapEntity extends MobEntity {
             return;
         }
         ServerWorld serverWorld = (ServerWorld) this.getEntityWorld();
-        TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
+        TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(getTrapTypeId());
 
         int lifetime = Math.max(1, settings.trapLifetimeSeconds);
         if (this.age >= lifetime * 20L) {
