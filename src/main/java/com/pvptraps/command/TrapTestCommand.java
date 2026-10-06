@@ -95,7 +95,7 @@ public final class TrapTestCommand {
 
         source.sendFeedback(() -> Text.literal("Тест: ловушка " + type + " создана в "
                 + pos.getX() + " " + pos.getY() + " " + pos.getZ()
-                + ", зомби — на ловушке. Срабатывание проверяется обычным тиком."), false);
+                + ", зомби — на ловушке. Срабатывание проверено."), false);
         return 1;
     }
 }
