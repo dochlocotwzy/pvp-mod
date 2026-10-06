@@ -174,11 +174,9 @@ public class TrapConfig implements ConfigData {
         public boolean ignoreWholeOwnerTeam = true;
 
         @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.Gui.CollapsibleObject
         public List<PotionEffectEntry> potionEffects = new ArrayList<>();
 
         @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.Gui.CollapsibleObject
         public List<AttributeModifierEntry> attributeModifiers = new ArrayList<>();
 
         public static TrapTypeSettings create(String id, double damage, List<PotionEffectEntry> effects) {
