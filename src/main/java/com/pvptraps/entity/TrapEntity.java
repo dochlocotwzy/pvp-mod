@@ -180,7 +180,7 @@ public class TrapEntity extends MobEntity {
         if (!testTrap || testVictim == null || !canTrigger(testVictim, ConfigManager.getTrapType(getTrapTypeId()))) {
             return;
         }
-        TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(trapTypeId);
+        TrapConfig.TrapTypeSettings settings = ConfigManager.getTrapType(getTrapTypeId());
         spawnActivationParticles(serverWorld, testVictim);
         double damage = Double.isFinite(settings.damage) ? Math.max(0.0, settings.damage) : 0.0;
         if (damage > 0.0) {
@@ -188,7 +188,7 @@ public class TrapEntity extends MobEntity {
         }
         TrapEffects.apply(testVictim, settings);
         com.pvptraps.PvpTraps.LOGGER.info("Trap smoke test triggered: type={}, target={}",
-                trapTypeId, testVictim.getType().getTranslationKey());
+                getTrapTypeId(), testVictim.getType().getTranslationKey());
         this.discard();
     }
 
@@ -260,7 +260,7 @@ public class TrapEntity extends MobEntity {
             }
             TrapEffects.apply(victim, settings);
             if (testTrap) {
-                com.pvptraps.PvpTraps.LOGGER.info("Trap smoke test triggered: type={}, target={}", trapTypeId, victim.getType().getTranslationKey());
+                com.pvptraps.PvpTraps.LOGGER.info("Trap smoke test triggered: type={}, target={}", getTrapTypeId(), victim.getType().getTranslationKey());
             }
             this.discard();
         }
