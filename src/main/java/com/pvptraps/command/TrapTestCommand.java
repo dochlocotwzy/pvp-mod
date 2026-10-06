@@ -89,6 +89,9 @@ public final class TrapTestCommand {
         }
 
         trap.setTestVictim(zombie);
+        if (world instanceof net.minecraft.server.world.ServerWorld serverWorld) {
+            trap.triggerTestVictim(serverWorld);
+        }
 
         source.sendFeedback(() -> Text.literal("Тест: ловушка " + type + " создана в "
                 + pos.getX() + " " + pos.getY() + " " + pos.getZ()
