@@ -14,6 +14,13 @@ public class TrapConfig implements ConfigData {
     @ConfigEntry.Gui.TransitiveObject
     public GeneralSettings general = new GeneralSettings();
 
+    /**
+     * Compatibility field for configs created before the per-trap GUI was introduced.
+     * It is migrated once by ConfigManager and hidden from the GUI.
+     */
+    @ConfigEntry.Gui.Excluded
+    public List<TrapTypeSettings> trapTypes = null;
+
     @ConfigEntry.Category("traps")
     @ConfigEntry.Gui.CollapsibleObject
     public TrapTypeSettings spike = TrapTypeSettings.create("spike", 6.0, List.of());
