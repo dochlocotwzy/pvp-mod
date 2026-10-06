@@ -14,53 +14,120 @@ public class TrapConfig implements ConfigData {
     @ConfigEntry.Category("general")
     public GeneralSettings general = new GeneralSettings();
 
-    @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Category("traps")
     @ConfigEntry.Gui.CollapsibleObject
-    public List<TrapTypeSettings> trapTypes = createDefaultTrapTypes();
+    public TrapTypeSettings spike = TrapTypeSettings.create("spike", 6.0, List.of());
 
-    private static List<TrapTypeSettings> createDefaultTrapTypes() {
-        return new ArrayList<>(List.of(
-                TrapTypeSettings.create("spike", 6.0, List.of()),
-                TrapTypeSettings.create("ice", 1.0, List.of(new PotionEffectEntry("minecraft:slowness", 1, 100))),
-                TrapTypeSettings.create("poison", 1.0, List.of(new PotionEffectEntry("minecraft:poison", 0, 100))),
-                TrapTypeSettings.create("electric", 3.0, List.of(new PotionEffectEntry("minecraft:slowness", 1, 60), new PotionEffectEntry("minecraft:weakness", 0, 60))),
-                TrapTypeSettings.create("smoke", 0.0, List.of(new PotionEffectEntry("minecraft:blindness", 0, 50))),
-                TrapTypeSettings.create("weakening", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 100))),
-                TrapTypeSettings.create("sticky", 0.0, List.of(new PotionEffectEntry("minecraft:slowness", 3, 60))),
-                TrapTypeSettings.create("fire", 2.0, List.of()),
-                TrapTypeSettings.create("exhaustion", 2.0, List.of(new PotionEffectEntry("minecraft:weakness", 0, 80), new PotionEffectEntry("minecraft:slowness", 1, 80)))
-        ));
-    }
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings ice = TrapTypeSettings.create("ice", 1.0,
+            List.of(new PotionEffectEntry("minecraft:slowness", 1, 100)));
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings poison = TrapTypeSettings.create("poison", 1.0,
+            List.of(new PotionEffectEntry("minecraft:poison", 0, 100)));
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings electric = TrapTypeSettings.create("electric", 3.0,
+            List.of(
+                    new PotionEffectEntry("minecraft:slowness", 1, 60),
+                    new PotionEffectEntry("minecraft:weakness", 0, 60)
+            ));
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings smoke = TrapTypeSettings.create("smoke", 0.0,
+            List.of(new PotionEffectEntry("minecraft:blindness", 0, 50)));
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings weakening = TrapTypeSettings.create("weakening", 2.0,
+            List.of(new PotionEffectEntry("minecraft:weakness", 0, 100)));
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings sticky = TrapTypeSettings.create("sticky", 0.0,
+            List.of(new PotionEffectEntry("minecraft:slowness", 3, 60)));
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings fire = TrapTypeSettings.create("fire", 2.0, List.of());
+
+    @ConfigEntry.Category("traps")
+    @ConfigEntry.Gui.CollapsibleObject
+    public TrapTypeSettings exhaustion = TrapTypeSettings.create("exhaustion", 2.0,
+            List.of(
+                    new PotionEffectEntry("minecraft:weakness", 0, 80),
+                    new PotionEffectEntry("minecraft:slowness", 1, 80)
+            ));
 
     public static TrapTypeSettings presetFor(String id) {
-        List<PotionEffectEntry> effects = switch (id == null ? "" : id) {
-            case "ice" -> List.of(new PotionEffectEntry("minecraft:slowness", 1, 100));
-            case "poison" -> List.of(new PotionEffectEntry("minecraft:poison", 0, 100));
-            case "electric" -> List.of(new PotionEffectEntry("minecraft:slowness", 1, 60), new PotionEffectEntry("minecraft:weakness", 0, 60));
-            case "smoke" -> List.of(new PotionEffectEntry("minecraft:blindness", 0, 50));
-            case "weakening" -> List.of(new PotionEffectEntry("minecraft:weakness", 0, 100));
-            case "sticky" -> List.of(new PotionEffectEntry("minecraft:slowness", 3, 60));
-            case "exhaustion" -> List.of(new PotionEffectEntry("minecraft:weakness", 0, 80), new PotionEffectEntry("minecraft:slowness", 1, 80));
-            default -> List.of();
+        if (id == null) {
+            return TrapTypeSettings.createDefault();
+        }
+        return switch (id) {
+            case "spike" -> spikeDefaults();
+            case "ice" -> iceDefaults();
+            case "poison" -> poisonDefaults();
+            case "electric" -> electricDefaults();
+            case "smoke" -> smokeDefaults();
+            case "weakening" -> weakeningDefaults();
+            case "sticky" -> stickyDefaults();
+            case "fire" -> fireDefaults();
+            case "exhaustion" -> exhaustionDefaults();
+            default -> TrapTypeSettings.createDefault();
         };
-        double damage = switch (id == null ? "" : id) {
-            case "spike" -> 6.0;
-            case "electric" -> 3.0;
-            case "weakening", "fire", "exhaustion" -> 2.0;
-            case "ice", "poison" -> 1.0;
-            default -> 0.0;
-        };
-        TrapTypeSettings settings = new TrapTypeSettings();
-        settings.trapTypeId = id == null || id.isBlank() ? "default" : id;
-        settings.damage = damage;
-        settings.activationMode = switch (settings.trapTypeId) {
-            case "spike", "sticky", "fire" -> "step";
-            default -> "proximity";
-        };
-        settings.potionEffects = new ArrayList<>(effects);
-        settings.attributeModifiers = new ArrayList<>();
-        return settings;
+    }
+
+    private static TrapTypeSettings spikeDefaults() {
+        return TrapTypeSettings.create("spike", 6.0, List.of());
+    }
+
+    private static TrapTypeSettings iceDefaults() {
+        return TrapTypeSettings.create("ice", 1.0,
+                List.of(new PotionEffectEntry("minecraft:slowness", 1, 100)));
+    }
+
+    private static TrapTypeSettings poisonDefaults() {
+        return TrapTypeSettings.create("poison", 1.0,
+                List.of(new PotionEffectEntry("minecraft:poison", 0, 100)));
+    }
+
+    private static TrapTypeSettings electricDefaults() {
+        return TrapTypeSettings.create("electric", 3.0,
+                List.of(
+                        new PotionEffectEntry("minecraft:slowness", 1, 60),
+                        new PotionEffectEntry("minecraft:weakness", 0, 60)
+                ));
+    }
+
+    private static TrapTypeSettings smokeDefaults() {
+        return TrapTypeSettings.create("smoke", 0.0,
+                List.of(new PotionEffectEntry("minecraft:blindness", 0, 50)));
+    }
+
+    private static TrapTypeSettings weakeningDefaults() {
+        return TrapTypeSettings.create("weakening", 2.0,
+                List.of(new PotionEffectEntry("minecraft:weakness", 0, 100)));
+    }
+
+    private static TrapTypeSettings stickyDefaults() {
+        return TrapTypeSettings.create("sticky", 0.0,
+                List.of(new PotionEffectEntry("minecraft:slowness", 3, 60)));
+    }
+
+    private static TrapTypeSettings fireDefaults() {
+        return TrapTypeSettings.create("fire", 2.0, List.of());
+    }
+
+    private static TrapTypeSettings exhaustionDefaults() {
+        return TrapTypeSettings.create("exhaustion", 2.0,
+                List.of(
+                        new PotionEffectEntry("minecraft:weakness", 0, 80),
+                        new PotionEffectEntry("minecraft:slowness", 1, 80)
+                ));
     }
 
     public static class GeneralSettings {
@@ -69,8 +136,7 @@ public class TrapConfig implements ConfigData {
     }
 
     public static class TrapTypeSettings {
-
-        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.Gui.Excluded
         public String trapTypeId = "default";
 
         @ConfigEntry.Gui.Tooltip
@@ -79,7 +145,6 @@ public class TrapConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double triggerRadius = 1.0;
 
-        /** Activation mode: "step" triggers when a player stands on the trap; "proximity" uses triggerRadius. */
         @ConfigEntry.Gui.Tooltip
         public String activationMode = "proximity";
 
@@ -95,8 +160,8 @@ public class TrapConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 1, max = 64)
         public int maxStackSize = 16;
 
-        @ConfigEntry.Gui.Tooltip(count = 1)
-        @ConfigEntry.BoundedDiscrete(min = 1, max = 60)
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 60)
         public int enemyVisibilitySeconds = 5;
 
         @ConfigEntry.Gui.Tooltip
@@ -110,16 +175,11 @@ public class TrapConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.CollapsibleObject
-        public List<PotionEffectEntry> potionEffects = new ArrayList<>(List.of(
-                new PotionEffectEntry("minecraft:slowness", 1, 100),
-                new PotionEffectEntry("minecraft:poison", 0, 60)
-        ));
+        public List<PotionEffectEntry> potionEffects = new ArrayList<>();
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.Gui.CollapsibleObject
-        public List<AttributeModifierEntry> attributeModifiers = new ArrayList<>(List.of(
-                new AttributeModifierEntry("minecraft:generic.jump_strength", -0.4, "ADD_MULTIPLIED_TOTAL", 100)
-        ));
+        public List<AttributeModifierEntry> attributeModifiers = new ArrayList<>();
 
         public static TrapTypeSettings create(String id, double damage, List<PotionEffectEntry> effects) {
             TrapTypeSettings settings = new TrapTypeSettings();
