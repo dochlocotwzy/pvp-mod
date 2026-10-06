@@ -10,6 +10,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.ai.pathing.MobNavigation;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +20,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +38,10 @@ public class TrapEntity extends MobEntity {
     private boolean visibilityApplied = false;
     private boolean testTrap = false;
     private LivingEntity testVictim = null;
+    private boolean positionLocked = false;
+    private double lockedX;
+    private double lockedY;
+    private double lockedZ;
 
     public TrapEntity(EntityType<? extends MobEntity> type, World world) {
         super(type, world);
@@ -63,6 +69,45 @@ public class TrapEntity extends MobEntity {
     @Override
     public boolean isPushable() {
         return false;
+    }
+
+    /**
+     * Traps are stationary gameplay objects. Their position is set when they are spawned,
+     * and no physics, knockback, piston movement, or other movement source may move them.
+     */
+    @Override
+    public void move(MovementType type, Vec3d movement) {
+        // Intentionally immobile: trap position is fixed for its entire lifetime.
+    }
+
+    @Override
+    public void setVelocity(double x, double y, double z) {
+        // Trap velocity must never be changed by knockback, effects, or physics.
+    }
+
+    @Override
+    public void setVelocity(Vec3d velocity) {
+        // Trap velocity must never be changed by knockback, effects, or physics.
+    }
+
+    @Override
+    public void setVelocityClient(Vec3d clientVelocity) {
+        // Ignore client-side velocity updates as well.
+    }
+
+    @Override
+    public void addVelocity(double deltaX, double deltaY, double deltaZ) {
+        // Ignore all external velocity impulses.
+    }
+
+    @Override
+    public void addVelocity(Vec3d velocity) {
+        // Ignore all external velocity impulses.
+    }
+
+    @Override
+    public void addVelocityInternal(Vec3d velocity) {
+        // Ignore internal velocity impulses such as knockback.
     }
 
     @Override
@@ -148,7 +193,22 @@ public class TrapEntity extends MobEntity {
 
     @Override
     public void tick() {
+        if (!positionLocked) {
+            lockedX = this.getX();
+            lockedY = this.getY();
+            lockedZ = this.getZ();
+            positionLocked = true;
+        }
+
         super.tick();
+
+        // Restore the original spawn position in case something changed it directly
+        // (for example a teleport-style effect). This is deliberately done on both
+        // client and server so the trap never visually drifts.
+        if (positionLocked && (this.getX() != lockedX || this.getY() != lockedY || this.getZ() != lockedZ)) {
+            this.setPos(lockedX, lockedY, lockedZ);
+        }
+        this.setVelocity(Vec3d.ZERO);
 
         if (this.getEntityWorld().isClient()) {
             return;
