@@ -3,6 +3,8 @@ package com.pvptraps.config;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
+import java.util.List;
+
 public final class ConfigManager {
 
     private ConfigManager() {
@@ -10,6 +12,7 @@ public final class ConfigManager {
 
     public static void init() {
         AutoConfig.register(TrapConfig.class, GsonConfigSerializer::new);
+        migrateLegacyTrapTypes();
     }
 
     public static TrapConfig get() {
@@ -33,5 +36,35 @@ public final class ConfigManager {
             case "exhaustion" -> config.exhaustion;
             default -> TrapConfig.presetFor(trapTypeId);
         };
+    }
+
+    private static void migrateLegacyTrapTypes() {
+        TrapConfig config = get();
+        List<TrapConfig.TrapTypeSettings> legacy = config.trapTypes;
+        if (legacy == null || legacy.isEmpty()) {
+            return;
+        }
+
+        for (TrapConfig.TrapTypeSettings settings : legacy) {
+            if (settings == null || settings.trapTypeId == null) {
+                continue;
+            }
+            switch (settings.trapTypeId) {
+                case "spike" -> config.spike = settings;
+                case "ice" -> config.ice = settings;
+                case "poison" -> config.poison = settings;
+                case "electric" -> config.electric = settings;
+                case "smoke" -> config.smoke = settings;
+                case "weakening" -> config.weakening = settings;
+                case "sticky" -> config.sticky = settings;
+                case "fire" -> config.fire = settings;
+                case "exhaustion" -> config.exhaustion = settings;
+                default -> {
+                }
+            }
+        }
+
+        config.trapTypes = null;
+        AutoConfig.getConfigHolder(TrapConfig.class).save();
     }
 }
