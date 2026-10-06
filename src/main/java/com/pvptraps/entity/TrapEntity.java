@@ -292,6 +292,7 @@ public class TrapEntity extends MobEntity {
     private void applyTeamVisibility(ServerWorld world) {
         visibilityApplied = true;
         this.dataTracker.set(VISIBILITY_APPLIED, true);
+        this.setInvisible(true);
         if (ownerTeamName != null) {
             Team team = world.getScoreboard().getTeam(ownerTeamName);
             if (team != null) {
