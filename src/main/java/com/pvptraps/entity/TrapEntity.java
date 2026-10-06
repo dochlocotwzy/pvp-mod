@@ -6,6 +6,9 @@ import com.pvptraps.util.TrapEffects;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.mob.MobEntity;
@@ -22,6 +25,11 @@ import java.util.UUID;
 
 public class TrapEntity extends MobEntity {
 
+    private static final TrackedData<String> OWNER_UUID = DataTracker.registerData(
+            TrapEntity.class, TrackedDataHandlerRegistry.STRING);
+    private static final TrackedData<Boolean> VISIBILITY_APPLIED = DataTracker.registerData(
+            TrapEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+
     private String trapTypeId = "default";
     private String ownerTeamName = null;
     private UUID ownerUuid = null;
@@ -34,6 +42,13 @@ public class TrapEntity extends MobEntity {
         this.setNoGravity(true);
         this.noClip = true;
         this.setInvulnerable(true);
+    }
+
+    @Override
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(OWNER_UUID, "");
+        builder.add(VISIBILITY_APPLIED, false);
     }
 
     public static DefaultAttributeContainer.Builder createTrapAttributes() {
@@ -81,6 +96,7 @@ public class TrapEntity extends MobEntity {
         configure(trapTypeId);
         if (owner != null) {
             this.ownerUuid = owner.getUuid();
+            this.dataTracker.set(OWNER_UUID, owner.getUuidAsString());
             Team team = owner.getScoreboardTeam();
             this.ownerTeamName = team != null ? team.getName() : null;
         }
@@ -91,6 +107,8 @@ public class TrapEntity extends MobEntity {
         this.trapTypeId = trapTypeId == null ? "default" : trapTypeId;
         this.ownerUuid = null;
         this.ownerTeamName = null;
+        this.dataTracker.set(OWNER_UUID, "");
+        this.dataTracker.set(VISIBILITY_APPLIED, false);
         this.testTrap = false;
         this.testVictim = null;
     }
@@ -213,7 +231,7 @@ public class TrapEntity extends MobEntity {
 
     private void applyTeamVisibility(ServerWorld world) {
         visibilityApplied = true;
-        this.setInvisible(true);
+        this.dataTracker.set(VISIBILITY_APPLIED, true);
         if (ownerTeamName != null) {
             Team team = world.getScoreboard().getTeam(ownerTeamName);
             if (team != null) {
@@ -242,6 +260,28 @@ public class TrapEntity extends MobEntity {
         return overlapsFootprint
                 && feetY >= this.getY() - 0.05
                 && feetY <= this.getY() + 1.1;
+    }
+
+    @Override
+    public boolean isInvisibleTo(PlayerEntity player) {
+        if (!visibilityApplied && !this.dataTracker.get(VISIBILITY_APPLIED)) {
+            return false;
+        }
+        if (player.isSpectator()) {
+            return false;
+        }
+
+        String trackedOwnerUuid = this.dataTracker.get(OWNER_UUID);
+        if (!trackedOwnerUuid.isEmpty() && player.getUuidAsString().equals(trackedOwnerUuid)) {
+            return false;
+        }
+
+        Team trapTeam = this.getScoreboardTeam();
+        Team playerTeam = player.getScoreboardTeam();
+        if (trapTeam != null && playerTeam != null && trapTeam.getName().equals(playerTeam.getName())) {
+            return false;
+        }
+        return true;
     }
 
     private boolean canTrigger(LivingEntity target, TrapConfig.TrapTypeSettings settings) {
