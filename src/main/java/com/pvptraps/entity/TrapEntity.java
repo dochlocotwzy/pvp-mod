@@ -297,6 +297,11 @@ public class TrapEntity extends MobEntity {
             Team team = world.getScoreboard().getTeam(ownerTeamName);
             if (team != null) {
                 world.getScoreboard().addScoreHolderToTeam(this.getNameForScoreboard(), team);
+
+                // Vanilla's invisible-entity rendering uses the team's friendly-invisibility
+                // flag. Without it, setInvisible(true) hides the trap from the owner's team too,
+                // regardless of the custom isInvisibleTo override below.
+                team.setShowFriendlyInvisibles(true);
             }
         }
     }
