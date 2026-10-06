@@ -3,9 +3,6 @@ package com.pvptraps.config;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
-import java.util.List;
-import java.util.Objects;
-
 public final class ConfigManager {
 
     private ConfigManager() {
@@ -21,16 +18,20 @@ public final class ConfigManager {
 
     public static TrapConfig.TrapTypeSettings getTrapType(String trapTypeId) {
         TrapConfig config = get();
-        List<TrapConfig.TrapTypeSettings> trapTypes = config.trapTypes;
-        if (trapTypes != null) {
-            for (TrapConfig.TrapTypeSettings settings : trapTypes) {
-                if (settings != null && Objects.equals(settings.trapTypeId, trapTypeId)) {
-                    return settings;
-                }
-            }
+        if (trapTypeId == null) {
+            return TrapConfig.TrapTypeSettings.createDefault();
         }
-        return trapTypeId == null
-                ? TrapConfig.TrapTypeSettings.createDefault()
-                : TrapConfig.presetFor(trapTypeId);
+        return switch (trapTypeId) {
+            case "spike" -> config.spike;
+            case "ice" -> config.ice;
+            case "poison" -> config.poison;
+            case "electric" -> config.electric;
+            case "smoke" -> config.smoke;
+            case "weakening" -> config.weakening;
+            case "sticky" -> config.sticky;
+            case "fire" -> config.fire;
+            case "exhaustion" -> config.exhaustion;
+            default -> TrapConfig.presetFor(trapTypeId);
+        };
     }
 }
