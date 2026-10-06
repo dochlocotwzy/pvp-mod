@@ -2,7 +2,10 @@ package com.pvptraps.item;
 
 import com.pvptraps.config.ConfigManager;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BlockPredicatesComponent;
 import net.minecraft.item.Item;
+import net.minecraft.predicate.BlockPredicate;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -27,7 +30,12 @@ public final class ModItems {
         RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Identifier.of("pvptraps", itemId));
         int count = Math.max(1, Math.min(64, ConfigManager.getTrapType(trapTypeId).maxStackSize));
         return Registry.register(Registries.ITEM, key,
-                new TrapItem(new Item.Settings().registryKey(key).maxCount(count), trapTypeId));
+                new TrapItem(new Item.Settings()
+                        .registryKey(key)
+                        .maxCount(count)
+                        .component(DataComponentTypes.CAN_PLACE_ON,
+                                new BlockPredicatesComponent(java.util.List.of(BlockPredicate.Builder.create().build()))),
+                        trapTypeId));
     }
 
     public static void register() {
