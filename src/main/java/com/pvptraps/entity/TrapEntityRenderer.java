@@ -10,8 +10,8 @@ import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.scoreboard.Team;
 
 /**
@@ -24,7 +24,7 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, TrapEntityRen
 
     public TrapEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
-        this.itemModelManager = ctx.itemModelManager;
+        this.itemModelManager = ctx.getItemModelManager();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, TrapEntityRen
         itemModelManager.updateForNonLivingEntity(
                 state.itemState,
                 new ItemStack(ModItems.TRAP_ITEM),
-                ModelTransformationMode.GROUND,
+                ItemDisplayContext.GROUND,
                 entity
         );
     }

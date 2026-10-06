@@ -58,6 +58,9 @@ jobs:
                 echo "=== ItemModelManager in same jar ==="
                 javap -p -classpath "$j" net.minecraft.client.item.ItemModelManager 2>&1
                 echo
+                echo "=== ItemDisplayContext in same jar ==="
+                javap -p -classpath "$j" net.minecraft.item.ItemDisplayContext 2>&1
+                echo
                 echo "=== Searching jar for class names containing ModelTransformation ==="
                 unzip -l "$j" 2>/dev/null | grep -i ModelTransformation
                 FOUND=1
