@@ -1,4 +1,5 @@
 name: Build mod
+# CI trigger check
 
 on:
   push:
