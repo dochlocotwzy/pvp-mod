@@ -53,7 +53,7 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, ItemStackEnti
         matrices.push();
         matrices.translate(0.0, 0.08, 0.0);
         matrices.scale(0.65f, 0.65f, 0.65f);
-        ItemEntityRenderer.renderStack(matrices, queue, state.light, state, random);
+        ItemEntityRenderer.render(matrices, queue, state.light, state, random);
         matrices.pop();
     }
 
