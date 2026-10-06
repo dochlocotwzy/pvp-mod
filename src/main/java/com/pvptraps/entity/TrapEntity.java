@@ -5,6 +5,7 @@ import com.pvptraps.config.TrapConfig;
 import com.pvptraps.util.TrapEffects;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.mob.MobEntity;
@@ -55,6 +56,14 @@ public class TrapEntity extends MobEntity {
 
     @Override
     public boolean isAttackable() {
+        return false;
+    }
+
+    @Override
+    public boolean damage(ServerWorld world, DamageSource source, float amount) {
+        // Traps are gameplay objects, not combat entities. Even creative-mode
+        // attacks must never destroy them; lifetime/activation are their only
+        // normal removal paths.
         return false;
     }
 
