@@ -2,9 +2,9 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/packed_ice",
-    "rim": "minecraft:block/blue_ice",
-    "core": "minecraft:block/ice",
+    "frame": "minecraft:item/snowball",
+    "rim": "minecraft:item/diamond",
+    "core": "minecraft:item/prismarine_crystals",
     "particle": "#frame"
   },
   "elements": [
