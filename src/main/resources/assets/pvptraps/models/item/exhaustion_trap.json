@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/deepslate_tiles",
-    "metal": "minecraft:block/oxidized_copper",
-    "accent": "minecraft:block/cyan_concrete",
-    "core": "minecraft:block/warped_planks",
+    "frame": "minecraft:item/iron_ingot",
+    "metal": "minecraft:item/oxidized_copper",
+    "accent": "minecraft:item/cyan_dye",
+    "core": "minecraft:item/warped_planks",
     "particle": "#frame"
   },
   "elements": [
