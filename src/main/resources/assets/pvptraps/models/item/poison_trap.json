@@ -3,7 +3,7 @@
   "gui_light": "side",
   "textures": {
     "frame": "minecraft:item/iron_ingot",
-    "rim": "minecraft:item/mossy_cobblestone",
+    "rim": "minecraft:item/emerald",
     "core": "minecraft:item/slime_ball",
     "metal": "minecraft:item/copper_ingot",
     "particle": "#frame"
