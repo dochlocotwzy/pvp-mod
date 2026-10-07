@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/deepslate_tiles",
-    "rim": "minecraft:block/moss_block",
-    "core": "minecraft:block/slime_block",
-    "metal": "minecraft:block/copper_block",
+    "frame": "minecraft:item/iron_ingot",
+    "rim": "minecraft:item/mossy_cobblestone",
+    "core": "minecraft:item/slime_ball",
+    "metal": "minecraft:item/copper_ingot",
     "particle": "#frame"
   },
   "elements": [
