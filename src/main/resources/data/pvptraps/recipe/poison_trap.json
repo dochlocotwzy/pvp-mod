@@ -10,7 +10,7 @@
     "H": "minecraft:tripwire_hook"
   },
   "result": {
-    "id": "pvptraps:spike_trap",
+    "id": "pvptraps:poison_trap",
     "count": 2
   }
 }

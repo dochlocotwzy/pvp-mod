@@ -1,6 +1,7 @@
 package com.pvptraps;
 
 import com.pvptraps.config.ConfigManager;
+import com.pvptraps.command.TrapTestCommand;
 import com.pvptraps.entity.ModEntities;
 import com.pvptraps.item.ModItems;
 import com.pvptraps.util.TrapEffectScheduler;
@@ -20,6 +21,7 @@ public class PvpTraps implements ModInitializer {
         ModEntities.registerAttributes();
         ModItems.register();
         TrapEffectScheduler.registerEvents();
+        TrapTestCommand.register();
 
         LOGGER.info("PvP Traps: инициализация завершена");
     }
