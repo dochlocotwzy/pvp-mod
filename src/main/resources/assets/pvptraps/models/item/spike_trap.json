@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/iron_ingot",
-    "metal": "minecraft:item/iron_ingot",
-    "accent": "minecraft:item/copper_ingot",
-    "particle": "#frame"
+    "frame": "pvptraps:item/spike_texture",
+    "metal": "pvptraps:item/spike_texture",
+    "accent": "pvptraps:item/spike_texture",
+    "particle": "pvptraps:item/spike_texture"
   },
   "elements": [
     {

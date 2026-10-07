@@ -2,11 +2,11 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/iron_ingot",
-    "metal": "minecraft:item/copper_ingot",
-    "accent": "minecraft:item/cyan_dye",
-    "core": "minecraft:item/warped_fungus",
-    "particle": "#frame"
+    "frame": "pvptraps:item/exhaustion_texture",
+    "metal": "pvptraps:item/exhaustion_texture",
+    "accent": "pvptraps:item/exhaustion_texture",
+    "core": "pvptraps:item/exhaustion_texture",
+    "particle": "pvptraps:item/exhaustion_texture"
   },
   "elements": [
     {

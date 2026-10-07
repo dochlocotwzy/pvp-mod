@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/iron_ingot",
-    "metal": "minecraft:item/gold_ingot",
-    "accent": "minecraft:item/lapis_lazuli",
-    "particle": "#frame"
+    "frame": "pvptraps:item/electric_texture",
+    "metal": "pvptraps:item/electric_texture",
+    "accent": "pvptraps:item/electric_texture",
+    "particle": "pvptraps:item/electric_texture"
   },
   "elements": [
     {

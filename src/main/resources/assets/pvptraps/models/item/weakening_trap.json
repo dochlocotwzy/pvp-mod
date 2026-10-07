@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/amethyst_shard",
-    "rim": "minecraft:item/purple_dye",
-    "core": "minecraft:item/chorus_fruit",
-    "particle": "#frame"
+    "frame": "pvptraps:item/weakening_texture",
+    "rim": "pvptraps:item/weakening_texture",
+    "core": "pvptraps:item/weakening_texture",
+    "particle": "pvptraps:item/weakening_texture"
   },
   "elements": [
     {

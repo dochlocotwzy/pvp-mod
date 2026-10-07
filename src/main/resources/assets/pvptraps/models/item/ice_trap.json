@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/snowball",
-    "rim": "minecraft:item/diamond",
-    "core": "minecraft:item/prismarine_crystals",
-    "particle": "#frame"
+    "frame": "pvptraps:item/ice_texture",
+    "rim": "pvptraps:item/ice_texture",
+    "core": "pvptraps:item/ice_texture",
+    "particle": "pvptraps:item/ice_texture"
   },
   "elements": [
     {

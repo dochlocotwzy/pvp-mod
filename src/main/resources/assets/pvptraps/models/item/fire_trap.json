@@ -2,11 +2,11 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/charcoal",
-    "metal": "minecraft:item/copper_ingot",
-    "core": "minecraft:item/magma_cream",
-    "accent": "minecraft:item/blaze_powder",
-    "particle": "#frame"
+    "frame": "pvptraps:item/fire_texture",
+    "metal": "pvptraps:item/fire_texture",
+    "core": "pvptraps:item/fire_texture",
+    "accent": "pvptraps:item/fire_texture",
+    "particle": "pvptraps:item/fire_texture"
   },
   "elements": [
     {

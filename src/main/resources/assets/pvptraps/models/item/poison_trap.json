@@ -2,11 +2,11 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/iron_ingot",
-    "rim": "minecraft:item/emerald",
-    "core": "minecraft:item/slime_ball",
-    "metal": "minecraft:item/copper_ingot",
-    "particle": "#frame"
+    "frame": "pvptraps:item/poison_texture",
+    "rim": "pvptraps:item/poison_texture",
+    "core": "pvptraps:item/poison_texture",
+    "metal": "pvptraps:item/poison_texture",
+    "particle": "pvptraps:item/poison_texture"
   },
   "elements": [
     {
