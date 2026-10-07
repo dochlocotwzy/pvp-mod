@@ -2,9 +2,9 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/obsidian",
-    "rim": "minecraft:block/purpur_block",
-    "core": "minecraft:block/amethyst_block",
+    "frame": "minecraft:item/obsidian",
+    "rim": "minecraft:item/purple_dye",
+    "core": "minecraft:item/amethyst_shard",
     "particle": "#frame"
   },
   "elements": [
