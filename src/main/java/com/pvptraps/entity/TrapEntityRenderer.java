@@ -1,5 +1,6 @@
 package com.pvptraps.entity;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -39,6 +40,12 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, ItemStackEnti
     @Override
     public void updateRenderState(TrapEntity entity, ItemStackEntityRenderState state, float tickProgress) {
         super.updateRenderState(entity, state, tickProgress);
+
+        // The custom renderer bypasses vanilla's normal entity-model visibility path.
+        // Apply the player-specific trap visibility explicitly before rendering.
+        var player = MinecraftClient.getInstance().player;
+        state.invisible = player != null && entity.isInvisibleTo(player);
+
         Item item = getTrapItem(entity.getTrapTypeId());
         if (item == null) {
             state.itemRenderState.clear();
@@ -50,6 +57,10 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, ItemStackEnti
     @Override
     public void render(ItemStackEntityRenderState state, MatrixStack matrices,
                        OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState) {
+        if (state.invisible) {
+            return;
+        }
+
         matrices.push();
         matrices.translate(0.0, 0.27, 0.0);
         matrices.scale(1.0f, 1.0f, 1.0f);
