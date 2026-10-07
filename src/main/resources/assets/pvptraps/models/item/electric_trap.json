@@ -2,9 +2,9 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/iron_block",
-    "metal": "minecraft:block/gold_block",
-    "accent": "minecraft:block/blue_concrete",
+    "frame": "minecraft:item/iron_ingot",
+    "metal": "minecraft:item/gold_ingot",
+    "accent": "minecraft:item/lapis_lazuli",
     "particle": "#frame"
   },
   "elements": [
