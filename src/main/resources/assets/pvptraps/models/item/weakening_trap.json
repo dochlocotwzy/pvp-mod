@@ -2,9 +2,9 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:item/obsidian",
+    "frame": "minecraft:item/amethyst_shard",
     "rim": "minecraft:item/purple_dye",
-    "core": "minecraft:item/amethyst_shard",
+    "core": "minecraft:item/chorus_fruit",
     "particle": "#frame"
   },
   "elements": [
