@@ -51,7 +51,7 @@ public class TrapEntityRenderer extends EntityRenderer<TrapEntity, ItemStackEnti
     public void render(ItemStackEntityRenderState state, MatrixStack matrices,
                        OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState) {
         matrices.push();
-        matrices.translate(0.0, 0.02, 0.0);
+        matrices.translate(0.0, 0.27, 0.0);
         matrices.scale(1.0f, 1.0f, 1.0f);
         ItemEntityRenderer.render(matrices, queue, state.light, state, random);
         matrices.pop();
