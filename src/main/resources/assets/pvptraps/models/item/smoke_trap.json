@@ -4,7 +4,7 @@
   "textures": {
     "frame": "minecraft:item/iron_ingot",
     "metal": "minecraft:item/iron_ingot",
-    "accent": "minecraft:item/gray_wool",
+    "accent": "minecraft:item/gray_dye",
     "particle": "#frame"
   },
   "elements": [
