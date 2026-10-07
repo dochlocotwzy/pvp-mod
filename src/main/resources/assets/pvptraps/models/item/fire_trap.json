@@ -2,10 +2,10 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/blackstone",
-    "metal": "minecraft:block/copper_block",
-    "core": "minecraft:block/magma_block",
-    "accent": "minecraft:block/netherrack",
+    "frame": "minecraft:item/charcoal",
+    "metal": "minecraft:item/copper_ingot",
+    "core": "minecraft:item/magma_cream",
+    "accent": "minecraft:item/blaze_powder",
     "particle": "#frame"
   },
   "elements": [
