@@ -2,9 +2,9 @@
   "ambientocclusion": true,
   "gui_light": "side",
   "textures": {
-    "frame": "minecraft:block/iron_block",
-    "web": "minecraft:block/cobweb",
-    "accent": "minecraft:block/slime_block",
+    "frame": "minecraft:item/iron_ingot",
+    "web": "minecraft:item/string",
+    "accent": "minecraft:item/slime_ball",
     "particle": "#frame"
   },
   "elements": [
