@@ -1,6 +1,7 @@
 package com.pvptraps.entity;
 
 import com.pvptraps.config.MageConfigManager;
+import com.pvptraps.item.ModItems;
 import com.pvptraps.util.MageTeamAdapter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -9,6 +10,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
@@ -26,6 +28,11 @@ public final class ArcaneBoltEntity extends SnowballEntity {
 
     public ArcaneBoltEntity(EntityType<? extends SnowballEntity> type, World world) {
         super(type, world);
+    }
+
+    @Override
+    public ItemStack getStack() {
+        return ModItems.ARCANE_BOLT.getDefaultStack();
     }
 
     public void configure(double maxRange, int lifetimeTicks, float damage) {
