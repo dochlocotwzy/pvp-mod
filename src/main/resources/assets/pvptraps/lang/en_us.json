@@ -1,4 +1,10 @@
 {
   "item.pvptraps.trap": "Trap",
-  "itemGroup.pvptraps": "PvP Traps"
+  "item.pvptraps.magic_barrier": "Magic Barrier",
+  "item.pvptraps.flash_of_light": "Flash of Light",
+  "item.pvptraps.arcane_bolt": "Arcane Bolt",
+  "item.pvptraps.energy_impulse": "Energy Impulse",
+  "itemGroup.pvptraps": "PvP Traps",
+  "screen.pvptraps.mage.select_ally": "Choose an ally",
+  "screen.pvptraps.mage.no_allies": "No eligible teammates nearby"
 }

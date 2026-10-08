@@ -1,24 +1,27 @@
-# Mage ability framework — implementation notes
+# Mage ability framework
 
-This framework is intentionally independent of any server mode/class implementation. The mode may grant the items and optionally bridge its own team/mana rules later.
+The Mage abilities are implemented as standalone, reusable items in the `pvptraps` mod. They do not depend on the external mode's class tags or scoreboard mana. The built-in mana pool is configured in `config/pvptraps_mage.json`; an integration can grant the items and install a custom `MageTeamAdapter` on both logical sides.
 
-## Interaction rules
-- One registered item per ability; there is no ability wheel.
-- Targeted support abilities open a dedicated translucent teammate-selection screen.
-- The server revalidates target eligibility, range, mana, and cooldown when a selection is submitted.
-- Invalid target, insufficient mana, or active cooldown means no cast, no mana spent, and no cooldown started.
-- Every rejected cast gives the caster a short, clearly distinct staccato failure cue (two clipped, low-pitched magical notes); feedback must not sound like the successful-cast sound.
-- Ally-target cast animation may temporarily focus the camera on the selected ally for about 1–2 seconds, then restore normal camera control. The focus is cosmetic and never changes server targeting.
-- Abilities must not edit arena blocks or leave persistent terrain changes.
+## Items and behavior
 
-## Initial ability slice
-- Magic Barrier: select an eligible ally; apply a configurable temporary protective effect and beam/impact feedback.
-- Flash of Light: brief configurable Resistance effect.
-- Arcane Bolt: visible server-authoritative projectile with configurable speed, range, lifetime, and size.
-- Energy Impulse: configurable knockback pulse.
+- **Magic Barrier** — opens an ally selector; the server revalidates the selected player, team adapter, range, life state, mana and cooldown. On success it applies temporary Resistance and sends a particle beam. The client briefly focuses on the ally, then smoothly restores the previous view.
+- **Flash of Light** — grants brief Resistance to the caster.
+- **Arcane Bolt** — a visible, server-authoritative thrown projectile with configurable speed, range, lifetime, damage and size. The configured entity dimensions follow the visual size; impacts never edit blocks.
+- **Energy Impulse** — knocks back nearby non-allies without modifying terrain.
 
-## Integration boundaries
-- Keep mana and cooldown handling behind a reusable service.
-- Do not assume the external game mode's scoreboard, class tags, or team system. Provide a clear adapter seam for those checks.
-- Mana persistence through death should be configurable.
-- Balance values and visual timings should be configurable.
+## Shared rules
+
+- Each ability has an individual registered item; there is no wheel.
+- Mana maximum, passive regeneration, ability costs, cooldowns and effect/projectile values are configurable.
+- Mana is keyed by player UUID and by default survives death. Set `mana.persistThroughDeath=false` to refill on respawn.
+- Invalid ability requests, unavailable targets, insufficient mana and active cooldowns do not spend mana or start cooldowns. They produce a short two-pulse failure sound.
+- Team checks are isolated behind `MageTeamAdapter`. The default adapter uses scoreboard teams; a mode using another team system should install its own adapter on both the client (for the selector) and server (for authoritative validation).
+- All effects are entity/status/particle/sound based. Abilities do not place, break, or persistently alter arena blocks.
+
+## Integration surface
+
+- Grant `ModItems.MAGIC_BARRIER`, `FLASH_OF_LIGHT`, `ARCANE_BOLT` and `ENERGY_IMPULSE` to the Mage class.
+- Read or set the built-in mana pool with `MageAbilityService.getMana(ServerPlayerEntity)` and `MageAbilityService.setMana(ServerPlayerEntity, double)`.
+- Install custom team rules with `MageTeamAdapter.install((first, second) -> ...)` on both logical sides.
+
+This is the first implementation slice. Please verify in a real client/server session, especially the ally GUI, camera transition, projectile scale/hitbox feel and cooldown/mana rejection feedback.
