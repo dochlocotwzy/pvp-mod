@@ -16,6 +16,7 @@ import java.util.List;
 public final class AllySelectionScreen extends Screen {
     private final String abilityId;
     private final List<PlayerEntity> allies = new ArrayList<>();
+    private boolean noAlliesReported;
 
     public AllySelectionScreen(String abilityId) {
         super(Text.translatable("screen.pvptraps.mage.select_ally"));
@@ -39,6 +40,11 @@ public final class AllySelectionScreen extends Screen {
                 continue;
             }
             allies.add(candidate);
+        }
+
+        if (allies.isEmpty() && !noAlliesReported) {
+            noAlliesReported = true;
+            ClientPlayNetworking.send(new MageCastPayload(abilityId, -1));
         }
 
         int panelWidth = Math.min(300, width - 24);

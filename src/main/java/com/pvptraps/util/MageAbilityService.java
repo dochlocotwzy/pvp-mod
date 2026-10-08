@@ -51,7 +51,7 @@ public final class MageAbilityService {
         });
 
         ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
-            if (!MageConfigManager.get().mana.persistThroughDeath) {
+            if (!alive && !MageConfigManager.get().mana.persistThroughDeath) {
                 PLAYERS.put(newPlayer.getUuid(), new ManaState(MageConfigManager.get().mana.maxMana));
             }
         });

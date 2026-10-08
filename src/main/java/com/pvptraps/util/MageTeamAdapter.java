@@ -11,10 +11,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public interface MageTeamAdapter {
     AtomicReference<MageTeamAdapter> ACTIVE = new AtomicReference<>(MageTeamAdapter::scoreboardTeams);
 
-    boolean areAllies(PlayerEntity first, PlayerEntity second);
+    boolean isAlly(PlayerEntity first, PlayerEntity second);
 
     static boolean areAllies(PlayerEntity first, PlayerEntity second) {
-        return ACTIVE.get().areAllies(first, second);
+        return ACTIVE.get().isAlly(first, second);
     }
 
     static void install(MageTeamAdapter adapter) {
