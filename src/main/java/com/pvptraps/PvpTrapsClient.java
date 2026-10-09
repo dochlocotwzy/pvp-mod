@@ -1,6 +1,7 @@
 package com.pvptraps;
 
 import com.pvptraps.client.MageClientController;
+import com.pvptraps.client.MageHud;
 import com.pvptraps.entity.MageArcaneBoltRenderer;
 import com.pvptraps.entity.ModEntities;
 import com.pvptraps.entity.TrapEntityRenderer;
@@ -13,5 +14,6 @@ public class PvpTrapsClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.TRAP, TrapEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ARCANE_BOLT, MageArcaneBoltRenderer::new);
         MageClientController.register();
+        MageHud.register();
     }
 }
