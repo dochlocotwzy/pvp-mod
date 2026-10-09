@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class TrapEffectScheduler {
+    // Temporary attribute modifiers are removed by the server tick handler below.
 
     private record Pending(LivingEntity target, RegistryEntry<EntityAttribute> attribute, Identifier modifierId, long removeAtTick) {
     }
