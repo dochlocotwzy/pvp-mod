@@ -2,9 +2,10 @@ package com.pvptraps.client;
 
 import com.pvptraps.network.MageManaPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public final class MageHud {
     private static int mana = 100;
@@ -18,7 +19,7 @@ public final class MageHud {
                     mana = Math.max(0, payload.current());
                     maxMana = Math.max(1, payload.maximum());
                 }));
-        HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {
+        HudElementRegistry.addLast(Identifier.of("pvptraps", "mana_hud"), (drawContext, tickCounter) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player == null || client.options.hudHidden) {
                 return;
