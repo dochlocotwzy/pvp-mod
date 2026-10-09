@@ -42,5 +42,14 @@
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseManaCost": "Цена импульса",
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseCooldownTicks": "Перезарядка импульса (тики)",
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseRadius": "Радиус импульса",
-  "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseKnockback": "Сила отбрасывания"
+  "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseKnockback": "Сила отбрасывания",
+  "item.pvptraps.spike_trap": "Железные шипы",
+  "item.pvptraps.ice_trap": "Ледяная ловушка",
+  "item.pvptraps.poison_trap": "Ядовитая ловушка",
+  "item.pvptraps.electric_trap": "Электрическая ловушка",
+  "item.pvptraps.smoke_trap": "Дымовая ловушка",
+  "item.pvptraps.weakening_trap": "Ослабляющая ловушка",
+  "item.pvptraps.sticky_trap": "Липкая ловушка",
+  "item.pvptraps.fire_trap": "Огненная ловушка",
+  "item.pvptraps.exhaustion_trap": "Ловушка истощения"
 }
