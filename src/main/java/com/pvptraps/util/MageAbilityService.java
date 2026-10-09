@@ -244,13 +244,16 @@ public final class MageAbilityService {
                 continue;
             }
             double dx = target.getX() - caster.getX();
+            double dy = (target.getY() + target.getHeight() * 0.5) - (caster.getY() + caster.getHeight() * 0.5);
             double dz = target.getZ() - caster.getZ();
-            double distance = Math.max(0.1, Math.sqrt(dx * dx + dz * dz));
+            double distance = Math.max(0.1, Math.sqrt(dx * dx + dy * dy + dz * dz));
             if (distance > radius) {
                 continue;
             }
             double strength = knockback * (1.0 - distance / (radius + 0.01));
-            target.addVelocity(dx / distance * strength, 0.25 + strength * 0.2, dz / distance * strength);
+            double horizontalDistance = Math.max(0.1, Math.sqrt(dx * dx + dz * dz));
+            target.addVelocity(dx / horizontalDistance * strength, 0.25 + Math.max(0.0, dy / distance) * strength * 0.5
+                    + strength * 0.2, dz / horizontalDistance * strength);
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     8, 0.18, 0.25, 0.18, 0.04);
         }
