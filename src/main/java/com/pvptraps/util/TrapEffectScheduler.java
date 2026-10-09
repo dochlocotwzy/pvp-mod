@@ -12,6 +12,7 @@ import java.util.List;
 
 public final class TrapEffectScheduler {
     // Temporary attribute modifiers are removed by the server tick handler below.
+    // CI verification marker for the integrated trap and mage build.
 
     private record Pending(LivingEntity target, RegistryEntry<EntityAttribute> attribute, Identifier modifierId, long removeAtTick) {
     }
