@@ -67,7 +67,6 @@ public final class ModItems {
                     entries.add(STICKY_TRAP);
                     entries.add(FIRE_TRAP);
                     entries.add(EXHAUSTION_TRAP);
-                    entries.add(TRAP_ITEM);
                     entries.add(MAGIC_BARRIER);
                     entries.add(FLASH_OF_LIGHT);
                     entries.add(ARCANE_BOLT);
