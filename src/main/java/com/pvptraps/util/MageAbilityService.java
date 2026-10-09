@@ -177,9 +177,19 @@ public final class MageAbilityService {
                     sx + (tx - sx) * t, sy + (ty - sy) * t, sz + (tz - sz) * t,
                     1, 0.0, 0.0, 0.0, 0.0);
         }
-        world.spawnParticles(ParticleTypes.ENCHANT, tx, ty, tz, 24, 0.35, 0.45, 0.35, 0.4);
+        // Visible rotating-looking shield ring around the protected ally.
+        for (int i = 0; i < 32; i++) {
+            double angle = Math.PI * 2.0 * i / 32.0;
+            double px = tx + Math.cos(angle) * 0.72;
+            double pz = tz + Math.sin(angle) * 0.72;
+            world.spawnParticles(ParticleTypes.END_ROD, px, ty - 0.45, pz, 1, 0, 0.015, 0, 0);
+            world.spawnParticles(ParticleTypes.ENCHANT, px, ty + 0.35, pz, 1, 0, 0.01, 0, 0);
+        }
+        world.spawnParticles(ParticleTypes.ENCHANT, tx, ty, tz, 32, 0.4, 0.6, 0.4, 0.6);
         world.playSound(null, tx, ty, tz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
-                SoundCategory.PLAYERS, 0.8f, 1.35f);
+                SoundCategory.PLAYERS, 0.9f, 1.35f);
+        world.playSound(null, tx, ty, tz, SoundEvents.ITEM_TOTEM_USE,
+                SoundCategory.PLAYERS, 0.35f, 1.65f);
         ServerPlayNetworking.send(caster, new MageFeedbackPayload(1, target.getId()));
         return true;
     }
@@ -188,10 +198,14 @@ public final class MageAbilityService {
         caster.addStatusEffect(new StatusEffectInstance(
                 StatusEffects.RESISTANCE, config.abilities.flashDurationTicks, 0, false, true));
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
-        world.spawnParticles(ParticleTypes.GLOW, caster.getX(), caster.getY() + 1.0, caster.getZ(),
-                28, 0.45, 0.65, 0.45, 0.06);
-        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
-                SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 0.7f, 1.65f);
+        double x = caster.getX(), y = caster.getY() + 1.0, z = caster.getZ();
+        world.spawnParticles(ParticleTypes.GLOW, x, y, z, 36, 0.55, 0.75, 0.55, 0.08);
+        world.spawnParticles(ParticleTypes.FLASH, x, y, z, 1, 0, 0, 0, 0);
+        world.spawnParticles(ParticleTypes.FIREWORK, x, y, z, 22, 0.6, 0.7, 0.6, 0.12);
+        world.playSound(null, x, y, z, SoundEvents.BLOCK_BEACON_POWER_SELECT,
+                SoundCategory.PLAYERS, 0.8f, 1.65f);
+        world.playSound(null, x, y, z, SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,
+                SoundCategory.PLAYERS, 0.45f, 1.8f);
         return true;
     }
 
@@ -208,8 +222,10 @@ public final class MageAbilityService {
         if (!world.spawnEntity(bolt)) {
             return false;
         }
+        world.spawnParticles(ParticleTypes.ENCHANT, bolt.getX(), bolt.getY(), bolt.getZ(),
+                12, 0.12, 0.12, 0.12, 0.3);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
-                SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.7f, 1.8f);
+                SoundEvents.ENTITY_BREEZE_SHOOT, SoundCategory.PLAYERS, 0.8f, 1.35f);
         return true;
     }
 
@@ -234,10 +250,22 @@ public final class MageAbilityService {
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     8, 0.18, 0.25, 0.18, 0.04);
         }
+        // Ground-level expanding shockwave ring; terrain is never modified.
+        for (int i = 0; i < 48; i++) {
+            double angle = Math.PI * 2.0 * i / 48.0;
+            double px = caster.getX() + Math.cos(angle) * radius;
+            double pz = caster.getZ() + Math.sin(angle) * radius;
+            world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, px, caster.getY() + 0.12, pz,
+                    1, 0.04, 0.12, 0.04, 0.025);
+            world.spawnParticles(ParticleTypes.POOF, px, caster.getY() + 0.08, pz,
+                    1, 0.03, 0.03, 0.03, 0.005);
+        }
         world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, caster.getX(), caster.getY() + 1.0, caster.getZ(),
                 36, radius / 2.0, 0.6, radius / 2.0, 0.08);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
-                SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.8f, 1.0f);
+                SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.9f, 1.0f);
+        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.25f, 1.65f);
         return true;
     }
 
