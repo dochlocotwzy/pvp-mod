@@ -35,6 +35,7 @@ processResources {
     }
 }
 
+sourceSets.main.resources.srcDir("$buildDir/generated/resources/mageTextures")
 tasks.register("generateMageTextures") {
     def maps = fileTree("tools/textures") { include "*.png.hex"; include "shockwave.txt" }
     inputs.files(maps)
@@ -47,7 +48,8 @@ tasks.register("generateMageTextures") {
             def im = new java.awt.image.BufferedImage(16, 16, 2)
             rows.eachWithIndex { row, y -> row.eachWithIndex { ch, x -> im.setRGB(x, y, p[Integer.parseInt(ch.toString(), 16)]) } }
             def n = f.name == "shockwave.txt" ? "energy_impulse.png" : f.name.substring(0, f.name.length() - 4)
-            def out = file("src/main/resources/assets/pvptraps/textures/item/" + n)
+            def out = file("$buildDir/generated/resources/mageTextures/assets/pvptraps/textures/item/" + n)
+            out.parentFile.mkdirs()
             javax.imageio.ImageIO.write(im, "png", out)
         }
     }
