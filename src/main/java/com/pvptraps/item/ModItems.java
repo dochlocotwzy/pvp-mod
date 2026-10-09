@@ -16,6 +16,22 @@ public final class ModItems {
         return RegistryKey.of(RegistryKeys.ITEM, Identifier.of("pvptraps", path));
     }
 
+    private static Item registerTrap(String id) {
+        RegistryKey<Item> key = itemKey(id + "_trap");
+        return Registry.register(Registries.ITEM, key,
+                new TrapItem(new Item.Settings().registryKey(key).maxCount(16), id));
+    }
+
+    public static final Item SPIKE_TRAP = registerTrap("spike");
+    public static final Item ICE_TRAP = registerTrap("ice");
+    public static final Item POISON_TRAP = registerTrap("poison");
+    public static final Item ELECTRIC_TRAP = registerTrap("electric");
+    public static final Item SMOKE_TRAP = registerTrap("smoke");
+    public static final Item WEAKENING_TRAP = registerTrap("weakening");
+    public static final Item STICKY_TRAP = registerTrap("sticky");
+    public static final Item FIRE_TRAP = registerTrap("fire");
+    public static final Item EXHAUSTION_TRAP = registerTrap("exhaustion");
+    /** Legacy item ID retained for worlds and commands that already use it. */
     private static final RegistryKey<Item> TRAP_ITEM_KEY = itemKey("trap");
     public static final Item TRAP_ITEM = Registry.register(
             Registries.ITEM, TRAP_ITEM_KEY,
@@ -42,6 +58,15 @@ public final class ModItems {
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register(entries -> {
+                    entries.add(SPIKE_TRAP);
+                    entries.add(ICE_TRAP);
+                    entries.add(POISON_TRAP);
+                    entries.add(ELECTRIC_TRAP);
+                    entries.add(SMOKE_TRAP);
+                    entries.add(WEAKENING_TRAP);
+                    entries.add(STICKY_TRAP);
+                    entries.add(FIRE_TRAP);
+                    entries.add(EXHAUSTION_TRAP);
                     entries.add(TRAP_ITEM);
                     entries.add(MAGIC_BARRIER);
                     entries.add(FLASH_OF_LIGHT);
