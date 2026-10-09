@@ -76,6 +76,24 @@ tasks.register("validateMageTextures") {
             if (!sourceTexture.isFile() && !generatedTexture.isFile()) {
                 throw new GradleException("Missing mage item PNG for " + name)
             }
+
+            def textureFile = sourceTexture.isFile() ? sourceTexture : generatedTexture
+            def image = javax.imageio.ImageIO.read(textureFile)
+            if (image == null || image.width < 16 || image.height < 16) {
+                throw new GradleException("Mage item PNG is invalid or too small: " + textureFile)
+            }
+            def hasTransparentPixel = false
+            for (int y = 0; y < image.height && !hasTransparentPixel; y++) {
+                for (int x = 0; x < image.width; x++) {
+                    if (((image.getRGB(x, y) >>> 24) & 0xFF) == 0) {
+                        hasTransparentPixel = true
+                        break
+                    }
+                }
+            }
+            if (!hasTransparentPixel) {
+                throw new GradleException("Mage item PNG must contain transparent background pixels: " + textureFile)
+            }
         }
     }
 }
