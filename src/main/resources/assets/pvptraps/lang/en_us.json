@@ -42,5 +42,14 @@
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseManaCost": "Energy Impulse mana cost",
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseCooldownTicks": "Energy Impulse cooldown (ticks)",
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseRadius": "Energy Impulse radius",
-  "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseKnockback": "Knockback strength"
+  "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseKnockback": "Knockback strength",
+  "item.pvptraps.spike_trap": "Iron Spike Trap",
+  "item.pvptraps.ice_trap": "Ice Trap",
+  "item.pvptraps.poison_trap": "Poison Trap",
+  "item.pvptraps.electric_trap": "Electric Trap",
+  "item.pvptraps.smoke_trap": "Smoke Trap",
+  "item.pvptraps.weakening_trap": "Weakening Trap",
+  "item.pvptraps.sticky_trap": "Sticky Trap",
+  "item.pvptraps.fire_trap": "Fire Trap",
+  "item.pvptraps.exhaustion_trap": "Exhaustion Trap"
 }
