@@ -35,8 +35,22 @@ processResources {
     }
 }
 
-tasks.register("generateMageTextures", Exec) {
-    commandLine "python3", "tools/generate_mage_textures.py"
+tasks.register("generateMageTextures") {
+    def maps = fileTree("tools/textures") { include "*.png.hex"; include "shockwave.txt" }
+    inputs.files(maps)
+    doLast {
+        maps.files.each { f ->
+            def l = f.readLines("UTF-8").findAll { it.trim() }
+            def p = l[0].split(",").collect { Long.parseUnsignedLong(it.trim(), 16).intValue() }
+            def rows = l.drop(1)
+            if (rows.size() != 16 || rows.any { it.size() != 16 }) throw new GradleException("Bad texture grid: " + f)
+            def im = new java.awt.image.BufferedImage(16, 16, 2)
+            rows.eachWithIndex { row, y -> row.eachWithIndex { ch, x -> im.setRGB(x, y, p[Integer.parseInt(ch.toString(), 16)]) } }
+            def n = f.name == "shockwave.txt" ? "energy_impulse.png" : f.name.substring(0, f.name.length() - 4)
+            def out = file("src/main/resources/assets/pvptraps/textures/item/" + n)
+            javax.imageio.ImageIO.write(im, "png", out)
+        }
+    }
 }
 tasks.named("processResources") { dependsOn("generateMageTextures") }
 
