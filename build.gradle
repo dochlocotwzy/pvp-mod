@@ -54,7 +54,33 @@ tasks.register("generateMageTextures") {
         }
     }
 }
-tasks.named("processResources") { dependsOn("generateMageTextures") }
+def mageTextureNames = ["arcane_bolt", "magic_barrier", "flash_of_light", "energy_impulse"]
+
+tasks.register("validateMageTextures") {
+    dependsOn("generateMageTextures")
+    doLast {
+        def parser = new groovy.json.JsonSlurper()
+        def generatedDir = file(buildDir.toString() + "/generated/resources/mageTextures/assets/pvptraps/textures/item")
+        mageTextureNames.each { name ->
+            def modelFile = file("src/main/resources/assets/pvptraps/models/item/" + name + ".json")
+            if (!modelFile.isFile()) {
+                throw new GradleException("Missing mage item model: " + modelFile)
+            }
+            def model = parser.parse(modelFile)
+            def expected = "pvptraps:item/" + name
+            if (model.textures?.layer0 != expected) {
+                throw new GradleException("Mage model " + modelFile.name + " must use texture " + expected)
+            }
+            def sourceTexture = file("src/main/resources/assets/pvptraps/textures/item/" + name + ".png")
+            def generatedTexture = new File(generatedDir, name + ".png")
+            if (!sourceTexture.isFile() && !generatedTexture.isFile()) {
+                throw new GradleException("Missing mage item PNG for " + name)
+            }
+        }
+    }
+}
+
+tasks.named("processResources") { dependsOn("generateMageTextures", "validateMageTextures") }
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
