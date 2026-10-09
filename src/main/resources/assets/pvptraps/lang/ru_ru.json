@@ -43,7 +43,7 @@
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseCooldownTicks": "Перезарядка импульса (тики)",
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseRadius": "Радиус импульса",
   "text.autoconfig.pvptraps_mage.option.abilities.energyImpulseKnockback": "Сила отбрасывания",
-  "item.pvptraps.spike_trap": "Железные шипы",
+  "item.pvptraps.spike_trap": "Железная ловушка с шипами",
   "item.pvptraps.ice_trap": "Ледяная ловушка",
   "item.pvptraps.poison_trap": "Ядовитая ловушка",
   "item.pvptraps.electric_trap": "Электрическая ловушка",
