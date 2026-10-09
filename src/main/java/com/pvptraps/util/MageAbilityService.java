@@ -204,7 +204,6 @@ public final class MageAbilityService {
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double x = caster.getX(), y = caster.getY() + 1.0, z = caster.getZ();
         world.spawnParticles(ParticleTypes.GLOW, x, y, z, 36, 0.55, 0.75, 0.55, 0.08);
-        world.spawnParticles(ParticleTypes.FLASH, x, y, z, 1, 0, 0, 0, 0);
         world.spawnParticles(ParticleTypes.FIREWORK, x, y, z, 22, 0.6, 0.7, 0.6, 0.12);
         world.playSound(null, x, y, z, SoundEvents.BLOCK_BEACON_POWER_SELECT,
                 SoundCategory.PLAYERS, 0.8f, 1.65f);
