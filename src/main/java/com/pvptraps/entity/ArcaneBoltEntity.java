@@ -59,12 +59,18 @@ public final class ArcaneBoltEntity extends SnowballEntity {
         }
 
         livedTicks++;
-        world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+        world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 2, 0.015, 0.015, 0.015, 0.005);
+        world.spawnParticles(ParticleTypes.ENCHANT, getX(), getY(), getZ(), 2, 0.06, 0.06, 0.06, 0.12);
+        if (livedTicks % 3 == 0) {
+            world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(),
+                    1, 0.025, 0.025, 0.025, 0.015);
+        }
         double dx = getX() - originX;
         double dy = getY() - originY;
         double dz = getZ() - originZ;
         if (livedTicks >= lifetimeTicks || dx * dx + dy * dy + dz * dz >= maxRange * maxRange) {
-            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 8, 0.12, 0.12, 0.12, 0.02);
+            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 12, 0.18, 0.18, 0.18, 0.04);
+            world.spawnParticles(ParticleTypes.FIREWORK, getX(), getY(), getZ(), 8, 0.12, 0.12, 0.12, 0.03);
             discard();
         }
     }
@@ -88,7 +94,11 @@ public final class ArcaneBoltEntity extends SnowballEntity {
             }
         }
 
-        world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 10, 0.18, 0.18, 0.18, 0.03);
+        world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 14, 0.18, 0.18, 0.18, 0.04);
+        world.spawnParticles(ParticleTypes.ENCHANT, getX(), getY(), getZ(), 18, 0.22, 0.22, 0.22, 0.4);
+        world.playSound(null, getX(), getY(), getZ(),
+                net.minecraft.sound.SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,
+                net.minecraft.sound.SoundCategory.PLAYERS, 0.45f, 1.7f);
         discard();
     }
 }
