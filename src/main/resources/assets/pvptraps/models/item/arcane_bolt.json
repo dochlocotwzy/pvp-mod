@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecraft:item/echo_shard"
+    "layer0": "pvptraps:item/arcane_bolt"
   }
 }
