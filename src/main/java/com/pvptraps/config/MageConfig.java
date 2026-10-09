@@ -70,8 +70,8 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
         public int energyImpulseCooldownTicks = 160;
         @ConfigEntry.Gui.Tooltip
-        public double energyImpulseRadius = 4.0;
+        public double energyImpulseRadius = 7.0;
         @ConfigEntry.Gui.Tooltip
-        public double energyImpulseKnockback = 1.2;
+        public double energyImpulseKnockback = 1.8;
     }
 }
