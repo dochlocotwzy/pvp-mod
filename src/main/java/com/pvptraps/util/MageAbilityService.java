@@ -7,6 +7,7 @@ import com.pvptraps.entity.ModEntities;
 import com.pvptraps.item.MageAbilityItem;
 import com.pvptraps.network.MageCastPayload;
 import com.pvptraps.network.MageFeedbackPayload;
+import com.pvptraps.network.MageManaPayload;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -36,6 +37,7 @@ public final class MageAbilityService {
     public static void register() {
         PayloadTypeRegistry.playC2S().register(MageCastPayload.ID, MageCastPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(MageFeedbackPayload.ID, MageFeedbackPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(MageManaPayload.ID, MageManaPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(MageCastPayload.ID,
                 (payload, context) -> handleCast(context.player(), payload));
 
@@ -47,6 +49,9 @@ public final class MageAbilityService {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 ManaState state = stateFor(player);
                 state.mana = Math.min(maxMana, state.mana + regenPerTick);
+                if (serverTick % 5 == 0) {
+                    ServerPlayNetworking.send(player, new MageManaPayload((int) Math.round(state.mana), (int) maxMana));
+                }
             }
         });
 
