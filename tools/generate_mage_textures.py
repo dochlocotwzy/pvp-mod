@@ -1,7 +1,7 @@
 from pathlib import Path
 import struct,zlib
 R=Path(__file__).resolve().parents[1]
-S={"magic_barrier.png":"tools/textures/magic_barrier.png.hex","flash_of_light.png":"tools/textures/flash_of_light.png.hex","energy_impulse.png":"tools/textures/shockwave.txt"}
+S={"flash_of_light.png":"tools/textures/flash_of_light.png.hex","energy_impulse.png":"tools/textures/shockwave.txt"}
 def ck(t,d):return struct.pack(">I",len(d))+t+d+struct.pack(">I",zlib.crc32(t+d)&0xffffffff)
 for n,s in S.items():
  l=[x.strip() for x in (R/s).read_text().splitlines() if x.strip()];p=[int(x,16) for x in l[0].split(",")];rows=l[1:]
