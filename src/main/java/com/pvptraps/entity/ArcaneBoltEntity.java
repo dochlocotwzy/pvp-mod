@@ -16,6 +16,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class ArcaneBoltEntity extends SnowballEntity {
     private double originX;
@@ -101,6 +103,72 @@ public final class ArcaneBoltEntity extends SnowballEntity {
         }
     }
 
+
+    private void chainLightning(ServerWorld world, LivingEntity firstTarget, Entity owner) {
+        var config = MageConfigManager.get().abilities;
+        int maxTargets = Math.max(1, Math.min(8, config.electricBoltMaxJumps));
+        double jumpRange = Math.max(1.0, Math.min(24.0, config.electricBoltJumpRange));
+        Set<java.util.UUID> hitTargets = new HashSet<>();
+        hitTargets.add(firstTarget.getUuid());
+        LivingEntity previous = firstTarget;
+        for (int jump = 1; jump < maxTargets; jump++) {
+            final LivingEntity from = previous;
+            var area = from.getBoundingBox().expand(jumpRange);
+            LivingEntity next = world.getEntitiesByClass(LivingEntity.class, area,
+                    candidate -> candidate.isAlive() && !candidate.isSpectator()
+                            && candidate != owner && candidate != from
+                            && !hitTargets.contains(candidate.getUuid())
+                            && from.squaredDistanceTo(candidate) <= jumpRange * jumpRange
+                            && !(owner instanceof PlayerEntity caster
+                                && candidate instanceof PlayerEntity target
+                                && MageTeamAdapter.areAllies(caster, target)))
+                    .stream().min(java.util.Comparator.comparingDouble(from::squaredDistanceTo)).orElse(null);
+            if (next == null) break;
+            hitTargets.add(next.getUuid());
+            next.damage(world, world.getDamageSources().magic(), damage);
+            next.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+                    net.minecraft.entity.effect.StatusEffects.SLOWNESS, 30, 0, false, true));
+            spawnChainTrail(world, from, next, config.electricBoltChainParticleCount);
+            world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,
+                    next.getX(), next.getY() + next.getHeight() * 0.5, next.getZ(),
+                    Math.max(1, Math.min(128, config.electricBoltJumpDamageParticleCount)),
+                    0.2, 0.35, 0.2, 0.015);
+            previous = next;
+        }
+    }
+
+    private static void spawnChainTrail(ServerWorld world, LivingEntity from, LivingEntity to, int particleCount) {
+        int count = Math.max(1, Math.min(128, particleCount));
+        double sx = from.getX(), sy = from.getY() + from.getHeight() * 0.5, sz = from.getZ();
+        double dx = to.getX() - sx;
+        double dy = to.getY() + to.getHeight() * 0.5 - sy;
+        double dz = to.getZ() - sz;
+        for (int i = 0; i <= count; i++) {
+            double t = (double) i / count;
+            world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,
+                    sx + dx * t, sy + dy * t, sz + dz * t, 1, 0.015, 0.015, 0.015, 0.0);
+            if (i % 3 == 0) world.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
+                    sx + dx * t, sy + dy * t, sz + dz * t, 1, 0.01, 0.01, 0.01, 0.01);
+        }
+    }
+
+    private void igniteNearbyOnGroundImpact(ServerWorld world, double x, double y, double z, Entity owner) {
+        int radius = Math.max(1, Math.min(8, MageConfigManager.get().abilities.fireballGroundIgniteRadius));
+        var area = new net.minecraft.util.math.Box(x - radius, y - 1.0, z - radius,
+                x + radius, y + 1.0, z + radius);
+        for (LivingEntity target : world.getEntitiesByClass(LivingEntity.class, area,
+                candidate -> candidate.isAlive() && candidate != owner && !candidate.isSpectator())) {
+            if (owner instanceof PlayerEntity caster && target instanceof PlayerEntity playerTarget
+                    && MageTeamAdapter.areAllies(caster, playerTarget)) continue;
+            double dx = target.getX() - x, dz = target.getZ() - z;
+            if (dx * dx + dz * dz <= radius * radius) {
+                target.setOnFireFor(igniteSeconds);
+                world.spawnParticles(ParticleTypes.FLAME, target.getX(), target.getY() + 0.6,
+                        target.getZ(), 8, 0.18, 0.25, 0.18, 0.025);
+            }
+        }
+    }
+
     @Override
     protected void onCollision(HitResult hitResult) {
         if (!(getEntityWorld() instanceof ServerWorld world)) {
@@ -121,12 +189,16 @@ public final class ArcaneBoltEntity extends SnowballEntity {
                     } else if (electricBolt) {
                         living.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
                                 net.minecraft.entity.effect.StatusEffects.SLOWNESS, 30, 0, false, true));
+                        chainLightning(world, living, owner);
                     }
                 }
             }
         }
 
         if (fireball) {
+            if (hitResult.getType() == HitResult.Type.BLOCK) {
+                igniteNearbyOnGroundImpact(world, getX(), getY(), getZ(), getOwner());
+            }
             world.spawnParticles(ParticleTypes.FLAME, getX(), getY(), getZ(), 24, 0.28, 0.28, 0.28, 0.05);
             world.spawnParticles(ParticleTypes.LAVA, getX(), getY(), getZ(), 5, 0.18, 0.18, 0.18, 0.02);
             world.spawnParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(), 14, 0.22, 0.22, 0.22, 0.02);
