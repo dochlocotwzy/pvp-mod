@@ -73,18 +73,18 @@ tasks.register("validateMageTextures") {
     dependsOn("generateMageTextures")
     doLast {
         def parser = new groovy.json.JsonSlurper()
-        def generatedDir = file(buildDir.toString() + "/generated/resources/mageTextures/assets/pvptraps/textures/item")
+        def generatedDir = file(buildDir.toString() + "/generated/resources/mageTextures/assets/pvpmage/textures/item")
         mageTextureNames.each { name ->
             def modelFile = file("src/main/resources/assets/pvptraps/models/item/" + name + ".json")
             if (!modelFile.isFile()) {
                 throw new GradleException("Missing mage item model: " + modelFile)
             }
             def model = parser.parse(modelFile)
-            def expected = "pvpmage:item/" + name
+            def expected = "pvptraps:item/" + name
             if (model.textures?.layer0 != expected) {
                 throw new GradleException("Mage model " + modelFile.name + " must use texture " + expected)
             }
-            def sourceTexture = file("src/main/resources/assets/pvpmage/textures/item/" + name + ".png")
+            def sourceTexture = file("src/main/resources/assets/pvptraps/textures/item/" + name + ".png")
             def generatedTexture = new File(generatedDir, name + ".png")
             if (!sourceTexture.isFile() && !generatedTexture.isFile()) {
                 throw new GradleException("Missing mage item PNG for " + name)
@@ -127,7 +127,7 @@ tasks.register("validateItemDefinitions") {
                 throw new GradleException("Missing 1.21.11 item definition: " + definitionFile)
             }
             def definition = parser.parse(definitionFile)
-            def expectedModel = "pvpmage:item/" + name
+            def expectedModel = "pvptraps:item/" + name
             if (definition.model?.type != "minecraft:model" || definition.model?.model != expectedModel) {
                 throw new GradleException("Item definition " + definitionFile.name + " must reference " + expectedModel)
             }
@@ -140,7 +140,7 @@ tasks.register("validateItemDefinitions") {
 }
 
 tasks.named("processResources") {
-    dependsOn("generateMageTextures", "validateMageTextures", "validateItemDefinitions")
+    dependsOn("generateMageTextures", "prepareMageNamespaceResources", "validateMageTextures", "validateItemDefinitions")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -157,14 +157,14 @@ java {
 // The mage artifact is standalone: exclude legacy trap implementation and assets
 // even while the historical combined source tree is being split incrementally.
 tasks.named("jar") {
-    exclude "com/pvpmage/entity/TrapEntity*.class"
-    exclude "com/pvpmage/entity/TrapEntityRenderer*.class"
-    exclude "com/pvpmage/item/TrapItem*.class"
-    exclude "com/pvpmage/config/ConfigManager*.class"
-    exclude "com/pvpmage/config/TrapConfig*.class"
-    exclude "com/pvpmage/util/TrapEffectScheduler*.class"
-    exclude "com/pvpmage/util/TrapEffects*.class"
-    exclude "com/pvpmage/command/TrapTestCommand*.class"
+    exclude "com/pvptraps/entity/TrapEntity*.class"\n    exclude "com/pvpmage/entity/TrapEntity*.class"
+    exclude "com/pvptraps/entity/TrapEntityRenderer*.class"\n    exclude "com/pvpmage/entity/TrapEntityRenderer*.class"
+    exclude "com/pvptraps/item/TrapItem*.class"\n    exclude "com/pvpmage/item/TrapItem*.class"
+    exclude "com/pvptraps/config/ConfigManager*.class"\n    exclude "com/pvpmage/config/ConfigManager*.class"
+    exclude "com/pvptraps/config/TrapConfig*.class"\n    exclude "com/pvpmage/config/TrapConfig*.class"
+    exclude "com/pvptraps/util/TrapEffectScheduler*.class"\n    exclude "com/pvpmage/util/TrapEffectScheduler*.class"
+    exclude "com/pvptraps/util/TrapEffects*.class"\n    exclude "com/pvpmage/util/TrapEffects*.class"
+    exclude "com/pvptraps/command/TrapTestCommand*.class"\n    exclude "com/pvpmage/command/TrapTestCommand*.class"
     exclude "assets/pvptraps/**"\n    exclude "assets/pvpmage/**/*trap*"
     exclude "assets/pvptraps/**/*Trap*"
     exclude "data/pvptraps/**/*trap*"
