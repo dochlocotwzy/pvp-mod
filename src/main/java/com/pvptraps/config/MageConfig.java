@@ -143,6 +143,9 @@ public class MageConfig implements ConfigData {
         public int galeStepCooldownTicks = 100;
         @ConfigEntry.Gui.Tooltip
         public double galeStepDistance = 4.0;
+        @ConfigEntry.Gui.Tooltip
+        public double galeStepCollisionSampleStep = 0.05;
+
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
@@ -456,6 +459,14 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 40, max = 400)
         public int magicDoppelgangerDurationTicks = 160;
+        @ConfigEntry.Gui.Tooltip
+        public double doppelgangerPlacementMinDistance = 1.5;
+        @ConfigEntry.Gui.Tooltip
+        public double doppelgangerPlacementDistanceStep = 0.5;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
+        public int doppelgangerPlacementAttempts = 4;
+
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
