@@ -1,4 +1,4 @@
-package com.pvptraps.entity;
+package com.pvpmage.entity;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
@@ -15,7 +15,7 @@ public final class ModEntities {
     }
 
     private static final RegistryKey<EntityType<?>> ARCANE_BOLT_KEY =
-            RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("pvptraps", "arcane_bolt"));
+            RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("pvpmage", "arcane_bolt"));
 
     public static final EntityType<ArcaneBoltEntity> ARCANE_BOLT = Registry.register(
             Registries.ENTITY_TYPE, ARCANE_BOLT_KEY,
