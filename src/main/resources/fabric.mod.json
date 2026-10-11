@@ -9,9 +9,9 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.pvptraps.PvpTraps"],
-    "client": ["com.pvptraps.PvpTrapsClient"],
-    "modmenu": ["com.pvptraps.config.PvpTrapsModMenuIntegration"]
+    "main": ["com.pvpmage.PvpTraps"],
+    "client": ["com.pvpmage.PvpTrapsClient"],
+    "modmenu": ["com.pvpmage.config.PvpTrapsModMenuIntegration"]
   },
   "mixins": [],
   "depends": {
