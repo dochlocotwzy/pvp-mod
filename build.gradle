@@ -36,6 +36,19 @@ processResources {
 }
 
 sourceSets.main.resources.srcDir("$buildDir/generated/resources/mageTextures")
+sourceSets.main.resources.srcDir("$buildDir/generated/resources/mageNamespace")
+
+tasks.register("prepareMageNamespaceResources", Copy) {
+    from("src/main/resources/assets/pvptraps") {
+        eachFile { details ->
+            details.path = details.path.replaceFirst(/^/, "")
+            if (details.name.endsWith(".json")) {
+                filter { line -> line.replace("pvptraps", "pvpmage") }
+            }
+        }
+    }
+    into("$buildDir/generated/resources/mageNamespace/assets/pvpmage")
+}
 tasks.register("generateMageTextures") {
     def maps = fileTree("tools/textures") { include "*.png.hex"; include "shockwave.txt" }
     inputs.files(maps)
@@ -48,7 +61,7 @@ tasks.register("generateMageTextures") {
             def im = new java.awt.image.BufferedImage(16, 16, 2)
             rows.eachWithIndex { row, y -> row.eachWithIndex { ch, x -> im.setRGB(x, y, p[Integer.parseInt(ch.toString(), 16)]) } }
             def n = f.name == "shockwave.txt" ? "energy_impulse.png" : f.name.substring(0, f.name.length() - 4)
-            def out = file("$buildDir/generated/resources/mageTextures/assets/pvptraps/textures/item/" + n)
+            def out = file("$buildDir/generated/resources/mageTextures/assets/pvpmage/textures/item/" + n)
             out.parentFile.mkdirs()
             javax.imageio.ImageIO.write(im, "png", out)
         }
@@ -67,11 +80,11 @@ tasks.register("validateMageTextures") {
                 throw new GradleException("Missing mage item model: " + modelFile)
             }
             def model = parser.parse(modelFile)
-            def expected = "pvptraps:item/" + name
+            def expected = "pvpmage:item/" + name
             if (model.textures?.layer0 != expected) {
                 throw new GradleException("Mage model " + modelFile.name + " must use texture " + expected)
             }
-            def sourceTexture = file("src/main/resources/assets/pvptraps/textures/item/" + name + ".png")
+            def sourceTexture = file("src/main/resources/assets/pvpmage/textures/item/" + name + ".png")
             def generatedTexture = new File(generatedDir, name + ".png")
             if (!sourceTexture.isFile() && !generatedTexture.isFile()) {
                 throw new GradleException("Missing mage item PNG for " + name)
@@ -114,7 +127,7 @@ tasks.register("validateItemDefinitions") {
                 throw new GradleException("Missing 1.21.11 item definition: " + definitionFile)
             }
             def definition = parser.parse(definitionFile)
-            def expectedModel = "pvptraps:item/" + name
+            def expectedModel = "pvpmage:item/" + name
             if (definition.model?.type != "minecraft:model" || definition.model?.model != expectedModel) {
                 throw new GradleException("Item definition " + definitionFile.name + " must reference " + expectedModel)
             }
@@ -144,15 +157,15 @@ java {
 // The mage artifact is standalone: exclude legacy trap implementation and assets
 // even while the historical combined source tree is being split incrementally.
 tasks.named("jar") {
-    exclude "com/pvptraps/entity/TrapEntity*.class"
-    exclude "com/pvptraps/entity/TrapEntityRenderer*.class"
-    exclude "com/pvptraps/item/TrapItem*.class"
-    exclude "com/pvptraps/config/ConfigManager*.class"
-    exclude "com/pvptraps/config/TrapConfig*.class"
-    exclude "com/pvptraps/util/TrapEffectScheduler*.class"
-    exclude "com/pvptraps/util/TrapEffects*.class"
-    exclude "com/pvptraps/command/TrapTestCommand*.class"
-    exclude "assets/pvptraps/**/*trap*"
+    exclude "com/pvpmage/entity/TrapEntity*.class"
+    exclude "com/pvpmage/entity/TrapEntityRenderer*.class"
+    exclude "com/pvpmage/item/TrapItem*.class"
+    exclude "com/pvpmage/config/ConfigManager*.class"
+    exclude "com/pvpmage/config/TrapConfig*.class"
+    exclude "com/pvpmage/util/TrapEffectScheduler*.class"
+    exclude "com/pvpmage/util/TrapEffects*.class"
+    exclude "com/pvpmage/command/TrapTestCommand*.class"
+    exclude "assets/pvptraps/**"\n    exclude "assets/pvpmage/**/*trap*"
     exclude "assets/pvptraps/**/*Trap*"
     exclude "data/pvptraps/**/*trap*"
     exclude "data/pvptraps/**/*Trap*"
