@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "pvptraps",
+  "id": "pvpmage",
   "version": "${version}",
-  "name": "PvP Traps",
-  "description": "Настраиваемые ловушки для PvP-сервера: видимость по командам, эффекты и атрибуты из конфига.",
+  "name": "PvP Mage",
+  "description": "Магические способности PvP: заклинания, эффекты и настраиваемые параметры.",
   "authors": ["you"],
   "contact": {},
   "license": "MIT",
