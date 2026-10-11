@@ -1,4 +1,4 @@
-package com.pvptraps.config;
+package com.pvpmage.config;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.gui.screen.Screen;
