@@ -124,6 +124,7 @@ public final class MageAbilityService {
             case "flash_of_light" -> applyFlash(player, config);
             case "arcane_bolt" -> launchArcaneBolt(player, config);
             case "energy_impulse" -> applyEnergyImpulse(player, config);
+            case "frost_nova" -> applyFrostNova(player, config);
             default -> false;
         };
         if (!applied) {
@@ -146,7 +147,7 @@ public final class MageAbilityService {
 
     private static boolean isKnownAbility(String id) {
         return "magic_barrier".equals(id) || "flash_of_light".equals(id)
-                || "arcane_bolt".equals(id) || "energy_impulse".equals(id);
+                || "arcane_bolt".equals(id) || "energy_impulse".equals(id) || "frost_nova".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -155,6 +156,7 @@ public final class MageAbilityService {
             case "flash_of_light" -> config.abilities.flashManaCost;
             case "arcane_bolt" -> config.abilities.arcaneBoltManaCost;
             case "energy_impulse" -> config.abilities.energyImpulseManaCost;
+            case "frost_nova" -> config.abilities.frostNovaManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -165,6 +167,7 @@ public final class MageAbilityService {
             case "flash_of_light" -> config.abilities.flashCooldownTicks;
             case "arcane_bolt" -> config.abilities.arcaneBoltCooldownTicks;
             case "energy_impulse" -> config.abilities.energyImpulseCooldownTicks;
+            case "frost_nova" -> config.abilities.frostNovaCooldownTicks;
             default -> 1;
         };
     }
@@ -272,6 +275,48 @@ public final class MageAbilityService {
                 SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.9f, 1.0f);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.25f, 1.65f);
+        return true;
+    }
+
+    private static boolean applyFrostNova(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double radius = Math.max(2.0, Math.min(10.0, config.abilities.frostNovaRadius));
+        int duration = Math.max(20, Math.min(200, config.abilities.frostNovaDurationTicks));
+        double cx = caster.getX(), cy = caster.getY() + 0.8, cz = caster.getZ();
+
+        for (LivingEntity target : world.getEntitiesByClass(LivingEntity.class,
+                caster.getBoundingBox().expand(radius),
+                entity -> entity.isAlive() && entity != caster && !entity.isSpectator())) {
+            if (target instanceof PlayerEntity playerTarget && MageTeamAdapter.areAllies(caster, playerTarget)) {
+                continue;
+            }
+            double dx = target.getX() - cx;
+            double dy = (target.getY() + target.getHeight() * 0.5) - cy;
+            double dz = target.getZ() - cz;
+            if (dx * dx + dy * dy + dz * dz > radius * radius) {
+                continue;
+            }
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 2, false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration, 0, false, true));
+            world.spawnParticles(ParticleTypes.SNOWFLAKE, target.getX(), target.getY() + 0.8, target.getZ(),
+                    22, 0.45, 0.55, 0.45, 0.035);
+            world.spawnParticles(ParticleTypes.CLOUD, target.getX(), target.getY() + 0.4, target.getZ(),
+                    8, 0.3, 0.2, 0.3, 0.02);
+        }
+
+        for (int i = 0; i < 64; i++) {
+            double angle = Math.PI * 2.0 * i / 64.0;
+            double px = cx + Math.cos(angle) * radius;
+            double pz = cz + Math.sin(angle) * radius;
+            world.spawnParticles(ParticleTypes.SNOWFLAKE, px, cy, pz, 2, 0.08, 0.22, 0.08, 0.015);
+            world.spawnParticles(ParticleTypes.END_ROD, px, cy - 0.25, pz, 1, 0.025, 0.04, 0.025, 0.005);
+        }
+        world.spawnParticles(ParticleTypes.SNOWFLAKE, cx, cy, cz, 80,
+                radius * 0.45, 0.55, radius * 0.45, 0.06);
+        world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_GLASS_BREAK,
+                SoundCategory.PLAYERS, 0.9f, 0.65f);
+        world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
+                SoundCategory.PLAYERS, 0.55f, 0.7f);
         return true;
     }
 
