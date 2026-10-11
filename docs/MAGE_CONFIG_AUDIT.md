@@ -31,7 +31,7 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 - Added configurable status-effect amplifiers/durations for barrier, flash, frost nova, runic seal, blessing, gravity sphere, shadow veil, and electric bolt.
 - Scaled energy-impulse velocity rather than using the configured value directly as blocks/tick; retained distance falloff and a safety cap.
 - Expanded configurable particle counts for barrier, flash, projectile launch/trails/impacts, gale step, runic seal, blessing, gravity sphere, healing rune, frost nova, ice wall, doppelganger, gust of wind, and shadow/smoke veil.
-- Rechecked source/config field consistency across `MageAbilityService` and `ArcaneBoltEntity`; all referenced ability fields resolve to `MageConfig.AbilitySettings` (the static scan's only apparent missing name was the `MageConfigManager` class itself, not a config field).
+- Rechecked source/config field consistency across `MageAbilityService` and `ArcaneBoltEntity`; all referenced ability fields resolve to `MageConfig.AbilitySettings`; the refreshed static scan finds 176 unique config fields, including 63 particle-count/segment controls, with no duplicate field names or unused particle-count/segment controls (the static scan's only apparent missing name was the `MageConfigManager` class itself, not a config field).
 - Fixed electric bolt's direct-hit slowness to use `electricBoltSlowDurationTicks` and `electricBoltSlowAmplifier`, matching chained hits instead of silently hardcoding 30 ticks/amplifier 0.
 
 ## Required validation before closing the audit
