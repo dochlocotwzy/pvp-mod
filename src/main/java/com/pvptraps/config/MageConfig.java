@@ -72,7 +72,7 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double energyImpulseRadius = 7.0;
         @ConfigEntry.Gui.Tooltip
-        public double energyImpulseKnockback = 3.8;
+        public double energyImpulseKnockback = 8.0;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int frostNovaManaCost = 30;
@@ -146,10 +146,10 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double gravitySphereRange = 24.0;
         @ConfigEntry.Gui.Tooltip
-        public double gravitySphereRadius = 10.0;
+        public double gravitySphereRadius = 20.0;
         @ConfigEntry.Gui.Tooltip
-        @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
-        public int gravitySphereDurationTicks = 240;
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 1200)
+        public int gravitySphereDurationTicks = 720;
         @ConfigEntry.Gui.Tooltip
         public double gravitySpherePullStrength = 0.24;
         @ConfigEntry.Gui.Tooltip
@@ -196,10 +196,16 @@ public class MageConfig implements ConfigData {
         public int electricBoltChainParticleCount = 24;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
-        public int gravitySphereParticleMultiplier = 2;
+        public int gravitySphereParticleMultiplier = 4;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
         public int fireballGroundIgniteRadius = 1;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int gravitySphereParticlesPerPulse = 12;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int electricBoltJumpDamageParticleCount = 20;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
