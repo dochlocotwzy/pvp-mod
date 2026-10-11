@@ -613,7 +613,9 @@ public final class MageAbilityService {
                     MageConfigManager.get().abilities.gravitySpherePullIntervalTicks));
             int effectInterval = Math.max(1, Math.min(40,
                     MageConfigManager.get().abilities.gravitySphereEffectIntervalTicks));
-            if (serverTick % pullInterval != 0) {
+            boolean pullPulse = serverTick % pullInterval == 0;
+            boolean effectPulse = serverTick % effectInterval == 0;
+            if (!pullPulse && !effectPulse) {
                 return false;
             }
 
@@ -632,10 +634,12 @@ public final class MageAbilityService {
                     continue;
                 }
                 double distance = Math.sqrt(distanceSquared);
-                double strength = field.pullStrength * (1.0 - distance / field.radius);
-                target.addVelocity(dx / distance * strength, dy / distance * strength * 0.65,
-                        dz / distance * strength);
-                if (serverTick % effectInterval == 0) {
+                if (pullPulse) {
+                    double strength = field.pullStrength * (1.0 - distance / field.radius);
+                    target.addVelocity(dx / distance * strength, dy / distance * strength * 0.65,
+                            dz / distance * strength);
+                }
+                if (effectPulse) {
                     target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,
                             Math.max(1, Math.min(40, MageConfigManager.get().abilities.gravitySphereSlownessDurationTicks)),
                             Math.max(0, Math.min(4, MageConfigManager.get().abilities.gravitySphereSlownessAmplifier)), false, false));
