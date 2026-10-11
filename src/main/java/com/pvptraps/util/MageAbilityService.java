@@ -979,7 +979,9 @@ public final class MageAbilityService {
                             ServerWorld linkedWorld = (ServerWorld) linkedPlayer.getEntityWorld();
                             linkedWorld.spawnParticles(ParticleTypes.SMOKE,
                                     linkedPlayer.getX(), linkedPlayer.getY() + 1.0, linkedPlayer.getZ(),
-                                    14, 0.3, 0.55, 0.3, 0.01);
+                                    Math.max(1, Math.min(128,
+                                            MageConfigManager.get().abilities.smokeVeilRevealSmokeParticleCount)),
+                                    0.3, 0.55, 0.3, 0.01);
                         }
                     }
                 }
