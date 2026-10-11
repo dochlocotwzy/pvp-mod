@@ -246,6 +246,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
         public int electricBoltChainParticleCount = 24;
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int electricBoltChainSparkEveryNthPoint = 3;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int electricBoltChainSparkParticleCount = 1;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
         public int gravitySphereParticleMultiplier = 4;
         @ConfigEntry.Gui.Tooltip
