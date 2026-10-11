@@ -94,5 +94,16 @@ public class MageConfig implements ConfigData {
         public double healingRuneRadius = 6.0;
         @ConfigEntry.Gui.Tooltip
         public float healingRuneHealAmount = 6.0f;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int smokeVeilManaCost = 30;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int smokeVeilCooldownTicks = 360;
+        @ConfigEntry.Gui.Tooltip
+        public double smokeVeilRadius = 10.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 1200)
+        public int smokeVeilDurationTicks = 240;
     }
 }
