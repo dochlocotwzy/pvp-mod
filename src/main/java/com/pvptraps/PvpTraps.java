@@ -1,6 +1,7 @@
 package com.pvptraps;
 
 import com.pvptraps.config.ConfigManager;
+import com.pvptraps.config.MageConfigManager;
 import com.pvptraps.entity.ModEntities;
 import com.pvptraps.item.ModItems;
 import com.pvptraps.util.MageAbilityService;
@@ -16,6 +17,7 @@ public class PvpTraps implements ModInitializer {
     @Override
     public void onInitialize() {
         ConfigManager.init();
+        MageConfigManager.init();
         ModEntities.registerAttributes();
         ModItems.register();
         TrapEffectScheduler.registerEvents();
