@@ -148,7 +148,8 @@ public final class ArcaneBoltEntity extends SnowballEntity {
                     net.minecraft.entity.effect.StatusEffects.SLOWNESS,
                     Math.max(1, Math.min(200, MageConfigManager.get().abilities.electricBoltSlowDurationTicks)),
                     Math.max(0, Math.min(4, MageConfigManager.get().abilities.electricBoltSlowAmplifier)), false, true));
-            spawnChainTrail(world, from, next, config.electricBoltChainParticleCount);
+            spawnChainTrail(world, from, next, config.electricBoltChainParticleCount,
+                    config.electricBoltChainSparkEveryNthPoint, config.electricBoltChainSparkParticleCount);
             world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,
                     next.getX(), next.getY() + next.getHeight() * 0.5, next.getZ(),
                     Math.max(1, Math.min(128, config.electricBoltJumpDamageParticleCount)),
@@ -157,8 +158,11 @@ public final class ArcaneBoltEntity extends SnowballEntity {
         }
     }
 
-    private static void spawnChainTrail(ServerWorld world, LivingEntity from, LivingEntity to, int particleCount) {
+    private static void spawnChainTrail(ServerWorld world, LivingEntity from, LivingEntity to,
+            int particleCount, int sparkEveryNthPoint, int sparkParticleCount) {
         int count = Math.max(1, Math.min(128, particleCount));
+        int sparkInterval = Math.max(1, Math.min(16, sparkEveryNthPoint));
+        int sparkCount = Math.max(1, Math.min(16, sparkParticleCount));
         double sx = from.getX(), sy = from.getY() + from.getHeight() * 0.5, sz = from.getZ();
         double dx = to.getX() - sx;
         double dy = to.getY() + to.getHeight() * 0.5 - sy;
@@ -167,8 +171,8 @@ public final class ArcaneBoltEntity extends SnowballEntity {
             double t = (double) i / count;
             world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,
                     sx + dx * t, sy + dy * t, sz + dz * t, 1, 0.015, 0.015, 0.015, 0.0);
-            if (i % 3 == 0) world.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
-                    sx + dx * t, sy + dy * t, sz + dz * t, 1, 0.01, 0.01, 0.01, 0.01);
+            if (i % sparkInterval == 0) world.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
+                    sx + dx * t, sy + dy * t, sz + dz * t, sparkCount, 0.01, 0.01, 0.01, 0.01);
         }
     }
 
