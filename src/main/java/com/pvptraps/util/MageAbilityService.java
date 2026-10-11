@@ -345,7 +345,7 @@ public final class MageAbilityService {
     private static boolean applyEnergyImpulse(ServerPlayerEntity caster, MageConfig config) {
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double radius = Math.max(0.5, Math.min(12.0, config.abilities.energyImpulseRadius));
-        double knockback = Math.max(0.1, Math.min(4.0, config.abilities.energyImpulseKnockback));
+        double knockback = Math.max(0.1, Math.min(12.0, config.abilities.energyImpulseKnockback));
         for (LivingEntity target : world.getEntitiesByClass(LivingEntity.class,
                 caster.getBoundingBox().expand(radius),
                 entity -> entity.isAlive() && entity != caster && !entity.isSpectator())) {
@@ -544,17 +544,19 @@ public final class MageAbilityService {
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double range = Math.max(4.0, Math.min(32.0, config.abilities.gravitySphereRange));
         Vec3d point = getLookPoint(caster, world, range);
-        double radius = Math.max(2.0, Math.min(10.0, config.abilities.gravitySphereRadius));
-        int duration = Math.max(20, Math.min(200, config.abilities.gravitySphereDurationTicks));
+        double radius = Math.max(2.0, Math.min(32.0, config.abilities.gravitySphereRadius));
+        int duration = Math.max(20, Math.min(1200, config.abilities.gravitySphereDurationTicks));
         double pull = Math.max(0.02, Math.min(0.35, config.abilities.gravitySpherePullStrength));
         double cx = point.x;
         double cy = point.y + 0.35;
         double cz = point.z;
         GRAVITY_SPHERES.put(caster.getUuid(), new GravitySphereState(
                 world, cx, cy, cz, radius, pull, serverTick + duration));
-        world.spawnParticles(ParticleTypes.PORTAL, cx, cy, cz, 48,
+        world.spawnParticles(ParticleTypes.PORTAL, cx, cy, cz,
+                48 * Math.max(1, Math.min(8, config.abilities.gravitySphereParticleMultiplier)),
                 radius * 0.25, radius * 0.25, radius * 0.25, 0.12);
-        world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz, 18,
+        world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz,
+                18 * Math.max(1, Math.min(8, config.abilities.gravitySphereParticleMultiplier)),
                 radius * 0.18, radius * 0.18, radius * 0.18, 0.035);
         world.playSound(null, cx, cy, cz, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
                 SoundCategory.PLAYERS, 0.65f, 0.65f);
@@ -600,7 +602,8 @@ public final class MageAbilityService {
                     target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 6, 0, false, false));
                     field.world.spawnParticles(ParticleTypes.PORTAL,
                             target.getX(), target.getY() + target.getHeight() * 0.5, target.getZ(),
-                            5, 0.18, 0.22, 0.18, 0.08);
+                            Math.max(1, Math.min(128, MageConfigManager.get().abilities.gravitySphereParticlesPerPulse)),
+                            0.18, 0.22, 0.18, 0.08);
                 }
             }
             field.world.spawnParticles(ParticleTypes.PORTAL, field.x, field.y, field.z,
