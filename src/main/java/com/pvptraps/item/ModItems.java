@@ -43,6 +43,7 @@ public final class ModItems {
     private static final RegistryKey<Item> ENERGY_IMPULSE_KEY = itemKey("energy_impulse");
     private static final RegistryKey<Item> FROST_NOVA_KEY = itemKey("frost_nova");
     private static final RegistryKey<Item> HEALING_RUNE_KEY = itemKey("healing_rune");
+    private static final RegistryKey<Item> SMOKE_VEIL_KEY = itemKey("smoke_veil");
 
     public static final MageAbilityItem MAGIC_BARRIER = Registry.register(
             Registries.ITEM, MAGIC_BARRIER_KEY,
@@ -62,6 +63,9 @@ public final class ModItems {
     public static final MageAbilityItem HEALING_RUNE = Registry.register(
             Registries.ITEM, HEALING_RUNE_KEY,
             new MageAbilityItem(new Item.Settings().registryKey(HEALING_RUNE_KEY).maxCount(1), "healing_rune", false));
+    public static final MageAbilityItem SMOKE_VEIL = Registry.register(
+            Registries.ITEM, SMOKE_VEIL_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(SMOKE_VEIL_KEY).maxCount(1), "smoke_veil", false));
 
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
@@ -81,6 +85,7 @@ public final class ModItems {
                     entries.add(ENERGY_IMPULSE);
                     entries.add(FROST_NOVA);
                     entries.add(HEALING_RUNE);
+                    entries.add(SMOKE_VEIL);
                 });
     }
 }
