@@ -36,7 +36,7 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 
 ## Required validation before closing the audit
 
-- [ ] GitHub Actions `Build mod` succeeds on the latest PR head after the latest particle-config changes.
+- [x] GitHub Actions `Build mod` passed for the spell-config code at `f5c0cf2` ([run 38161099230](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38161099230)); documentation-only updates followed.
 - [ ] Energy impulse knocks a nearby enemy back roughly 4–5 blocks without launching it excessively; repeat at the edge of the configured radius.
 - [ ] Gravity sphere radius, duration, pull, and particle density match the intended balance.
 - [ ] Chain lightning hits the intended number of distinct enemies and never repeats a target during one cast.
