@@ -136,6 +136,8 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 20, max = 1200)
         public int smokeVeilDurationTicks = 240;
         @ConfigEntry.Gui.Tooltip
+        public double smokeVeilRevealRadius = 6.0;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int galeStepManaCost = 18;
         @ConfigEntry.Gui.Tooltip
