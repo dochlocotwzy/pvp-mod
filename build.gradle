@@ -138,10 +138,6 @@ tasks.register("validateItemDefinitions") {
     }
 }
 
-tasks.named("sourcesJar") {
-    dependsOn("prepareMageNamespaceResources")
-}
-
 tasks.named("processResources") {
     dependsOn("generateMageTextures", "prepareMageNamespaceResources", "validateMageTextures", "validateItemDefinitions")
 }
@@ -154,6 +150,11 @@ java {
     withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+// withSourcesJar() creates this task; configure it only after the Java extension block.
+tasks.named("sourcesJar") {
+    dependsOn("prepareMageNamespaceResources")
 }
 
 
