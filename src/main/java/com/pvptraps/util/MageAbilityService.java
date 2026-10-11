@@ -651,8 +651,10 @@ public final class MageAbilityService {
             }
             int particleMultiplier = Math.max(1, Math.min(8,
                     MageConfigManager.get().abilities.gravitySphereParticleMultiplier));
+            int baseParticleCount = Math.max(1, Math.min(32,
+                    MageConfigManager.get().abilities.gravitySphereBaseParticleCount));
             field.world.spawnParticles(ParticleTypes.PORTAL, field.x, field.y, field.z,
-                    6 * particleMultiplier, field.radius * 0.12, field.radius * 0.12,
+                    baseParticleCount * particleMultiplier, field.radius * 0.12, field.radius * 0.12,
                     field.radius * 0.12, 0.05);
             return false;
         });
