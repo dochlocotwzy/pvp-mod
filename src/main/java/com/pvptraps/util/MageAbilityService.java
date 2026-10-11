@@ -434,12 +434,15 @@ public final class MageAbilityService {
         double startZ = caster.getZ();
         caster.requestTeleport(startX + dx * safeDistance, startY, startZ + dz * safeDistance);
         world.spawnParticles(ParticleTypes.CLOUD, startX, startY + 0.8, startZ,
-                14, 0.22, 0.3, 0.22, 0.025);
+                Math.max(1, Math.min(128, config.abilities.galeStepDepartureCloudParticleCount)),
+                0.22, 0.3, 0.22, 0.025);
         world.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
                 startX + dx * safeDistance * 0.5, startY + 0.9, startZ + dz * safeDistance * 0.5,
-                18, 0.18, 0.25, 0.18, 0.04);
+                Math.max(1, Math.min(128, config.abilities.galeStepMidpointSparkParticleCount)),
+                0.18, 0.25, 0.18, 0.04);
         world.spawnParticles(ParticleTypes.CLOUD, caster.getX(), caster.getY() + 0.8, caster.getZ(),
-                16, 0.22, 0.3, 0.22, 0.025);
+                Math.max(1, Math.min(128, config.abilities.galeStepArrivalCloudParticleCount)),
+                0.22, 0.3, 0.22, 0.025);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.7f, 1.5f);
         return true;
@@ -481,19 +484,22 @@ public final class MageAbilityService {
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Math.max(1, Math.min(duration,
                     config.abilities.runicSealGlowDurationTicks)), 0, false, true));
             world.spawnParticles(ParticleTypes.WITCH, tx, target.getY() + 0.8, tz,
-                    16, 0.28, 0.45, 0.28, 0.03);
+                    Math.max(1, Math.min(128, config.abilities.runicSealTargetParticleCount)),
+                    0.28, 0.45, 0.28, 0.03);
             affected = true;
         }
         if (!affected) {
             return false;
         }
-        for (int i = 0; i < 40; i++) {
-            double angle = Math.PI * 2.0 * i / 40.0;
+        int ringSegments = Math.max(8, Math.min(128, config.abilities.runicSealRingSegments));
+        for (int i = 0; i < ringSegments; i++) {
+            double angle = Math.PI * 2.0 * i / ringSegments;
             world.spawnParticles(ParticleTypes.ENCHANT,
                     cx + Math.cos(angle) * radius, cy, cz + Math.sin(angle) * radius,
                     1, 0.01, 0.04, 0.01, 0.0);
         }
-        world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz, 22,
+        world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz,
+                Math.max(1, Math.min(128, config.abilities.runicSealCenterParticleCount)),
                 radius * 0.3, 0.12, radius * 0.3, 0.025);
         world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,
                 SoundCategory.PLAYERS, 0.8f, 0.7f);
@@ -552,9 +558,11 @@ public final class MageAbilityService {
                 Math.max(0, Math.min(4, config.abilities.blessingRegenerationAmplifier)), false, true));
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double x = target.getX(), y = target.getY() + target.getHeight() * 0.65, z = target.getZ();
-        world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, x, y, z, 22,
+        world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, x, y, z,
+                Math.max(1, Math.min(128, config.abilities.blessingVillagerParticleCount)),
                 0.35, 0.55, 0.35, 0.04);
-        world.spawnParticles(ParticleTypes.END_ROD, x, y, z, 14,
+        world.spawnParticles(ParticleTypes.END_ROD, x, y, z,
+                Math.max(1, Math.min(128, config.abilities.blessingEndRodParticleCount)),
                 0.25, 0.5, 0.25, 0.025);
         world.playSound(null, x, y, z, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                 SoundCategory.PLAYERS, 0.75f, 1.55f);
@@ -574,10 +582,12 @@ public final class MageAbilityService {
         GRAVITY_SPHERES.put(caster.getUuid(), new GravitySphereState(
                 world, cx, cy, cz, radius, pull, serverTick + duration));
         world.spawnParticles(ParticleTypes.PORTAL, cx, cy, cz,
-                48 * Math.max(1, Math.min(8, config.abilities.gravitySphereParticleMultiplier)),
+                Math.max(1, Math.min(256, config.abilities.gravitySphereInitialPortalParticleCount))
+                        * Math.max(1, Math.min(8, config.abilities.gravitySphereParticleMultiplier)),
                 radius * 0.25, radius * 0.25, radius * 0.25, 0.12);
         world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz,
-                18 * Math.max(1, Math.min(8, config.abilities.gravitySphereParticleMultiplier)),
+                Math.max(1, Math.min(256, config.abilities.gravitySphereInitialEndRodParticleCount))
+                        * Math.max(1, Math.min(8, config.abilities.gravitySphereParticleMultiplier)),
                 radius * 0.18, radius * 0.18, radius * 0.18, 0.035);
         world.playSound(null, cx, cy, cz, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
                 SoundCategory.PLAYERS, 0.65f, 0.65f);
@@ -594,7 +604,8 @@ public final class MageAbilityService {
             if (owner == null || !owner.isAlive() || owner.getEntityWorld() != field.world
                     || serverTick >= field.expiresAtTick) {
                 field.world.spawnParticles(ParticleTypes.PORTAL, field.x, field.y, field.z,
-                        18, 0.35, 0.35, 0.35, 0.08);
+                        Math.max(1, Math.min(128, MageConfigManager.get().abilities.gravitySphereExpireParticleCount)),
+                        0.35, 0.35, 0.35, 0.08);
                 return true;
             }
             if (serverTick % 2 != 0) {
@@ -670,9 +681,11 @@ public final class MageAbilityService {
             }
             healedAny = true;
             world.spawnParticles(ParticleTypes.HEART, target.getX(), target.getY() + target.getHeight() * 0.75,
-                    target.getZ(), 4, 0.28, 0.25, 0.28, 0.02);
+                    target.getZ(), Math.max(1, Math.min(128, config.abilities.healingRuneTargetHeartParticleCount)),
+                    0.28, 0.25, 0.28, 0.02);
             world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, target.getX(), target.getY() + 0.8,
-                    target.getZ(), 10, 0.35, 0.45, 0.35, 0.03);
+                    target.getZ(), Math.max(1, Math.min(128, config.abilities.healingRuneTargetVillagerParticleCount)),
+                    0.35, 0.45, 0.35, 0.03);
         }
 
         // Do not spend mana or start a cooldown if nobody in the pulse could be healed.
@@ -680,15 +693,17 @@ public final class MageAbilityService {
             return false;
         }
 
-        for (int i = 0; i < 40; i++) {
-            double angle = Math.PI * 2.0 * i / 40.0;
+        int ringSegments = Math.max(8, Math.min(128, config.abilities.healingRuneRingSegments));
+        for (int i = 0; i < ringSegments; i++) {
+            double angle = Math.PI * 2.0 * i / ringSegments;
             double px = cx + Math.cos(angle) * radius;
             double pz = cz + Math.sin(angle) * radius;
             world.spawnParticles(ParticleTypes.END_ROD, px, caster.getY() + 0.12, pz,
                     1, 0.025, 0.035, 0.025, 0.005);
         }
         world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, cx, cy, cz,
-                24, radius * 0.35, 0.45, radius * 0.35, 0.04);
+                Math.max(1, Math.min(128, config.abilities.healingRuneCenterParticleCount)),
+                radius * 0.35, 0.45, radius * 0.35, 0.04);
         world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                 SoundCategory.PLAYERS, 0.9f, 1.6f);
         return true;
@@ -720,7 +735,8 @@ public final class MageAbilityService {
                     Math.max(1, Math.min(64, config.abilities.frostNovaTargetParticleCount)),
                     0.45, 0.55, 0.45, 0.035);
             world.spawnParticles(ParticleTypes.CLOUD, target.getX(), target.getY() + 0.4, target.getZ(),
-                    8, 0.3, 0.2, 0.3, 0.02);
+                    Math.max(1, Math.min(128, config.abilities.frostNovaTargetCloudParticleCount)),
+                    0.3, 0.2, 0.3, 0.02);
         }
 
         int ringSegments = Math.max(8, Math.min(128, config.abilities.frostNovaRingSegments));
@@ -728,8 +744,12 @@ public final class MageAbilityService {
             double angle = Math.PI * 2.0 * i / ringSegments;
             double px = cx + Math.cos(angle) * radius;
             double pz = cz + Math.sin(angle) * radius;
-            world.spawnParticles(ParticleTypes.SNOWFLAKE, px, cy, pz, 2, 0.08, 0.22, 0.08, 0.015);
-            world.spawnParticles(ParticleTypes.END_ROD, px, cy - 0.25, pz, 1, 0.025, 0.04, 0.025, 0.005);
+            world.spawnParticles(ParticleTypes.SNOWFLAKE, px, cy, pz,
+                    Math.max(1, Math.min(16, config.abilities.frostNovaRingSnowflakeParticleCount)),
+                    0.08, 0.22, 0.08, 0.015);
+            world.spawnParticles(ParticleTypes.END_ROD, px, cy - 0.25, pz,
+                    Math.max(1, Math.min(16, config.abilities.frostNovaRingEndRodParticleCount)),
+                    0.025, 0.04, 0.025, 0.005);
         }
         world.spawnParticles(ParticleTypes.SNOWFLAKE, cx, cy, cz,
                 Math.max(1, Math.min(256, config.abilities.frostNovaCenterParticleCount)),
@@ -798,7 +818,10 @@ public final class MageAbilityService {
         }
         if(placed.isEmpty())return false;
         ICE_WALLS.add(new IceWallState(world,List.copyOf(placed),serverTick+duration));
-        for(BlockPos pos:placed)world.spawnParticles(ParticleTypes.SNOWFLAKE,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,4,0.2,0.3,0.2,0.01);
+        int placementParticles = Math.max(1, Math.min(16, config.abilities.iceWallPlacementParticleCount));
+        for (BlockPos pos : placed) world.spawnParticles(ParticleTypes.SNOWFLAKE,
+                pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5,
+                placementParticles, 0.2, 0.3, 0.2, 0.01);
         world.playSound(null,cx,baseY+1.0,cz,SoundEvents.BLOCK_GLASS_PLACE,SoundCategory.PLAYERS,0.9f,0.75f);
         return true;
     }
@@ -822,8 +845,12 @@ public final class MageAbilityService {
             decoy.equipStack(slot,caster.getEquippedStack(slot).copy());
         if(!world.spawnEntity(decoy))return false;
         DOPPELGANGERS.add(new DecoyState(world,decoy,serverTick+duration));
-        world.spawnParticles(ParticleTypes.PORTAL,decoy.getX(),decoy.getY()+1.0,decoy.getZ(),28,0.35,0.65,0.35,0.12);
-        world.spawnParticles(ParticleTypes.END_ROD,decoy.getX(),decoy.getY()+1.0,decoy.getZ(),12,0.25,0.5,0.25,0.04);
+        world.spawnParticles(ParticleTypes.PORTAL,decoy.getX(),decoy.getY()+1.0,decoy.getZ(),
+                Math.max(1, Math.min(128, config.abilities.doppelgangerSpawnPortalParticleCount)),
+                0.35,0.65,0.35,0.12);
+        world.spawnParticles(ParticleTypes.END_ROD,decoy.getX(),decoy.getY()+1.0,decoy.getZ(),
+                Math.max(1, Math.min(128, config.abilities.doppelgangerSpawnEndRodParticleCount)),
+                0.25,0.5,0.25,0.04);
         world.playSound(null,decoy.getX(),decoy.getY(),decoy.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.65f,1.35f);
         return true;
     }
@@ -844,8 +871,12 @@ public final class MageAbilityService {
             double distance=toTarget.length();
             if(distance<0.1||distance>range||toTarget.normalize().dotProduct(look)<Math.cos(halfAngle)||!caster.canSee(target))continue;
             target.addVelocity(horizontal.x*strength,0.25+Math.max(0.0,look.y)*strength*0.25,horizontal.z*strength);
-            world.spawnParticles(ParticleTypes.CLOUD,target.getX(),target.getY()+target.getHeight()*0.5,target.getZ(),12,0.25,0.35,0.25,0.035);
-            world.spawnParticles(ParticleTypes.POOF,target.getX(),target.getY()+0.4,target.getZ(),6,0.18,0.2,0.18,0.02);
+            world.spawnParticles(ParticleTypes.CLOUD,target.getX(),target.getY()+target.getHeight()*0.5,target.getZ(),
+                    Math.max(1, Math.min(128, config.abilities.gustOfWindTargetCloudParticleCount)),
+                    0.25,0.35,0.25,0.035);
+            world.spawnParticles(ParticleTypes.POOF,target.getX(),target.getY()+0.4,target.getZ(),
+                    Math.max(1, Math.min(128, config.abilities.gustOfWindTargetPoofParticleCount)),
+                    0.18,0.2,0.18,0.02);
         }
         // Layered corkscrew gust: several expanding rings make the wind readable as a cone.
         int visualLayers = Math.max(2, Math.min(16, config.abilities.gustOfWindVisualLayers));
@@ -884,7 +915,9 @@ public final class MageAbilityService {
             if(caster.squaredDistanceTo(target)>radius*radius||!caster.canSee(target))continue;
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSlowDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSlowAmplifier)),false,true));
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilBlindnessDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilBlindnessAmplifier)),false,true));
-            world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),12,0.25,0.4,0.25,0.015);
+            world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),
+                    Math.max(1, Math.min(128, config.abilities.shadowVeilTargetSmokeParticleCount)),
+                    0.25,0.4,0.25,0.015);
         }
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.45f,1.6f);
@@ -896,17 +929,23 @@ public final class MageAbilityService {
             if(serverTick<wall.expiresAtTick)return false;
             for(BlockPos pos:wall.positions)if(wall.world.getBlockState(pos).isOf(Blocks.PACKED_ICE)){
                 wall.world.setBlockState(pos,Blocks.AIR.getDefaultState(),Block.NOTIFY_ALL);
-                wall.world.spawnParticles(ParticleTypes.SNOWFLAKE,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,3,0.2,0.25,0.2,0.01);
+                wall.world.spawnParticles(ParticleTypes.SNOWFLAKE,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,
+                        Math.max(1, Math.min(16, MageConfigManager.get().abilities.iceWallRemovalParticleCount)),
+                        0.2,0.25,0.2,0.01);
             }
             return true;
         });
         DOPPELGANGERS.removeIf(decoy->{
             if(decoy.entity.isRemoved())return true;
             if(serverTick<decoy.expiresAtTick){
-                if(serverTick%10==0)decoy.world.spawnParticles(ParticleTypes.PORTAL,decoy.entity.getX(),decoy.entity.getY()+1.0,decoy.entity.getZ(),2,0.12,0.3,0.12,0.04);
+                if(serverTick%10==0)decoy.world.spawnParticles(ParticleTypes.PORTAL,decoy.entity.getX(),decoy.entity.getY()+1.0,decoy.entity.getZ(),
+                        Math.max(1, Math.min(32, MageConfigManager.get().abilities.doppelgangerIdleParticleCount)),
+                        0.12,0.3,0.12,0.04);
                 return false;
             }
-            decoy.world.spawnParticles(ParticleTypes.PORTAL,decoy.entity.getX(),decoy.entity.getY()+1.0,decoy.entity.getZ(),16,0.3,0.55,0.3,0.1);
+            decoy.world.spawnParticles(ParticleTypes.PORTAL,decoy.entity.getX(),decoy.entity.getY()+1.0,decoy.entity.getZ(),
+                    Math.max(1, Math.min(128, MageConfigManager.get().abilities.doppelgangerExpireParticleCount)),
+                    0.3,0.55,0.3,0.1);
             decoy.entity.discard();return true;
         });
     }
