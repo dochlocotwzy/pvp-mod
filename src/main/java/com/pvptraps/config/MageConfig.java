@@ -94,5 +94,14 @@ public class MageConfig implements ConfigData {
         public double healingRuneRadius = 6.0;
         @ConfigEntry.Gui.Tooltip
         public float healingRuneHealAmount = 6.0f;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int galeStepManaCost = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int galeStepCooldownTicks = 180;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
+        public int galeStepDurationTicks = 60;
     }
 }

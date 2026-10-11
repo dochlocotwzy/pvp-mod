@@ -61,5 +61,9 @@
   "item.pvptraps.weakening_trap": "Weakening Trap",
   "item.pvptraps.sticky_trap": "Sticky Trap",
   "item.pvptraps.fire_trap": "Fire Trap",
-  "item.pvptraps.exhaustion_trap": "Exhaustion Trap"
+  "item.pvptraps.exhaustion_trap": "Exhaustion Trap",
+  "item.pvptraps.gale_step": "Gale Step",
+  "text.autoconfig.pvptraps.option.abilities.galeStepManaCost": "Gale Step mana cost",
+  "text.autoconfig.pvptraps.option.abilities.galeStepCooldownTicks": "Gale Step cooldown (ticks)",
+  "text.autoconfig.pvptraps.option.abilities.galeStepDurationTicks": "Gale Step duration (ticks)"
 }

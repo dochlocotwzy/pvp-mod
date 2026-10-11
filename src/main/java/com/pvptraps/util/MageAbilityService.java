@@ -126,6 +126,7 @@ public final class MageAbilityService {
             case "energy_impulse" -> applyEnergyImpulse(player, config);
             case "frost_nova" -> applyFrostNova(player, config);
             case "healing_rune" -> applyHealingRune(player, config);
+            case "gale_step" -> applyGaleStep(player, config);
             default -> false;
         };
         if (!applied) {
@@ -149,7 +150,8 @@ public final class MageAbilityService {
     private static boolean isKnownAbility(String id) {
         return "magic_barrier".equals(id) || "flash_of_light".equals(id)
                 || "arcane_bolt".equals(id) || "energy_impulse".equals(id)
-                || "frost_nova".equals(id) || "healing_rune".equals(id);
+                || "frost_nova".equals(id) || "healing_rune".equals(id)
+                || "gale_step".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -160,6 +162,7 @@ public final class MageAbilityService {
             case "energy_impulse" -> config.abilities.energyImpulseManaCost;
             case "frost_nova" -> config.abilities.frostNovaManaCost;
             case "healing_rune" -> config.abilities.healingRuneManaCost;
+            case "gale_step" -> config.abilities.galeStepManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -172,6 +175,7 @@ public final class MageAbilityService {
             case "energy_impulse" -> config.abilities.energyImpulseCooldownTicks;
             case "frost_nova" -> config.abilities.frostNovaCooldownTicks;
             case "healing_rune" -> config.abilities.healingRuneCooldownTicks;
+            case "gale_step" -> config.abilities.galeStepCooldownTicks;
             default -> 1;
         };
     }
@@ -216,6 +220,20 @@ public final class MageAbilityService {
                 SoundCategory.PLAYERS, 0.8f, 1.65f);
         world.playSound(null, x, y, z, SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,
                 SoundCategory.PLAYERS, 0.45f, 1.8f);
+        return true;
+    }
+
+    private static boolean applyGaleStep(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        int duration = Math.max(20, Math.min(200, config.abilities.galeStepDurationTicks));
+        caster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, duration, 1, false, true));
+        caster.addStatusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, duration, 0, false, true));
+        double x = caster.getX(), y = caster.getY() + 0.15, z = caster.getZ();
+        world.spawnParticles(ParticleTypes.CLOUD, x, y, z, 28, 0.35, 0.12, 0.35, 0.08);
+        world.spawnParticles(ParticleTypes.END_ROD, x, y + 0.45, z, 14, 0.28, 0.45, 0.28, 0.025);
+        world.spawnParticles(ParticleTypes.SWEEP_ATTACK, x, y + 0.05, z, 5, 0.25, 0.05, 0.25, 0.0);
+        world.playSound(null, x, y, z, SoundEvents.ENTITY_BREEZE_WIND_BURST,
+                SoundCategory.PLAYERS, 0.65f, 1.55f);
         return true;
     }
 

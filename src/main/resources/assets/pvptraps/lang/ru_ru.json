@@ -61,5 +61,9 @@
   "item.pvptraps.weakening_trap": "Ослабляющая ловушка",
   "item.pvptraps.sticky_trap": "Липкая ловушка",
   "item.pvptraps.fire_trap": "Огненная ловушка",
-  "item.pvptraps.exhaustion_trap": "Ловушка истощения"
+  "item.pvptraps.exhaustion_trap": "Ловушка истощения",
+  "item.pvptraps.gale_step": "Шаг ветра",
+  "text.autoconfig.pvptraps.option.abilities.galeStepManaCost": "Стоимость шага ветра",
+  "text.autoconfig.pvptraps.option.abilities.galeStepCooldownTicks": "Перезарядка шага ветра (тики)",
+  "text.autoconfig.pvptraps.option.abilities.galeStepDurationTicks": "Длительность шага ветра (тики)"
 }
