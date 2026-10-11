@@ -13,21 +13,30 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,6 +44,8 @@ public final class MageAbilityService {
     private static final Map<UUID, ManaState> PLAYERS = new HashMap<>();
     private static final Map<UUID, SmokeVeilState> SMOKE_VEIL_TARGETS = new HashMap<>();
     private static final Map<UUID, GravitySphereState> GRAVITY_SPHERES = new HashMap<>();
+    private static final List<IceWallState> ICE_WALLS = new ArrayList<>();
+    private static final List<DecoyState> DOPPELGANGERS = new ArrayList<>();
     private static long serverTick;
 
     private MageAbilityService() {
@@ -61,6 +72,7 @@ public final class MageAbilityService {
             }
             tickSmokeVeil(server);
             tickGravitySpheres(server);
+            tickTemporaryAbilities();
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
@@ -144,6 +156,10 @@ public final class MageAbilityService {
             case "gravity_sphere" -> applyGravitySphere(player, config);
             case "fireball" -> launchFireball(player, config);
             case "electric_bolt" -> launchElectricBolt(player, config);
+            case "ice_wall" -> applyIceWall(player, config);
+            case "magic_doppelganger" -> applyMagicDoppelganger(player, config);
+            case "gust_of_wind" -> applyGustOfWind(player, config);
+            case "shadow_veil" -> applyShadowVeil(player, config);
             default -> false;
         };
         if (!applied) {
@@ -171,7 +187,9 @@ public final class MageAbilityService {
                 || "smoke_veil".equals(id) || "gale_step".equals(id)
                 || "runic_seal".equals(id) || "blessing".equals(id)
                 || "gravity_sphere".equals(id) || "fireball".equals(id)
-                || "electric_bolt".equals(id);
+                || "electric_bolt".equals(id) || "ice_wall".equals(id)
+                || "magic_doppelganger".equals(id) || "gust_of_wind".equals(id)
+                || "shadow_veil".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -189,6 +207,10 @@ public final class MageAbilityService {
             case "gravity_sphere" -> config.abilities.gravitySphereManaCost;
             case "fireball" -> config.abilities.fireballManaCost;
             case "electric_bolt" -> config.abilities.electricBoltManaCost;
+            case "ice_wall" -> config.abilities.iceWallManaCost;
+            case "magic_doppelganger" -> config.abilities.magicDoppelgangerManaCost;
+            case "gust_of_wind" -> config.abilities.gustOfWindManaCost;
+            case "shadow_veil" -> config.abilities.shadowVeilManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -208,6 +230,10 @@ public final class MageAbilityService {
             case "gravity_sphere" -> config.abilities.gravitySphereCooldownTicks;
             case "fireball" -> config.abilities.fireballCooldownTicks;
             case "electric_bolt" -> config.abilities.electricBoltCooldownTicks;
+            case "ice_wall" -> config.abilities.iceWallCooldownTicks;
+            case "magic_doppelganger" -> config.abilities.magicDoppelgangerCooldownTicks;
+            case "gust_of_wind" -> config.abilities.gustOfWindCooldownTicks;
+            case "shadow_veil" -> config.abilities.shadowVeilCooldownTicks;
             default -> 1;
         };
     }
@@ -360,8 +386,8 @@ public final class MageAbilityService {
     }
 
     /**
-     * Short horizontal blink. The full player box is sampled every 0.2 blocks;
-     * the destination is the last collision-free sample, so walls cannot be skipped.
+     * Short horizontal blink. The full player box is sampled every 0.05 blocks;
+     * the destination is the last collision-free sample, including narrow shapes.
      */
     private static boolean applyGaleStep(ServerPlayerEntity caster, MageConfig config) {
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
@@ -372,7 +398,7 @@ public final class MageAbilityService {
         Box originalBox = caster.getBoundingBox();
         double safeDistance = 0.0;
 
-        for (double step = 0.2; step < distance + 1.0E-6; step += 0.2) {
+        for (double step = 0.05; step < distance + 1.0E-6; step += 0.05) {
             double candidateDistance = Math.min(step, distance);
             Box candidate = originalBox.offset(dx * candidateDistance, 0.0, dz * candidateDistance);
             if (!world.isSpaceEmpty(caster, candidate)) {
@@ -720,6 +746,124 @@ public final class MageAbilityService {
         return true;
     }
 
+
+    private static boolean applyIceWall(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world=(ServerWorld)caster.getEntityWorld();
+        int width=Math.max(3,Math.min(9,config.abilities.iceWallWidth));
+        int height=Math.max(2,Math.min(5,config.abilities.iceWallHeight));
+        int duration=Math.max(40,Math.min(240,config.abilities.iceWallDurationTicks));
+        double distance=Math.max(1.5,Math.min(5.0,config.abilities.iceWallDistance));
+        double yaw=Math.toRadians(caster.getYaw());
+        double fx=-Math.sin(yaw), fz=Math.cos(yaw), sx=Math.cos(yaw), sz=Math.sin(yaw);
+        double cx=caster.getX()+fx*distance, cz=caster.getZ()+fz*distance;
+        int baseY=BlockPos.ofFloored(caster.getX(),caster.getY(),caster.getZ()).getY();
+        List<BlockPos> placed=new ArrayList<>();
+        for(int lateral=0;lateral<width;lateral++){
+            int offset=lateral-width/2;
+            for(int vertical=0;vertical<height;vertical++){
+                BlockPos pos=BlockPos.ofFloored(cx+sx*offset,baseY+vertical,cz+sz*offset);
+                if(!world.getBlockState(pos).isAir())continue;
+                Box cell=new Box(pos.getX(),pos.getY(),pos.getZ(),pos.getX()+1.0,pos.getY()+1.0,pos.getZ()+1.0);
+                if(!world.getEntitiesByClass(LivingEntity.class,cell,e->e.isAlive()).isEmpty())continue;
+                if(world.setBlockState(pos,Blocks.PACKED_ICE.getDefaultState(),Block.NOTIFY_ALL))placed.add(pos);
+            }
+        }
+        if(placed.isEmpty())return false;
+        ICE_WALLS.add(new IceWallState(world,List.copyOf(placed),serverTick+duration));
+        for(BlockPos pos:placed)world.spawnParticles(ParticleTypes.SNOWFLAKE,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,4,0.2,0.3,0.2,0.01);
+        world.playSound(null,cx,baseY+1.0,cz,SoundEvents.BLOCK_GLASS_PLACE,SoundCategory.PLAYERS,0.9f,0.75f);
+        return true;
+    }
+
+    private static boolean applyMagicDoppelganger(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world=(ServerWorld)caster.getEntityWorld();
+        int duration=Math.max(40,Math.min(400,config.abilities.magicDoppelgangerDurationTicks));
+        double yaw=Math.toRadians(caster.getYaw()), fx=-Math.sin(yaw), fz=Math.cos(yaw);
+        ArmorStandEntity decoy=new ArmorStandEntity(EntityType.ARMOR_STAND,world);
+        boolean foundSpace=false;
+        for(double distance:new double[]{1.5,2.0,2.5,3.0}){
+            decoy.refreshPositionAndAngles(caster.getX()+fx*distance,caster.getY(),caster.getZ()+fz*distance,caster.getYaw(),0.0f);
+            if(world.isSpaceEmpty(decoy,decoy.getBoundingBox())){foundSpace=true;break;}
+        }
+        if(!foundSpace)return false;
+        decoy.setInvulnerable(true);
+        decoy.setShowArms(true);
+        decoy.setCustomName(Text.literal(caster.getName().getString()));
+        decoy.setCustomNameVisible(true);
+        for(EquipmentSlot slot:new EquipmentSlot[]{EquipmentSlot.HEAD,EquipmentSlot.CHEST,EquipmentSlot.LEGS,EquipmentSlot.FEET,EquipmentSlot.MAINHAND,EquipmentSlot.OFFHAND})
+            decoy.equipStack(slot,caster.getEquippedStack(slot).copy());
+        if(!world.spawnEntity(decoy))return false;
+        DOPPELGANGERS.add(new DecoyState(world,decoy,serverTick+duration));
+        world.spawnParticles(ParticleTypes.PORTAL,decoy.getX(),decoy.getY()+1.0,decoy.getZ(),28,0.35,0.65,0.35,0.12);
+        world.spawnParticles(ParticleTypes.END_ROD,decoy.getX(),decoy.getY()+1.0,decoy.getZ(),12,0.25,0.5,0.25,0.04);
+        world.playSound(null,decoy.getX(),decoy.getY(),decoy.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.65f,1.35f);
+        return true;
+    }
+
+    private static boolean applyGustOfWind(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world=(ServerWorld)caster.getEntityWorld();
+        double range=Math.max(2.0,Math.min(14.0,config.abilities.gustOfWindRange));
+        double strength=Math.max(0.2,Math.min(3.0,config.abilities.gustOfWindStrength));
+        double halfAngle=Math.toRadians(Math.max(20.0,Math.min(120.0,config.abilities.gustOfWindConeDegrees))*0.5);
+        Vec3d look=caster.getRotationVec(1.0f).normalize();
+        Vec3d horizontal=new Vec3d(look.x,0.0,look.z);
+        if(horizontal.lengthSquared()<1.0E-6){double yaw=Math.toRadians(caster.getYaw());horizontal=new Vec3d(-Math.sin(yaw),0.0,Math.cos(yaw));}
+        else horizontal=horizontal.normalize();
+        Box search=caster.getBoundingBox().stretch(look.multiply(range)).expand(1.0);
+        for(LivingEntity target:world.getEntitiesByClass(LivingEntity.class,search,e->e.isAlive()&&e!=caster&&!e.isSpectator())){
+            if(target instanceof PlayerEntity ally&&MageTeamAdapter.areAllies(caster,ally))continue;
+            Vec3d toTarget=new Vec3d(target.getX()-caster.getX(),target.getY()+target.getHeight()*0.5-caster.getEyeY(),target.getZ()-caster.getZ());
+            double distance=toTarget.length();
+            if(distance<0.1||distance>range||toTarget.normalize().dotProduct(look)<Math.cos(halfAngle)||!caster.canSee(target))continue;
+            target.addVelocity(horizontal.x*strength,0.25+Math.max(0.0,look.y)*strength*0.25,horizontal.z*strength);
+            world.spawnParticles(ParticleTypes.CLOUD,target.getX(),target.getY()+target.getHeight()*0.5,target.getZ(),12,0.25,0.35,0.25,0.035);
+            world.spawnParticles(ParticleTypes.POOF,target.getX(),target.getY()+0.4,target.getZ(),6,0.18,0.2,0.18,0.02);
+        }
+        for(int i=1;i<=12;i++){double step=i*range/12.0;world.spawnParticles(ParticleTypes.CLOUD,caster.getX()+look.x*step,caster.getEyeY()+look.y*step,caster.getZ()+look.z*step,2,0.12,0.12,0.12,0.01);}
+        world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_BREEZE_WIND_BURST,SoundCategory.PLAYERS,0.9f,1.2f);
+        return true;
+    }
+
+    private static boolean applyShadowVeil(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world=(ServerWorld)caster.getEntityWorld();
+        int duration=Math.max(20,Math.min(240,config.abilities.shadowVeilDurationTicks));
+        double radius=Math.max(1.5,Math.min(8.0,config.abilities.shadowVeilRadius));
+        caster.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY,duration,0,true,false,true));
+        caster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED,Math.min(duration,60),1,false,true));
+        for(LivingEntity target:world.getEntitiesByClass(LivingEntity.class,caster.getBoundingBox().expand(radius),e->e.isAlive()&&e!=caster&&!e.isSpectator())){
+            if(target instanceof PlayerEntity ally&&MageTeamAdapter.areAllies(caster,ally))continue;
+            if(caster.squaredDistanceTo(target)>radius*radius||!caster.canSee(target))continue;
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,Math.min(duration,50),1,false,true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,30),0,false,true));
+            world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),12,0.25,0.4,0.25,0.015);
+        }
+        world.spawnParticles(ParticleTypes.LARGE_SMOKE,caster.getX(),caster.getY()+1.0,caster.getZ(),40,radius*0.45,0.55,radius*0.45,0.02);
+        world.spawnParticles(ParticleTypes.PORTAL,caster.getX(),caster.getY()+0.8,caster.getZ(),24,0.4,0.65,0.4,0.14);
+        world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
+        world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.45f,1.6f);
+        return true;
+    }
+
+    private static void tickTemporaryAbilities() {
+        ICE_WALLS.removeIf(wall->{
+            if(serverTick<wall.expiresAtTick)return false;
+            for(BlockPos pos:wall.positions)if(wall.world.getBlockState(pos).isOf(Blocks.PACKED_ICE)){
+                wall.world.setBlockState(pos,Blocks.AIR.getDefaultState(),Block.NOTIFY_ALL);
+                wall.world.spawnParticles(ParticleTypes.SNOWFLAKE,pos.getX()+0.5,pos.getY()+0.5,pos.getZ()+0.5,3,0.2,0.25,0.2,0.01);
+            }
+            return true;
+        });
+        DOPPELGANGERS.removeIf(decoy->{
+            if(decoy.entity.isRemoved())return true;
+            if(serverTick<decoy.expiresAtTick){
+                if(serverTick%10==0)decoy.world.spawnParticles(ParticleTypes.PORTAL,decoy.entity.getX(),decoy.entity.getY()+1.0,decoy.entity.getZ(),2,0.12,0.3,0.12,0.04);
+                return false;
+            }
+            decoy.world.spawnParticles(ParticleTypes.PORTAL,decoy.entity.getX(),decoy.entity.getY()+1.0,decoy.entity.getZ(),16,0.3,0.55,0.3,0.1);
+            decoy.entity.discard();return true;
+        });
+    }
+
     private static void tickSmokeVeil(net.minecraft.server.MinecraftServer server) {
         if (SMOKE_VEIL_TARGETS.isEmpty()) {
             return;
@@ -770,6 +914,15 @@ public final class MageAbilityService {
             }
         }
         return false;
+    }
+
+    private static final class IceWallState {
+        private final ServerWorld world; private final List<BlockPos> positions; private final long expiresAtTick;
+        private IceWallState(ServerWorld world,List<BlockPos> positions,long expiresAtTick){this.world=world;this.positions=positions;this.expiresAtTick=expiresAtTick;}
+    }
+    private static final class DecoyState {
+        private final ServerWorld world; private final ArmorStandEntity entity; private final long expiresAtTick;
+        private DecoyState(ServerWorld world,ArmorStandEntity entity,long expiresAtTick){this.world=world;this.entity=entity;this.expiresAtTick=expiresAtTick;}
     }
 
     private static final class GravitySphereState {

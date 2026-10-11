@@ -186,5 +186,59 @@ public class MageConfig implements ConfigData {
         public int electricBoltLifetimeTicks = 50;
         @ConfigEntry.Gui.Tooltip
         public float electricBoltDamage = 6.0f;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int iceWallManaCost = 32;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int iceWallCooldownTicks = 360;
+        @ConfigEntry.Gui.Tooltip
+        public double iceWallDistance = 2.5;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 3, max = 9)
+        public int iceWallWidth = 5;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 2, max = 5)
+        public int iceWallHeight = 3;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 40, max = 240)
+        public int iceWallDurationTicks = 100;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int magicDoppelgangerManaCost = 28;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int magicDoppelgangerCooldownTicks = 280;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 40, max = 400)
+        public int magicDoppelgangerDurationTicks = 160;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int gustOfWindManaCost = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int gustOfWindCooldownTicks = 100;
+        @ConfigEntry.Gui.Tooltip
+        public double gustOfWindRange = 9.0;
+        @ConfigEntry.Gui.Tooltip
+        public double gustOfWindStrength = 1.25;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 120)
+        public int gustOfWindConeDegrees = 70;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int shadowVeilManaCost = 26;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int shadowVeilCooldownTicks = 260;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 240)
+        public int shadowVeilDurationTicks = 80;
+        @ConfigEntry.Gui.Tooltip
+        public double shadowVeilRadius = 4.0;
     }
 }
