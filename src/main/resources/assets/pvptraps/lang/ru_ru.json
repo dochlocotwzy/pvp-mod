@@ -102,5 +102,17 @@
   "text.autoconfig.pvptraps_mage.option.abilities.electricBoltSpeed": "Скорость электрического разряда",
   "text.autoconfig.pvptraps_mage.option.abilities.electricBoltRange": "Дальность электрического разряда",
   "text.autoconfig.pvptraps_mage.option.abilities.electricBoltLifetimeTicks": "Время жизни электрического разряда (тики)",
-  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltDamage": "Урон электрического разряда"
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltDamage": "Урон электрического разряда",
+  "item.pvptraps.ice_wall": "Ледяная стена",
+  "item.pvptraps.magic_doppelganger": "Магический двойник",
+  "entity.pvptraps.magic_doppelganger": "Магический двойник",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallManaCost": "Стоимость ледяной стены",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallCooldownTicks": "Перезарядка ледяной стены (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallDurationTicks": "Время жизни ледяной стены (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallWidth": "Ширина ледяной стены",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallHeight": "Высота ледяной стены",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerManaCost": "Стоимость магического двойника",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerCooldownTicks": "Перезарядка магического двойника (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerDurationTicks": "Время жизни двойника (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerInvisibilityTicks": "Длительность невидимости (тики)"
 }

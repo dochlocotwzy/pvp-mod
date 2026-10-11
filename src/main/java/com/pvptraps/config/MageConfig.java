@@ -186,5 +186,33 @@ public class MageConfig implements ConfigData {
         public int electricBoltLifetimeTicks = 50;
         @ConfigEntry.Gui.Tooltip
         public float electricBoltDamage = 6.0f;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int iceWallManaCost = 28;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int iceWallCooldownTicks = 280;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 400)
+        public int iceWallDurationTicks = 100;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 3, max = 9)
+        public int iceWallWidth = 5;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 2, max = 5)
+        public int iceWallHeight = 3;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int magicDoppelgangerManaCost = 26;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int magicDoppelgangerCooldownTicks = 300;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 300)
+        public int magicDoppelgangerDurationTicks = 100;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 10, max = 80)
+        public int magicDoppelgangerInvisibilityTicks = 40;
     }
 }

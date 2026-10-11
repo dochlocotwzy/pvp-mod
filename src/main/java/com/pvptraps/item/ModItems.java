@@ -50,6 +50,8 @@ public final class ModItems {
     private static final RegistryKey<Item> GRAVITY_SPHERE_KEY = itemKey("gravity_sphere");
     private static final RegistryKey<Item> FIREBALL_KEY = itemKey("fireball");
     private static final RegistryKey<Item> ELECTRIC_BOLT_KEY = itemKey("electric_bolt");
+    private static final RegistryKey<Item> ICE_WALL_KEY = itemKey("ice_wall");
+    private static final RegistryKey<Item> MAGIC_DOPPELGANGER_KEY = itemKey("magic_doppelganger");
 
     public static final MageAbilityItem MAGIC_BARRIER = Registry.register(
             Registries.ITEM, MAGIC_BARRIER_KEY,
@@ -90,6 +92,12 @@ public final class ModItems {
     public static final MageAbilityItem ELECTRIC_BOLT = Registry.register(
             Registries.ITEM, ELECTRIC_BOLT_KEY,
             new MageAbilityItem(new Item.Settings().registryKey(ELECTRIC_BOLT_KEY).maxCount(1), "electric_bolt", false));
+    public static final MageAbilityItem ICE_WALL = Registry.register(
+            Registries.ITEM, ICE_WALL_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(ICE_WALL_KEY).maxCount(1), "ice_wall", false));
+    public static final MageAbilityItem MAGIC_DOPPELGANGER = Registry.register(
+            Registries.ITEM, MAGIC_DOPPELGANGER_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(MAGIC_DOPPELGANGER_KEY).maxCount(1), "magic_doppelganger", false));
 
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
@@ -116,6 +124,8 @@ public final class ModItems {
                     entries.add(GRAVITY_SPHERE);
                     entries.add(FIREBALL);
                     entries.add(ELECTRIC_BOLT);
+                    entries.add(ICE_WALL);
+                    entries.add(MAGIC_DOPPELGANGER);
                 });
     }
 }

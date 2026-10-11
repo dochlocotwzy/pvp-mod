@@ -102,5 +102,17 @@
   "text.autoconfig.pvptraps_mage.option.abilities.electricBoltSpeed": "Electric Bolt speed",
   "text.autoconfig.pvptraps_mage.option.abilities.electricBoltRange": "Electric Bolt range",
   "text.autoconfig.pvptraps_mage.option.abilities.electricBoltLifetimeTicks": "Electric Bolt lifetime (ticks)",
-  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltDamage": "Electric Bolt damage"
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltDamage": "Electric Bolt damage",
+  "item.pvptraps.ice_wall": "Ice Wall",
+  "item.pvptraps.magic_doppelganger": "Magic Doppelganger",
+  "entity.pvptraps.magic_doppelganger": "Magic Doppelganger",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallManaCost": "Ice Wall mana cost",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallCooldownTicks": "Ice Wall cooldown (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallDurationTicks": "Ice Wall lifetime (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallWidth": "Ice Wall width",
+  "text.autoconfig.pvptraps_mage.option.abilities.iceWallHeight": "Ice Wall height",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerManaCost": "Magic Doppelganger mana cost",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerCooldownTicks": "Magic Doppelganger cooldown (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerDurationTicks": "Doppelganger lifetime (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.magicDoppelgangerInvisibilityTicks": "Invisibility duration (ticks)"
 }
