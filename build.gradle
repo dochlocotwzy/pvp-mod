@@ -99,9 +99,6 @@ tasks.register("validateMageTextures") {
 }
 
 def customItemNames = [
-    "trap",
-    "spike_trap", "ice_trap", "poison_trap", "electric_trap", "smoke_trap",
-    "weakening_trap", "sticky_trap", "fire_trap", "exhaustion_trap",
     "magic_barrier", "flash_of_light", "arcane_bolt", "energy_impulse",
     "frost_nova", "healing_rune", "smoke_veil", "gale_step", "runic_seal",
     "blessing", "gravity_sphere", "fireball", "electric_bolt", "ice_wall",
