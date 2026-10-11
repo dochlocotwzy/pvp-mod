@@ -142,3 +142,20 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }
+
+
+// The mage artifact is standalone: exclude legacy trap implementation and assets
+// even while the historical combined source tree is being split incrementally.
+tasks.named("jar") {
+    exclude "com/pvptraps/entity/TrapEntity*.class"
+    exclude "com/pvptraps/entity/TrapEntityRenderer*.class"
+    exclude "com/pvptraps/item/TrapItem*.class"
+    exclude "com/pvptraps/config/ConfigManager*.class"
+    exclude "com/pvptraps/config/TrapConfig*.class"
+    exclude "com/pvptraps/config/PvpTrapsModMenuIntegration*.class"
+    exclude "com/pvptraps/util/TrapEffectScheduler*.class"
+    exclude "com/pvptraps/util/TrapEffects*.class"
+    exclude "assets/pvptraps/models/item/*trap*.json"
+    exclude "assets/pvptraps/items/*trap*.json"
+    exclude "assets/pvptraps/textures/item/*trap*.png"
+}
