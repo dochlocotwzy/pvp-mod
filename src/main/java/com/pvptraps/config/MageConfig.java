@@ -38,6 +38,9 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 1, max = 600)
         public int barrierDurationTicks = 80;
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int barrierResistanceAmplifier = 1;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int flashManaCost = 20;
         @ConfigEntry.Gui.Tooltip
@@ -46,6 +49,9 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 400)
         public int flashDurationTicks = 60;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int flashResistanceAmplifier = 0;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int arcaneBoltManaCost = 15;
@@ -84,6 +90,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
         public int frostNovaDurationTicks = 80;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int frostNovaSlownessAmplifier = 2;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int frostNovaWeaknessAmplifier = 0;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int healingRuneManaCost = 24;
@@ -127,6 +139,15 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
         public int runicSealDurationTicks = 60;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int runicSealSlownessAmplifier = 4;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int runicSealWeaknessAmplifier = 0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int runicSealGlowDurationTicks = 40;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
@@ -137,6 +158,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 600)
         public int blessingDurationTicks = 160;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int blessingSpeedAmplifier = 0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int blessingRegenerationAmplifier = 0;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int gravitySphereManaCost = 30;
@@ -152,6 +179,12 @@ public class MageConfig implements ConfigData {
         public int gravitySphereDurationTicks = 720;
         @ConfigEntry.Gui.Tooltip
         public double gravitySpherePullStrength = 0.24;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 40)
+        public int gravitySphereSlownessDurationTicks = 6;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int gravitySphereSlownessAmplifier = 0;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int fireballManaCost = 22;
@@ -266,5 +299,23 @@ public class MageConfig implements ConfigData {
         public int shadowVeilDurationTicks = 80;
         @ConfigEntry.Gui.Tooltip
         public double shadowVeilRadius = 4.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 240)
+        public int shadowVeilSpeedDurationTicks = 60;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int shadowVeilSpeedAmplifier = 1;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 240)
+        public int shadowVeilSlowDurationTicks = 50;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int shadowVeilSlowAmplifier = 1;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 240)
+        public int shadowVeilBlindnessDurationTicks = 30;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int shadowVeilBlindnessAmplifier = 0;
     }
 }
