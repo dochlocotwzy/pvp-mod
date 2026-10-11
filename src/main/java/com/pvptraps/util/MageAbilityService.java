@@ -414,7 +414,8 @@ public final class MageAbilityService {
         Box originalBox = caster.getBoundingBox();
         double safeDistance = 0.0;
 
-        for (double step = 0.05; step < distance + 1.0E-6; step += 0.05) {
+        double sampleStep = Math.max(0.01, Math.min(0.25, config.abilities.galeStepCollisionSampleStep));
+        for (double step = sampleStep; step < distance + 1.0E-6; step += sampleStep) {
             double candidateDistance = Math.min(step, distance);
             Box candidate = originalBox.offset(dx * candidateDistance, 0.0, dz * candidateDistance);
             if (!world.isSpaceEmpty(caster, candidate)) {
@@ -832,7 +833,11 @@ public final class MageAbilityService {
         double yaw=Math.toRadians(caster.getYaw()), fx=-Math.sin(yaw), fz=Math.cos(yaw);
         ArmorStandEntity decoy=new ArmorStandEntity(EntityType.ARMOR_STAND,world);
         boolean foundSpace=false;
-        for(double distance:new double[]{1.5,2.0,2.5,3.0}){
+        double minPlacementDistance = Math.max(0.5, Math.min(5.0, config.abilities.doppelgangerPlacementMinDistance));
+        double placementDistanceStep = Math.max(0.1, Math.min(2.0, config.abilities.doppelgangerPlacementDistanceStep));
+        int placementAttempts = Math.max(1, Math.min(8, config.abilities.doppelgangerPlacementAttempts));
+        for (int attempt = 0; attempt < placementAttempts; attempt++) {
+            double distance = minPlacementDistance + placementDistanceStep * attempt;
             decoy.refreshPositionAndAngles(caster.getX()+fx*distance,caster.getY(),caster.getZ()+fz*distance,caster.getYaw(),0.0f);
             if(world.isSpaceEmpty(decoy,decoy.getBoundingBox())){foundSpace=true;break;}
         }
