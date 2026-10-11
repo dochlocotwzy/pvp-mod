@@ -42,6 +42,8 @@ sourceSets.main.java.exclude "com/pvptraps/config/ConfigManager.java", "com/pvpt
 tasks.register("prepareMageNamespaceResources", Copy) {
     from("src/main/resources/assets/pvptraps") {
         exclude "textures/**"
+        // Trap-only item definitions/models must never ship in the mage namespace.
+        exclude "**/*trap*.json", "**/*Trap*.json", "**/trap.json"
     }
     filesMatching("**/*.json") {
         filter { line -> line.replace("pvptraps", "pvpmage") }
