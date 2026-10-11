@@ -729,19 +729,13 @@ public final class MageAbilityService {
                     StatusEffects.INVISIBILITY, duration, 0, true, false, true));
             SMOKE_VEIL_TARGETS.put(target.getUuid(),
                     new SmokeVeilState(caster.getUuid(), serverTick + duration));
-            world.spawnParticles(ParticleTypes.LARGE_SMOKE,
-                    target.getX(), target.getY() + 1.0, target.getZ(), 18, 0.35, 0.65, 0.35, 0.015);
-            world.spawnParticles(ParticleTypes.PORTAL,
-                    target.getX(), target.getY() + 0.8, target.getZ(), 12, 0.35, 0.5, 0.35, 0.15);
+            // Do not emit particles from an entity that has just become invisible.
             affected++;
         }
 
         if (affected == 0) {
             return false;
         }
-        world.spawnParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                caster.getX(), caster.getY() + 0.4, caster.getZ(), 35,
-                radius * 0.35, 0.35, radius * 0.35, 0.015);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 0.9f, 0.7f);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
@@ -822,7 +816,26 @@ public final class MageAbilityService {
             world.spawnParticles(ParticleTypes.CLOUD,target.getX(),target.getY()+target.getHeight()*0.5,target.getZ(),12,0.25,0.35,0.25,0.035);
             world.spawnParticles(ParticleTypes.POOF,target.getX(),target.getY()+0.4,target.getZ(),6,0.18,0.2,0.18,0.02);
         }
-        for(int i=1;i<=12;i++){double step=i*range/12.0;world.spawnParticles(ParticleTypes.CLOUD,caster.getX()+look.x*step,caster.getEyeY()+look.y*step,caster.getZ()+look.z*step,2,0.12,0.12,0.12,0.01);}
+        // Layered corkscrew gust: several expanding rings make the wind readable as a cone.
+        for (int layer = 1; layer <= 8; layer++) {
+            double progress = layer / 8.0;
+            double step = range * progress;
+            double ringRadius = 0.18 + progress * 0.9;
+            Vec3d center = new Vec3d(caster.getX(), caster.getEyeY(), caster.getZ()).add(look.multiply(step));
+            Vec3d side = new Vec3d(-horizontal.z, 0.0, horizontal.x);
+            for (int particle = 0; particle < 16; particle++) {
+                double angle = (Math.PI * 2.0 * particle / 16.0) + layer * 0.55;
+                double sideOffset = Math.cos(angle) * ringRadius;
+                double upOffset = Math.sin(angle) * ringRadius * 0.65;
+                world.spawnParticles(ParticleTypes.CLOUD,
+                        center.x + side.x * sideOffset,
+                        center.y + upOffset,
+                        center.z + side.z * sideOffset,
+                        1, 0.035, 0.035, 0.035, 0.015);
+            }
+            world.spawnParticles(ParticleTypes.SWEEP_ATTACK, center.x, center.y, center.z,
+                    1, ringRadius * 0.2, ringRadius * 0.2, ringRadius * 0.2, 0.0);
+        }
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_BREEZE_WIND_BURST,SoundCategory.PLAYERS,0.9f,1.2f);
         return true;
     }
@@ -840,8 +853,6 @@ public final class MageAbilityService {
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,30),0,false,true));
             world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),12,0.25,0.4,0.25,0.015);
         }
-        world.spawnParticles(ParticleTypes.LARGE_SMOKE,caster.getX(),caster.getY()+1.0,caster.getZ(),40,radius*0.45,0.55,radius*0.45,0.02);
-        world.spawnParticles(ParticleTypes.PORTAL,caster.getX(),caster.getY()+0.8,caster.getZ(),24,0.4,0.65,0.4,0.14);
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.45f,1.6f);
         return true;
