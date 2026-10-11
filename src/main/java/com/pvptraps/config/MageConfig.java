@@ -1,10 +1,10 @@
-package com.pvptraps.config;
+package com.pvpmage.config;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-@Config(name = "pvptraps_mage")
+@Config(name = "pvpmage_mage")
 public class MageConfig implements ConfigData {
     @ConfigEntry.Category("mana")
     @ConfigEntry.Gui.CollapsibleObject
