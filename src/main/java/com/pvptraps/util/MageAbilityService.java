@@ -369,11 +369,13 @@ public final class MageAbilityService {
             target.addVelocity(dx / horizontalDistance * strength, 0.25 + Math.max(0.0, dy / distance) * strength * 0.5
                     + strength * 0.2, dz / horizontalDistance * strength);
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
-                    8, 0.18, 0.25, 0.18, 0.04);
+                    Math.max(1, Math.min(64, config.abilities.energyImpulseTargetParticleCount)),
+                    0.18, 0.25, 0.18, 0.04);
         }
         // Ground-level expanding shockwave ring; terrain is never modified.
-        for (int i = 0; i < 48; i++) {
-            double angle = Math.PI * 2.0 * i / 48.0;
+        int shockwaveSegments = Math.max(8, Math.min(128, config.abilities.energyImpulseShockwaveSegments));
+        for (int i = 0; i < shockwaveSegments; i++) {
+            double angle = Math.PI * 2.0 * i / shockwaveSegments;
             double px = caster.getX() + Math.cos(angle) * radius;
             double pz = caster.getZ() + Math.sin(angle) * radius;
             world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, px, caster.getY() + 0.12, pz,
@@ -382,7 +384,8 @@ public final class MageAbilityService {
                     1, 0.03, 0.03, 0.03, 0.005);
         }
         world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, caster.getX(), caster.getY() + 1.0, caster.getZ(),
-                36, radius / 2.0, 0.6, radius / 2.0, 0.08);
+                Math.max(1, Math.min(128, config.abilities.energyImpulseCenterParticleCount)),
+                radius / 2.0, 0.6, radius / 2.0, 0.08);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.9f, 1.0f);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
@@ -706,19 +709,22 @@ public final class MageAbilityService {
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration,
                     Math.max(0, Math.min(4, config.abilities.runicSealWeaknessAmplifier)), false, true));
             world.spawnParticles(ParticleTypes.SNOWFLAKE, target.getX(), target.getY() + 0.8, target.getZ(),
-                    22, 0.45, 0.55, 0.45, 0.035);
+                    Math.max(1, Math.min(64, config.abilities.frostNovaTargetParticleCount)),
+                    0.45, 0.55, 0.45, 0.035);
             world.spawnParticles(ParticleTypes.CLOUD, target.getX(), target.getY() + 0.4, target.getZ(),
                     8, 0.3, 0.2, 0.3, 0.02);
         }
 
-        for (int i = 0; i < 64; i++) {
-            double angle = Math.PI * 2.0 * i / 64.0;
+        int ringSegments = Math.max(8, Math.min(128, config.abilities.frostNovaRingSegments));
+        for (int i = 0; i < ringSegments; i++) {
+            double angle = Math.PI * 2.0 * i / ringSegments;
             double px = cx + Math.cos(angle) * radius;
             double pz = cz + Math.sin(angle) * radius;
             world.spawnParticles(ParticleTypes.SNOWFLAKE, px, cy, pz, 2, 0.08, 0.22, 0.08, 0.015);
             world.spawnParticles(ParticleTypes.END_ROD, px, cy - 0.25, pz, 1, 0.025, 0.04, 0.025, 0.005);
         }
-        world.spawnParticles(ParticleTypes.SNOWFLAKE, cx, cy, cz, 80,
+        world.spawnParticles(ParticleTypes.SNOWFLAKE, cx, cy, cz,
+                Math.max(1, Math.min(256, config.abilities.frostNovaCenterParticleCount)),
                 radius * 0.45, 0.55, radius * 0.45, 0.06);
         world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_GLASS_BREAK,
                 SoundCategory.PLAYERS, 0.9f, 0.65f);
