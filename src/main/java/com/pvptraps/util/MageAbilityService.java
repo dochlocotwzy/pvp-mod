@@ -125,6 +125,7 @@ public final class MageAbilityService {
             case "arcane_bolt" -> launchArcaneBolt(player, config);
             case "energy_impulse" -> applyEnergyImpulse(player, config);
             case "frost_nova" -> applyFrostNova(player, config);
+            case "healing_rune" -> applyHealingRune(player, config);
             default -> false;
         };
         if (!applied) {
@@ -147,7 +148,8 @@ public final class MageAbilityService {
 
     private static boolean isKnownAbility(String id) {
         return "magic_barrier".equals(id) || "flash_of_light".equals(id)
-                || "arcane_bolt".equals(id) || "energy_impulse".equals(id) || "frost_nova".equals(id);
+                || "arcane_bolt".equals(id) || "energy_impulse".equals(id)
+                || "frost_nova".equals(id) || "healing_rune".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -157,6 +159,7 @@ public final class MageAbilityService {
             case "arcane_bolt" -> config.abilities.arcaneBoltManaCost;
             case "energy_impulse" -> config.abilities.energyImpulseManaCost;
             case "frost_nova" -> config.abilities.frostNovaManaCost;
+            case "healing_rune" -> config.abilities.healingRuneManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -168,6 +171,7 @@ public final class MageAbilityService {
             case "arcane_bolt" -> config.abilities.arcaneBoltCooldownTicks;
             case "energy_impulse" -> config.abilities.energyImpulseCooldownTicks;
             case "frost_nova" -> config.abilities.frostNovaCooldownTicks;
+            case "healing_rune" -> config.abilities.healingRuneCooldownTicks;
             default -> 1;
         };
     }
@@ -275,6 +279,62 @@ public final class MageAbilityService {
                 SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.9f, 1.0f);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.25f, 1.65f);
+        return true;
+    }
+
+    private static boolean applyHealingRune(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double radius = Math.max(1.0, Math.min(12.0, config.abilities.healingRuneRadius));
+        float healAmount = Math.max(0.5f, Math.min(20.0f, config.abilities.healingRuneHealAmount));
+        double cx = caster.getX();
+        double cy = caster.getY() + caster.getHeight() * 0.5;
+        double cz = caster.getZ();
+        boolean healedAny = false;
+
+        // The rune only heals the caster and allied players; it never benefits enemies or mobs.
+        for (LivingEntity target : world.getEntitiesByClass(LivingEntity.class,
+                caster.getBoundingBox().expand(radius),
+                entity -> entity.isAlive() && !entity.isSpectator())) {
+            if (!(target instanceof PlayerEntity targetPlayer)
+                    || (targetPlayer != caster && !MageTeamAdapter.areAllies(caster, targetPlayer))) {
+                continue;
+            }
+            double dx = target.getX() - cx;
+            double dy = target.getY() + target.getHeight() * 0.5 - cy;
+            double dz = target.getZ() - cz;
+            if (dx * dx + dy * dy + dz * dz > radius * radius
+                    || target.getHealth() >= target.getMaxHealth()) {
+                continue;
+            }
+
+            float previousHealth = target.getHealth();
+            target.heal(healAmount);
+            if (target.getHealth() <= previousHealth) {
+                continue;
+            }
+            healedAny = true;
+            world.spawnParticles(ParticleTypes.HEART, target.getX(), target.getY() + target.getHeight() * 0.75,
+                    target.getZ(), 4, 0.28, 0.25, 0.28, 0.02);
+            world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, target.getX(), target.getY() + 0.8,
+                    target.getZ(), 10, 0.35, 0.45, 0.35, 0.03);
+        }
+
+        // Do not spend mana or start a cooldown if nobody in the pulse could be healed.
+        if (!healedAny) {
+            return false;
+        }
+
+        for (int i = 0; i < 40; i++) {
+            double angle = Math.PI * 2.0 * i / 40.0;
+            double px = cx + Math.cos(angle) * radius;
+            double pz = cz + Math.sin(angle) * radius;
+            world.spawnParticles(ParticleTypes.END_ROD, px, caster.getY() + 0.12, pz,
+                    1, 0.025, 0.035, 0.025, 0.005);
+        }
+        world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, cx, cy, cz,
+                24, radius * 0.35, 0.45, radius * 0.35, 0.04);
+        world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
+                SoundCategory.PLAYERS, 0.9f, 1.6f);
         return true;
     }
 

@@ -84,5 +84,15 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
         public int frostNovaDurationTicks = 80;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int healingRuneManaCost = 24;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int healingRuneCooldownTicks = 300;
+        @ConfigEntry.Gui.Tooltip
+        public double healingRuneRadius = 6.0;
+        @ConfigEntry.Gui.Tooltip
+        public float healingRuneHealAmount = 6.0f;
     }
 }
