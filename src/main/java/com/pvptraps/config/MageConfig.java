@@ -441,6 +441,12 @@ public class MageConfig implements ConfigData {
         public int shadowVeilTargetSmokeParticleCount = 12;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int smokeVeilCastSmokeParticleCount = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int smokeVeilCastLargeSmokeParticleCount = 6;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
         public int smokeVeilRevealSmokeParticleCount = 14;
 
         @ConfigEntry.Gui.Tooltip
