@@ -240,7 +240,8 @@ public final class MageAbilityService {
 
     private static boolean applyBarrier(ServerPlayerEntity caster, PlayerEntity target, MageConfig config) {
         target.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.RESISTANCE, config.abilities.barrierDurationTicks, 1, false, true));
+                StatusEffects.RESISTANCE, config.abilities.barrierDurationTicks,
+                Math.max(0, Math.min(4, config.abilities.barrierResistanceAmplifier)), false, true));
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double sx = caster.getX(), sy = caster.getEyeY(), sz = caster.getZ();
         double tx = target.getX(), ty = target.getEyeY(), tz = target.getZ();
@@ -269,7 +270,8 @@ public final class MageAbilityService {
 
     private static boolean applyFlash(ServerPlayerEntity caster, MageConfig config) {
         caster.addStatusEffect(new StatusEffectInstance(
-                StatusEffects.RESISTANCE, config.abilities.flashDurationTicks, 0, false, true));
+                StatusEffects.RESISTANCE, config.abilities.flashDurationTicks,
+                Math.max(0, Math.min(4, config.abilities.flashResistanceAmplifier)), false, true));
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double x = caster.getX(), y = caster.getY() + 1.0, z = caster.getZ();
         world.spawnParticles(ParticleTypes.GLOW, x, y, z, 36, 0.55, 0.75, 0.55, 0.08);
@@ -461,9 +463,12 @@ public final class MageAbilityService {
             if (dx * dx + dy * dy + dz * dz > radiusSquared || !caster.canSee(target)) {
                 continue;
             }
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 4, false, true));
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration, 0, false, true));
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Math.min(duration, 40), 0, false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration,
+                    Math.max(0, Math.min(4, config.abilities.runicSealSlownessAmplifier)), false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration,
+                    Math.max(0, Math.min(4, config.abilities.frostNovaWeaknessAmplifier)), false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Math.max(1, Math.min(duration,
+                    config.abilities.runicSealGlowDurationTicks)), 0, false, true));
             world.spawnParticles(ParticleTypes.WITCH, tx, target.getY() + 0.8, tz,
                     16, 0.28, 0.45, 0.28, 0.03);
             affected = true;
@@ -530,8 +535,10 @@ public final class MageAbilityService {
             return false;
         }
         int duration = Math.max(20, Math.min(600, config.abilities.blessingDurationTicks));
-        target.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, duration, 0, false, true));
-        target.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, duration, 0, false, true));
+        target.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, duration,
+                Math.max(0, Math.min(4, config.abilities.blessingSpeedAmplifier)), false, true));
+        target.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, duration,
+                Math.max(0, Math.min(4, config.abilities.blessingRegenerationAmplifier)), false, true));
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double x = target.getX(), y = target.getY() + target.getHeight() * 0.65, z = target.getZ();
         world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, x, y, z, 22,
@@ -602,7 +609,9 @@ public final class MageAbilityService {
                 target.addVelocity(dx / distance * strength, dy / distance * strength * 0.65,
                         dz / distance * strength);
                 if (serverTick % 4 == 0) {
-                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 6, 0, false, false));
+                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,
+                            Math.max(1, Math.min(40, MageConfigManager.get().abilities.gravitySphereSlownessDurationTicks)),
+                            Math.max(0, Math.min(4, MageConfigManager.get().abilities.gravitySphereSlownessAmplifier)), false, false));
                     field.world.spawnParticles(ParticleTypes.PORTAL,
                             target.getX(), target.getY() + target.getHeight() * 0.5, target.getZ(),
                             Math.max(1, Math.min(128, MageConfigManager.get().abilities.gravitySphereParticlesPerPulse)),
@@ -692,8 +701,10 @@ public final class MageAbilityService {
             if (dx * dx + dy * dy + dz * dz > radius * radius) {
                 continue;
             }
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 2, false, true));
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration, 0, false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration,
+                    Math.max(0, Math.min(4, config.abilities.frostNovaSlownessAmplifier)), false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration,
+                    Math.max(0, Math.min(4, config.abilities.runicSealWeaknessAmplifier)), false, true));
             world.spawnParticles(ParticleTypes.SNOWFLAKE, target.getX(), target.getY() + 0.8, target.getZ(),
                     22, 0.45, 0.55, 0.45, 0.035);
             world.spawnParticles(ParticleTypes.CLOUD, target.getX(), target.getY() + 0.4, target.getZ(),
@@ -853,12 +864,12 @@ public final class MageAbilityService {
         int duration=Math.max(20,Math.min(240,config.abilities.shadowVeilDurationTicks));
         double radius=Math.max(1.5,Math.min(8.0,config.abilities.shadowVeilRadius));
         caster.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY,duration,0,true,false,true));
-        caster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED,Math.min(duration,60),1,false,true));
+        caster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSpeedDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSpeedAmplifier)),false,true));
         for(LivingEntity target:world.getEntitiesByClass(LivingEntity.class,caster.getBoundingBox().expand(radius),e->e.isAlive()&&e!=caster&&!e.isSpectator())){
             if(target instanceof PlayerEntity ally&&MageTeamAdapter.areAllies(caster,ally))continue;
             if(caster.squaredDistanceTo(target)>radius*radius||!caster.canSee(target))continue;
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,Math.min(duration,50),1,false,true));
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,30),0,false,true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSlowDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSlowAmplifier)),false,true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilBlindnessDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilBlindnessAmplifier)),false,true));
             world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),12,0.25,0.4,0.25,0.015);
         }
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
