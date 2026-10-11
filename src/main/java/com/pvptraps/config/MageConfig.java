@@ -239,6 +239,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
         public int electricBoltJumpDamageParticleCount = 20;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int electricBoltSlowDurationTicks = 30;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
+        public int electricBoltSlowAmplifier = 0;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
