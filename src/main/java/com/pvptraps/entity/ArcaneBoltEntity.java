@@ -127,7 +127,9 @@ public final class ArcaneBoltEntity extends SnowballEntity {
             hitTargets.add(next.getUuid());
             next.damage(world, world.getDamageSources().magic(), damage);
             next.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
-                    net.minecraft.entity.effect.StatusEffects.SLOWNESS, 30, 0, false, true));
+                    net.minecraft.entity.effect.StatusEffects.SLOWNESS,
+                    Math.max(1, Math.min(200, MageConfigManager.get().abilities.electricBoltSlowDurationTicks)),
+                    Math.max(0, Math.min(4, MageConfigManager.get().abilities.electricBoltSlowAmplifier)), false, true));
             spawnChainTrail(world, from, next, config.electricBoltChainParticleCount);
             world.spawnParticles(ParticleTypes.SOUL_FIRE_FLAME,
                     next.getX(), next.getY() + next.getHeight() * 0.5, next.getZ(),
