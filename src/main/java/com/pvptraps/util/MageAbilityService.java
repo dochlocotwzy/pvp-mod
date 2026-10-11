@@ -25,6 +25,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public final class MageAbilityService {
     private static final Map<UUID, ManaState> PLAYERS = new HashMap<>();
     private static final Map<UUID, SmokeVeilState> SMOKE_VEIL_TARGETS = new HashMap<>();
+    private static final Map<UUID, GravitySphereState> GRAVITY_SPHERES = new HashMap<>();
     private static long serverTick;
 
     private MageAbilityService() {
@@ -58,11 +60,13 @@ public final class MageAbilityService {
                 }
             }
             tickSmokeVeil(server);
+            tickGravitySpheres(server);
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             PLAYERS.remove(handler.player.getUuid());
             SMOKE_VEIL_TARGETS.remove(handler.player.getUuid());
+            GRAVITY_SPHERES.remove(handler.player.getUuid());
             SMOKE_VEIL_TARGETS.entrySet().removeIf(entry -> entry.getValue().ownerUuid.equals(handler.player.getUuid()));
         });
 
@@ -137,6 +141,7 @@ public final class MageAbilityService {
             case "gale_step" -> applyGaleStep(player, config);
             case "runic_seal" -> applyRunicSeal(player, config);
             case "blessing" -> applyBlessing(player, ally, config);
+            case "gravity_sphere" -> applyGravitySphere(player, config);
             default -> false;
         };
         if (!applied) {
@@ -162,7 +167,8 @@ public final class MageAbilityService {
                 || "arcane_bolt".equals(id) || "energy_impulse".equals(id)
                 || "frost_nova".equals(id) || "healing_rune".equals(id)
                 || "smoke_veil".equals(id) || "gale_step".equals(id)
-                || "runic_seal".equals(id) || "blessing".equals(id);
+                || "runic_seal".equals(id) || "blessing".equals(id)
+                || "gravity_sphere".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -177,6 +183,7 @@ public final class MageAbilityService {
             case "gale_step" -> config.abilities.galeStepManaCost;
             case "runic_seal" -> config.abilities.runicSealManaCost;
             case "blessing" -> config.abilities.blessingManaCost;
+            case "gravity_sphere" -> config.abilities.gravitySphereManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -193,6 +200,7 @@ public final class MageAbilityService {
             case "gale_step" -> config.abilities.galeStepCooldownTicks;
             case "runic_seal" -> config.abilities.runicSealCooldownTicks;
             case "blessing" -> config.abilities.blessingCooldownTicks;
+            case "gravity_sphere" -> config.abilities.gravitySphereCooldownTicks;
             default -> 1;
         };
     }
@@ -347,16 +355,16 @@ public final class MageAbilityService {
         return true;
     }
 
-    /** Server-raycast snare; allies and targets hidden behind solid blocks are excluded. */
+    /** Server-raycast snare; aimed entities take priority over the block impact point. */
     private static boolean applyRunicSeal(ServerPlayerEntity caster, MageConfig config) {
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double range = Math.max(2.0, Math.min(32.0, config.abilities.runicSealRange));
         double radius = Math.max(1.0, Math.min(4.0, config.abilities.runicSealRadius));
         int duration = Math.max(20, Math.min(200, config.abilities.runicSealDurationTicks));
-        HitResult hit = caster.raycast(range, 1.0f, false);
-        double cx = hit.getPos().x;
-        double cy = hit.getPos().y + 0.15;
-        double cz = hit.getPos().z;
+        Vec3d point = getLookPoint(caster, world, range);
+        double cx = point.x;
+        double cy = point.y + 0.15;
+        double cz = point.z;
         double radiusSquared = radius * radius;
         boolean affected = false;
 
@@ -401,6 +409,43 @@ public final class MageAbilityService {
         return true;
     }
 
+    /**
+     * Finds the closest living entity under the crosshair before a blocking wall;
+     * if no entity is aimed at, the point is the normal block-raycast impact.
+     */
+    private static Vec3d getLookPoint(ServerPlayerEntity caster, ServerWorld world, double range) {
+        Vec3d origin = new Vec3d(caster.getX(), caster.getEyeY(), caster.getZ());
+        Vec3d direction = caster.getRotationVec(1.0f).normalize();
+        HitResult blockHit = caster.raycast(range, 1.0f, false);
+        double maxDistance = blockHit.getType() == HitResult.Type.BLOCK
+                ? Math.min(range, origin.distanceTo(blockHit.getPos())) : range;
+        Box search = caster.getBoundingBox().stretch(direction.multiply(maxDistance)).expand(1.0);
+        LivingEntity nearest = null;
+        double nearestAlong = maxDistance + 1.0;
+
+        for (LivingEntity target : world.getEntitiesByClass(LivingEntity.class, search,
+                entity -> entity.isAlive() && entity != caster && !entity.isSpectator())) {
+            Vec3d toTarget = new Vec3d(target.getX() - origin.x, target.getEyeY() - origin.y,
+                    target.getZ() - origin.z);
+            double along = toTarget.dotProduct(direction);
+            if (along <= 0.0 || along > maxDistance || along >= nearestAlong || !caster.canSee(target)) {
+                continue;
+            }
+            double px = toTarget.x - direction.x * along;
+            double py = toTarget.y - direction.y * along;
+            double pz = toTarget.z - direction.z * along;
+            if (px * px + py * py + pz * pz > 0.85 * 0.85) {
+                continue;
+            }
+            nearest = target;
+            nearestAlong = along;
+        }
+        if (nearest != null) {
+            return new Vec3d(nearest.getX(), nearest.getY() + nearest.getHeight() * 0.5, nearest.getZ());
+        }
+        return blockHit.getPos();
+    }
+
     private static boolean applyBlessing(ServerPlayerEntity caster, PlayerEntity target, MageConfig config) {
         if (target == null || !target.isAlive() || target.isSpectator()
                 || target.getEntityWorld() != caster.getEntityWorld()
@@ -419,6 +464,75 @@ public final class MageAbilityService {
         world.playSound(null, x, y, z, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                 SoundCategory.PLAYERS, 0.75f, 1.55f);
         return true;
+    }
+
+    private static boolean applyGravitySphere(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double range = Math.max(4.0, Math.min(32.0, config.abilities.gravitySphereRange));
+        Vec3d point = getLookPoint(caster, world, range);
+        double radius = Math.max(2.0, Math.min(10.0, config.abilities.gravitySphereRadius));
+        int duration = Math.max(20, Math.min(200, config.abilities.gravitySphereDurationTicks));
+        double pull = Math.max(0.02, Math.min(0.35, config.abilities.gravitySpherePullStrength));
+        double cx = point.x;
+        double cy = point.y + 0.35;
+        double cz = point.z;
+        GRAVITY_SPHERES.put(caster.getUuid(), new GravitySphereState(
+                world, cx, cy, cz, radius, pull, serverTick + duration));
+        world.spawnParticles(ParticleTypes.PORTAL, cx, cy, cz, 48,
+                radius * 0.25, radius * 0.25, radius * 0.25, 0.12);
+        world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz, 18,
+                radius * 0.18, radius * 0.18, radius * 0.18, 0.035);
+        world.playSound(null, cx, cy, cz, SoundEvents.ENTITY_ENDERMAN_TELEPORT,
+                SoundCategory.PLAYERS, 0.65f, 0.65f);
+        return true;
+    }
+
+    private static void tickGravitySpheres(net.minecraft.server.MinecraftServer server) {
+        if (GRAVITY_SPHERES.isEmpty()) {
+            return;
+        }
+        GRAVITY_SPHERES.entrySet().removeIf(entry -> {
+            ServerPlayerEntity owner = server.getPlayerManager().getPlayer(entry.getKey());
+            GravitySphereState field = entry.getValue();
+            if (owner == null || !owner.isAlive() || owner.getEntityWorld() != field.world
+                    || serverTick >= field.expiresAtTick) {
+                field.world.spawnParticles(ParticleTypes.PORTAL, field.x, field.y, field.z,
+                        18, 0.35, 0.35, 0.35, 0.08);
+                return true;
+            }
+            if (serverTick % 2 != 0) {
+                return false;
+            }
+
+            Box area = new Box(field.x - field.radius, field.y - field.radius, field.z - field.radius,
+                    field.x + field.radius, field.y + field.radius, field.z + field.radius);
+            for (LivingEntity target : field.world.getEntitiesByClass(LivingEntity.class, area,
+                    entity -> entity.isAlive() && entity != owner && !entity.isSpectator())) {
+                if (target instanceof PlayerEntity ally && MageTeamAdapter.areAllies(owner, ally)) {
+                    continue;
+                }
+                double dx = field.x - target.getX();
+                double dy = field.y - (target.getY() + target.getHeight() * 0.5);
+                double dz = field.z - target.getZ();
+                double distanceSquared = dx * dx + dy * dy + dz * dz;
+                if (distanceSquared > field.radius * field.radius || distanceSquared < 0.04) {
+                    continue;
+                }
+                double distance = Math.sqrt(distanceSquared);
+                double strength = field.pullStrength * (1.0 - distance / field.radius);
+                target.addVelocity(dx / distance * strength, dy / distance * strength * 0.65,
+                        dz / distance * strength);
+                if (serverTick % 4 == 0) {
+                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 6, 0, false, false));
+                    field.world.spawnParticles(ParticleTypes.PORTAL,
+                            target.getX(), target.getY() + target.getHeight() * 0.5, target.getZ(),
+                            5, 0.18, 0.22, 0.18, 0.08);
+                }
+            }
+            field.world.spawnParticles(ParticleTypes.PORTAL, field.x, field.y, field.z,
+                    6, field.radius * 0.12, field.radius * 0.12, field.radius * 0.12, 0.05);
+            return false;
+        });
     }
 
     private static boolean applyHealingRune(ServerPlayerEntity caster, MageConfig config) {
@@ -608,6 +722,27 @@ public final class MageAbilityService {
             }
         }
         return false;
+    }
+
+    private static final class GravitySphereState {
+        private final ServerWorld world;
+        private final double x;
+        private final double y;
+        private final double z;
+        private final double radius;
+        private final double pullStrength;
+        private final long expiresAtTick;
+
+        private GravitySphereState(ServerWorld world, double x, double y, double z,
+                                   double radius, double pullStrength, long expiresAtTick) {
+            this.world = world;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.radius = radius;
+            this.pullStrength = pullStrength;
+            this.expiresAtTick = expiresAtTick;
+        }
     }
 
     private static final class SmokeVeilState {

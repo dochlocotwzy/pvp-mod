@@ -80,5 +80,12 @@
   "text.autoconfig.pvptraps_mage.option.abilities.runicSealDurationTicks": "Длительность печати (тики)",
   "text.autoconfig.pvptraps_mage.option.abilities.blessingManaCost": "Стоимость благословения",
   "text.autoconfig.pvptraps_mage.option.abilities.blessingCooldownTicks": "Перезарядка благословения (тики)",
-  "text.autoconfig.pvptraps_mage.option.abilities.blessingDurationTicks": "Длительность благословения (тики)"
+  "text.autoconfig.pvptraps_mage.option.abilities.blessingDurationTicks": "Длительность благословения (тики)",
+  "item.pvptraps.gravity_sphere": "Гравитационная сфера",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereManaCost": "Стоимость гравитационной сферы",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereCooldownTicks": "Перезарядка сферы (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRange": "Дальность сферы",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRadius": "Радиус сферы",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereDurationTicks": "Время жизни сферы (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySpherePullStrength": "Сила притяжения сферы"
 }

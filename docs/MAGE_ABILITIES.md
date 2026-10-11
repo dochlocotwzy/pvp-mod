@@ -11,6 +11,7 @@ The Mage abilities are implemented as standalone, reusable items in the `pvptrap
 - **Gale Step** — a short horizontal blink with server-side collision checks every 0.2 blocks. The destination is the last empty player bounding box; it stops before walls and does not edit blocks.
 - **Runic Seal** — a server-raycast snare at the look impact point; it slows and weakens visible enemies in a small radius, but never catches allies or targets through solid walls.
 - **Blessing** — opens the ally selector and grants the selected teammate Speed and Regeneration for a configurable duration.
+- **Gravity Sphere** — a temporary server-side field pulls non-allies toward a configurable point, briefly slowing them; it expires automatically and never edits blocks.
 
 ## Shared rules
 

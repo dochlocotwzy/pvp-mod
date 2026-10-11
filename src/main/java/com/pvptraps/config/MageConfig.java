@@ -137,5 +137,20 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 600)
         public int blessingDurationTicks = 160;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int gravitySphereManaCost = 30;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int gravitySphereCooldownTicks = 320;
+        @ConfigEntry.Gui.Tooltip
+        public double gravitySphereRange = 24.0;
+        @ConfigEntry.Gui.Tooltip
+        public double gravitySphereRadius = 5.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
+        public int gravitySphereDurationTicks = 80;
+        @ConfigEntry.Gui.Tooltip
+        public double gravitySpherePullStrength = 0.18;
     }
 }

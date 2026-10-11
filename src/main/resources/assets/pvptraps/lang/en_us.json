@@ -80,5 +80,12 @@
   "text.autoconfig.pvptraps_mage.option.abilities.runicSealDurationTicks": "Runic Seal duration (ticks)",
   "text.autoconfig.pvptraps_mage.option.abilities.blessingManaCost": "Blessing mana cost",
   "text.autoconfig.pvptraps_mage.option.abilities.blessingCooldownTicks": "Blessing cooldown (ticks)",
-  "text.autoconfig.pvptraps_mage.option.abilities.blessingDurationTicks": "Blessing duration (ticks)"
+  "text.autoconfig.pvptraps_mage.option.abilities.blessingDurationTicks": "Blessing duration (ticks)",
+  "item.pvptraps.gravity_sphere": "Gravity Sphere",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereManaCost": "Gravity Sphere mana cost",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereCooldownTicks": "Gravity Sphere cooldown (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRange": "Gravity Sphere range",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRadius": "Gravity Sphere radius",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereDurationTicks": "Gravity Sphere lifetime (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySpherePullStrength": "Gravity Sphere pull strength"
 }

@@ -47,6 +47,7 @@ public final class ModItems {
     private static final RegistryKey<Item> GALE_STEP_KEY = itemKey("gale_step");
     private static final RegistryKey<Item> RUNIC_SEAL_KEY = itemKey("runic_seal");
     private static final RegistryKey<Item> BLESSING_KEY = itemKey("blessing");
+    private static final RegistryKey<Item> GRAVITY_SPHERE_KEY = itemKey("gravity_sphere");
 
     public static final MageAbilityItem MAGIC_BARRIER = Registry.register(
             Registries.ITEM, MAGIC_BARRIER_KEY,
@@ -78,6 +79,9 @@ public final class ModItems {
     public static final MageAbilityItem BLESSING = Registry.register(
             Registries.ITEM, BLESSING_KEY,
             new MageAbilityItem(new Item.Settings().registryKey(BLESSING_KEY).maxCount(1), "blessing", true));
+    public static final MageAbilityItem GRAVITY_SPHERE = Registry.register(
+            Registries.ITEM, GRAVITY_SPHERE_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(GRAVITY_SPHERE_KEY).maxCount(1), "gravity_sphere", false));
 
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
@@ -101,6 +105,7 @@ public final class ModItems {
                     entries.add(GALE_STEP);
                     entries.add(RUNIC_SEAL);
                     entries.add(BLESSING);
+                    entries.add(GRAVITY_SPHERE);
                 });
     }
 }
