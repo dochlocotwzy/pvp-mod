@@ -609,7 +609,11 @@ public final class MageAbilityService {
                         0.35, 0.35, 0.35, 0.08);
                 return true;
             }
-            if (serverTick % 2 != 0) {
+            int pullInterval = Math.max(1, Math.min(20,
+                    MageConfigManager.get().abilities.gravitySpherePullIntervalTicks));
+            int effectInterval = Math.max(1, Math.min(40,
+                    MageConfigManager.get().abilities.gravitySphereEffectIntervalTicks));
+            if (serverTick % pullInterval != 0) {
                 return false;
             }
 
@@ -631,7 +635,7 @@ public final class MageAbilityService {
                 double strength = field.pullStrength * (1.0 - distance / field.radius);
                 target.addVelocity(dx / distance * strength, dy / distance * strength * 0.65,
                         dz / distance * strength);
-                if (serverTick % 4 == 0) {
+                if (serverTick % effectInterval == 0) {
                     target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,
                             Math.max(1, Math.min(40, MageConfigManager.get().abilities.gravitySphereSlownessDurationTicks)),
                             Math.max(0, Math.min(4, MageConfigManager.get().abilities.gravitySphereSlownessAmplifier)), false, false));
@@ -903,7 +907,8 @@ public final class MageAbilityService {
                         1, 0.035, 0.035, 0.035, 0.015);
             }
             world.spawnParticles(ParticleTypes.SWEEP_ATTACK, center.x, center.y, center.z,
-                    1, ringRadius * 0.2, ringRadius * 0.2, ringRadius * 0.2, 0.0);
+                    Math.max(1, Math.min(16, config.abilities.gustOfWindSweepParticleCount)),
+                    ringRadius * 0.2, ringRadius * 0.2, ringRadius * 0.2, 0.0);
         }
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_BREEZE_WIND_BURST,SoundCategory.PLAYERS,0.9f,1.2f);
         return true;
