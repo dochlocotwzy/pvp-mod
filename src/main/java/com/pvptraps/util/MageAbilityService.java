@@ -384,7 +384,6 @@ public final class MageAbilityService {
             target.addVelocity(dx / horizontalDistance * strength,
                     0.12 + Math.min(0.28, strength * 0.12),
                     dz / horizontalDistance * strength);
-            target.velocityModified = true;
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     Math.max(1, Math.min(64, config.abilities.energyImpulseTargetParticleCount)),
                     0.18, 0.25, 0.18, 0.04);
