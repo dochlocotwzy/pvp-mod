@@ -79,26 +79,44 @@ public final class ArcaneBoltEntity extends SnowballEntity {
         }
 
         livedTicks++;
+        var config = MageConfigManager.get().abilities;
         if (fireball) {
-            world.spawnParticles(ParticleTypes.FLAME, getX(), getY(), getZ(), 5, 0.06, 0.06, 0.06, 0.015);
-            world.spawnParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(), 2, 0.035, 0.035, 0.035, 0.005);
+            world.spawnParticles(ParticleTypes.FLAME, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.fireballTrailFlameParticleCount)),
+                    0.06, 0.06, 0.06, 0.015);
+            world.spawnParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.fireballTrailSmokeParticleCount)),
+                    0.035, 0.035, 0.035, 0.005);
         } else if (electricBolt) {
-            world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(), 5, 0.06, 0.06, 0.06, 0.035);
-            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 1, 0.02, 0.02, 0.02, 0.005);
+            world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.electricBoltTrailSparkParticleCount)),
+                    0.06, 0.06, 0.06, 0.035);
+            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.electricBoltTrailEndRodParticleCount)),
+                    0.02, 0.02, 0.02, 0.005);
         } else {
-            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 2, 0.015, 0.015, 0.015, 0.005);
-            world.spawnParticles(ParticleTypes.ENCHANT, getX(), getY(), getZ(), 2, 0.06, 0.06, 0.06, 0.12);
+            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.arcaneBoltTrailParticleCount)),
+                    0.015, 0.015, 0.015, 0.005);
+            world.spawnParticles(ParticleTypes.ENCHANT, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.arcaneBoltTrailParticleCount)),
+                    0.06, 0.06, 0.06, 0.12);
             if (livedTicks % 3 == 0) {
                 world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(),
-                        1, 0.025, 0.025, 0.025, 0.015);
+                        Math.max(1, Math.min(128, config.arcaneBoltSparkParticleCount)),
+                        0.025, 0.025, 0.025, 0.015);
             }
         }
         double dx = getX() - originX;
         double dy = getY() - originY;
         double dz = getZ() - originZ;
         if (livedTicks >= lifetimeTicks || dx * dx + dy * dy + dz * dz >= maxRange * maxRange) {
-            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 12, 0.18, 0.18, 0.18, 0.04);
-            world.spawnParticles(ParticleTypes.FIREWORK, getX(), getY(), getZ(), 8, 0.12, 0.12, 0.12, 0.03);
+            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.projectileExpireEndRodParticleCount)),
+                    0.18, 0.18, 0.18, 0.04);
+            world.spawnParticles(ParticleTypes.FIREWORK, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.projectileExpireFireworkParticleCount)),
+                    0.12, 0.12, 0.12, 0.03);
             discard();
         }
     }
@@ -166,7 +184,9 @@ public final class ArcaneBoltEntity extends SnowballEntity {
             if (dx * dx + dz * dz <= radius * radius) {
                 target.setOnFireFor(igniteSeconds);
                 world.spawnParticles(ParticleTypes.FLAME, target.getX(), target.getY() + 0.6,
-                        target.getZ(), 8, 0.18, 0.25, 0.18, 0.025);
+                        target.getZ(), Math.max(1, Math.min(128,
+                                MageConfigManager.get().abilities.fireballTargetFlameParticleCount)),
+                        0.18, 0.25, 0.18, 0.025);
             }
         }
     }
@@ -176,6 +196,7 @@ public final class ArcaneBoltEntity extends SnowballEntity {
         if (!(getEntityWorld() instanceof ServerWorld world)) {
             return;
         }
+        var config = MageConfigManager.get().abilities;
 
         if (hitResult instanceof EntityHitResult entityHitResult) {
             Entity hit = entityHitResult.getEntity();
@@ -204,21 +225,35 @@ public final class ArcaneBoltEntity extends SnowballEntity {
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 igniteNearbyOnGroundImpact(world, getX(), getY(), getZ(), getOwner());
             }
-            world.spawnParticles(ParticleTypes.FLAME, getX(), getY(), getZ(), 24, 0.28, 0.28, 0.28, 0.05);
-            world.spawnParticles(ParticleTypes.LAVA, getX(), getY(), getZ(), 5, 0.18, 0.18, 0.18, 0.02);
-            world.spawnParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(), 14, 0.22, 0.22, 0.22, 0.02);
+            world.spawnParticles(ParticleTypes.FLAME, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.fireballImpactFlameParticleCount)),
+                    0.28, 0.28, 0.28, 0.05);
+            world.spawnParticles(ParticleTypes.LAVA, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.fireballImpactLavaParticleCount)),
+                    0.18, 0.18, 0.18, 0.02);
+            world.spawnParticles(ParticleTypes.SMOKE, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.fireballImpactSmokeParticleCount)),
+                    0.22, 0.22, 0.22, 0.02);
             world.playSound(null, getX(), getY(), getZ(),
                     net.minecraft.sound.SoundEvents.ENTITY_GENERIC_EXPLODE.value(),
                     net.minecraft.sound.SoundCategory.PLAYERS, 0.45f, 1.25f);
         } else if (electricBolt) {
-            world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(), 28, 0.22, 0.22, 0.22, 0.06);
-            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 12, 0.18, 0.18, 0.18, 0.04);
+            world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.electricBoltImpactSparkParticleCount)),
+                    0.22, 0.22, 0.22, 0.06);
+            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.electricBoltImpactEndRodParticleCount)),
+                    0.18, 0.18, 0.18, 0.04);
             world.playSound(null, getX(), getY(), getZ(),
                     net.minecraft.sound.SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                     net.minecraft.sound.SoundCategory.PLAYERS, 0.55f, 1.9f);
         } else {
-            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(), 14, 0.18, 0.18, 0.18, 0.04);
-            world.spawnParticles(ParticleTypes.ENCHANT, getX(), getY(), getZ(), 18, 0.22, 0.22, 0.22, 0.4);
+            world.spawnParticles(ParticleTypes.END_ROD, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.arcaneBoltImpactEndRodParticleCount)),
+                    0.18, 0.18, 0.18, 0.04);
+            world.spawnParticles(ParticleTypes.ENCHANT, getX(), getY(), getZ(),
+                    Math.max(1, Math.min(128, config.arcaneBoltImpactEnchantParticleCount)),
+                    0.22, 0.22, 0.22, 0.4);
             world.playSound(null, getX(), getY(), getZ(),
                     net.minecraft.sound.SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,
                     net.minecraft.sound.SoundCategory.PLAYERS, 0.45f, 1.7f);
