@@ -41,6 +41,7 @@ sourceSets.main.java.exclude "com/pvptraps/config/ConfigManager.java", "com/pvpt
 
 tasks.register("prepareMageNamespaceResources", Copy) {
     from("src/main/resources/assets/pvptraps") {
+        exclude "textures/**"
         eachFile { details ->
             details.path = details.path.replaceFirst(/^/, "")
             if (details.name.endsWith(".json")) {
