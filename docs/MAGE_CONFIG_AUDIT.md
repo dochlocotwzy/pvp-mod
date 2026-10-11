@@ -30,7 +30,8 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 
 - Added configurable status-effect amplifiers/durations for barrier, flash, frost nova, runic seal, blessing, gravity sphere, shadow veil, and electric bolt.
 - Scaled energy-impulse velocity rather than using the configured value directly as blocks/tick; retained distance falloff and a safety cap.
-- Verified that configuration references used by `MageAbilityService` resolve to fields in `MageConfig`. This is a source consistency check, not a successful Gradle build result.
+- Rechecked source/config field consistency across `MageAbilityService` and `ArcaneBoltEntity`; all referenced ability fields resolve to `MageConfig.AbilitySettings` (the static scan's only apparent missing name was the `MageConfigManager` class itself, not a config field). This is a source consistency check, not a successful Gradle build result.
+- Fixed electric bolt's direct-hit slowness to use `electricBoltSlowDurationTicks` and `electricBoltSlowAmplifier`, matching chained hits instead of silently hardcoding 30 ticks/amplifier 0.
 
 ## Required validation before closing the audit
 
