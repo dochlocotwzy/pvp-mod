@@ -369,13 +369,22 @@ public final class MageAbilityService {
             if (distance > radius) {
                 continue;
             }
-            // Treat the configured value as impulse power, not raw blocks/tick. Raw values like 8.0
-            // create extreme velocities in Minecraft; this scale targets a readable ~4-5 block shove
-            // near the center while retaining a distance falloff and a hard safety cap.
-            double strength = Math.min(1.35, knockback * 0.16 * (1.0 - distance / (radius + 0.01)));
-            double horizontalDistance = Math.max(0.1, Math.sqrt(dx * dx + dz * dz));
-            target.addVelocity(dx / horizontalDistance * strength, 0.32 + Math.max(0.0, dy / distance) * strength * 0.55
-                    + strength * 0.28, dz / horizontalDistance * strength);
+            // Strong horizontal blast with distance falloff. Keep the vertical component
+            // deliberately smaller so this reads as a shove rather than a jump.
+            double falloff = Math.max(0.0, 1.0 - distance / (radius + 0.01));
+            double strength = Math.min(2.4, knockback * 0.30 * falloff);
+            double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
+            if (horizontalDistance < 0.15) {
+                // If caster and target overlap horizontally, push away from the caster's facing.
+                double yaw = Math.toRadians(caster.getYaw());
+                dx = -Math.sin(yaw);
+                dz = Math.cos(yaw);
+                horizontalDistance = 1.0;
+            }
+            target.addVelocity(dx / horizontalDistance * strength,
+                    0.12 + Math.min(0.28, strength * 0.12),
+                    dz / horizontalDistance * strength);
+            target.velocityModified = true;
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     Math.max(1, Math.min(64, config.abilities.energyImpulseTargetParticleCount)),
                     0.18, 0.25, 0.18, 0.04);
@@ -791,7 +800,11 @@ public final class MageAbilityService {
                     StatusEffects.INVISIBILITY, duration, 0, true, false, true));
             SMOKE_VEIL_TARGETS.put(target.getUuid(),
                     new SmokeVeilState(caster.getUuid(), serverTick + duration));
-            // Do not emit particles from an entity that has just become invisible.
+            // One-shot cast decoration only. The invisible player emits no ongoing particles.
+            world.spawnParticles(ParticleTypes.SMOKE, target.getX(), target.getY() + 0.9, target.getZ(),
+                    18, 0.28, 0.55, 0.28, 0.015);
+            world.spawnParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY() + 0.8, target.getZ(),
+                    6, 0.18, 0.35, 0.18, 0.005);
             affected++;
         }
 
