@@ -264,6 +264,9 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
         public int gravitySphereParticleMultiplier = 4;
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 32)
+        public int gravitySphereBaseParticleCount = 6;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
         public int fireballGroundIgniteRadius = 1;
         @ConfigEntry.Gui.Tooltip
