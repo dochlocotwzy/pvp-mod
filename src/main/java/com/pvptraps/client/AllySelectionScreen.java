@@ -1,8 +1,8 @@
-package com.pvptraps.client;
+package com.pvpmage.client;
 
-import com.pvptraps.config.MageConfigManager;
-import com.pvptraps.network.MageCastPayload;
-import com.pvptraps.util.MageTeamAdapter;
+import com.pvpmage.config.MageConfigManager;
+import com.pvpmage.network.MageCastPayload;
+import com.pvpmage.util.MageTeamAdapter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
