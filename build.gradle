@@ -152,7 +152,6 @@ tasks.named("jar") {
     exclude "com/pvptraps/item/TrapItem*.class"
     exclude "com/pvptraps/config/ConfigManager*.class"
     exclude "com/pvptraps/config/TrapConfig*.class"
-    exclude "com/pvptraps/config/PvpTrapsModMenuIntegration*.class"
     exclude "com/pvptraps/util/TrapEffectScheduler*.class"
     exclude "com/pvptraps/util/TrapEffects*.class"
     exclude "assets/pvptraps/models/item/*trap*.json"
