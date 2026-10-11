@@ -469,7 +469,7 @@ public final class MageAbilityService {
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration,
                     Math.max(0, Math.min(4, config.abilities.runicSealSlownessAmplifier)), false, true));
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration,
-                    Math.max(0, Math.min(4, config.abilities.frostNovaWeaknessAmplifier)), false, true));
+                    Math.max(0, Math.min(4, config.abilities.runicSealWeaknessAmplifier)), false, true));
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Math.max(1, Math.min(duration,
                     config.abilities.runicSealGlowDurationTicks)), 0, false, true));
             world.spawnParticles(ParticleTypes.WITCH, tx, target.getY() + 0.8, tz,
@@ -707,7 +707,7 @@ public final class MageAbilityService {
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration,
                     Math.max(0, Math.min(4, config.abilities.frostNovaSlownessAmplifier)), false, true));
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration,
-                    Math.max(0, Math.min(4, config.abilities.runicSealWeaknessAmplifier)), false, true));
+                    Math.max(0, Math.min(4, config.abilities.frostNovaWeaknessAmplifier)), false, true));
             world.spawnParticles(ParticleTypes.SNOWFLAKE, target.getX(), target.getY() + 0.8, target.getZ(),
                     Math.max(1, Math.min(64, config.abilities.frostNovaTargetParticleCount)),
                     0.45, 0.55, 0.45, 0.035);
