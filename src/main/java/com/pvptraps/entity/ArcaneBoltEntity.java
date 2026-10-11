@@ -11,6 +11,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
@@ -37,7 +38,7 @@ public final class ArcaneBoltEntity extends SnowballEntity {
 
     @Override
     public ItemStack getStack() {
-        if (fireball) return ModItems.FIREBALL.getDefaultStack();
+        if (fireball) return Items.FIRE_CHARGE.getDefaultStack();
         if (electricBolt) return ModItems.ELECTRIC_BOLT.getDefaultStack();
         return ModItems.ARCANE_BOLT.getDefaultStack();
     }
