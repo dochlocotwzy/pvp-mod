@@ -372,10 +372,11 @@ public final class MageAbilityService {
             // Treat the configured value as impulse power, not raw blocks/tick. Raw values like 8.0
             // create extreme velocities in Minecraft; this scale targets a readable ~4-5 block shove
             // near the center while retaining a distance falloff and a hard safety cap.
-            double strength = Math.min(0.75, knockback * 0.08 * (1.0 - distance / (radius + 0.01)));
+            double strength = Math.min(1.35, knockback * 0.16 * (1.0 - distance / (radius + 0.01)));
             double horizontalDistance = Math.max(0.1, Math.sqrt(dx * dx + dz * dz));
-            target.addVelocity(dx / horizontalDistance * strength, 0.25 + Math.max(0.0, dy / distance) * strength * 0.5
-                    + strength * 0.2, dz / horizontalDistance * strength);
+            target.addVelocity(dx / horizontalDistance * strength, 0.32 + Math.max(0.0, dy / distance) * strength * 0.55
+                    + strength * 0.28, dz / horizontalDistance * strength);
+            target.velocityModified = true;
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     Math.max(1, Math.min(64, config.abilities.energyImpulseTargetParticleCount)),
                     0.18, 0.25, 0.18, 0.04);
