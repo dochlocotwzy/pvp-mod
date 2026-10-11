@@ -189,8 +189,11 @@ public final class ArcaneBoltEntity extends SnowballEntity {
                     if (fireball) {
                         living.setOnFireFor(igniteSeconds);
                     } else if (electricBolt) {
+                        var config = MageConfigManager.get().abilities;
                         living.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
-                                net.minecraft.entity.effect.StatusEffects.SLOWNESS, 30, 0, false, true));
+                                net.minecraft.entity.effect.StatusEffects.SLOWNESS,
+                                Math.max(1, Math.min(200, config.electricBoltSlowDurationTicks)),
+                                Math.max(0, Math.min(4, config.electricBoltSlowAmplifier)), false, true));
                         chainLightning(world, living, owner);
                     }
                 }
