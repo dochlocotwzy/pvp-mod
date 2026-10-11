@@ -359,7 +359,10 @@ public final class MageAbilityService {
             if (distance > radius) {
                 continue;
             }
-            double strength = knockback * (1.0 - distance / (radius + 0.01));
+            // Treat the configured value as impulse power, not raw blocks/tick. Raw values like 8.0
+            // create extreme velocities in Minecraft; this scale targets a readable ~4-5 block shove
+            // near the center while retaining a distance falloff and a hard safety cap.
+            double strength = Math.min(0.75, knockback * 0.08 * (1.0 - distance / (radius + 0.01)));
             double horizontalDistance = Math.max(0.1, Math.sqrt(dx * dx + dz * dz));
             target.addVelocity(dx / horizontalDistance * strength, 0.25 + Math.max(0.0, dy / distance) * strength * 0.5
                     + strength * 0.2, dz / horizontalDistance * strength);
