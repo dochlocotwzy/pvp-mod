@@ -1,4 +1,4 @@
-package com.pvptraps.item;
+package com.pvpmage.item;
 
 import net.minecraft.item.Item;
 
