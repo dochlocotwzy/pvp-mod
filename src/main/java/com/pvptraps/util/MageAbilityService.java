@@ -245,21 +245,24 @@ public final class MageAbilityService {
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double sx = caster.getX(), sy = caster.getEyeY(), sz = caster.getZ();
         double tx = target.getX(), ty = target.getEyeY(), tz = target.getZ();
-        for (int i = 0; i <= 16; i++) {
-            double t = i / 16.0;
+        int beamSegments = Math.max(1, Math.min(128, config.abilities.barrierBeamSegments));
+        for (int i = 0; i <= beamSegments; i++) {
+            double t = (double) i / beamSegments;
             world.spawnParticles(ParticleTypes.END_ROD,
                     sx + (tx - sx) * t, sy + (ty - sy) * t, sz + (tz - sz) * t,
                     1, 0.0, 0.0, 0.0, 0.0);
         }
         // Visible rotating-looking shield ring around the protected ally.
-        for (int i = 0; i < 32; i++) {
-            double angle = Math.PI * 2.0 * i / 32.0;
+        int ringSegments = Math.max(1, Math.min(128, config.abilities.barrierRingSegments));
+        for (int i = 0; i < ringSegments; i++) {
+            double angle = Math.PI * 2.0 * i / ringSegments;
             double px = tx + Math.cos(angle) * 0.72;
             double pz = tz + Math.sin(angle) * 0.72;
             world.spawnParticles(ParticleTypes.END_ROD, px, ty - 0.45, pz, 1, 0, 0.015, 0, 0);
             world.spawnParticles(ParticleTypes.ENCHANT, px, ty + 0.35, pz, 1, 0, 0.01, 0, 0);
         }
-        world.spawnParticles(ParticleTypes.ENCHANT, tx, ty, tz, 32, 0.4, 0.6, 0.4, 0.6);
+        world.spawnParticles(ParticleTypes.ENCHANT, tx, ty, tz,
+                Math.max(1, Math.min(128, config.abilities.barrierCenterParticleCount)), 0.4, 0.6, 0.4, 0.6);
         world.playSound(null, tx, ty, tz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                 SoundCategory.PLAYERS, 0.9f, 1.35f);
         world.playSound(null, tx, ty, tz, SoundEvents.ITEM_TOTEM_USE,
@@ -274,8 +277,10 @@ public final class MageAbilityService {
                 Math.max(0, Math.min(4, config.abilities.flashResistanceAmplifier)), false, true));
         ServerWorld world = (ServerWorld) caster.getEntityWorld();
         double x = caster.getX(), y = caster.getY() + 1.0, z = caster.getZ();
-        world.spawnParticles(ParticleTypes.GLOW, x, y, z, 36, 0.55, 0.75, 0.55, 0.08);
-        world.spawnParticles(ParticleTypes.FIREWORK, x, y, z, 22, 0.6, 0.7, 0.6, 0.12);
+        world.spawnParticles(ParticleTypes.GLOW, x, y, z,
+                Math.max(1, Math.min(128, config.abilities.flashGlowParticleCount)), 0.55, 0.75, 0.55, 0.08);
+        world.spawnParticles(ParticleTypes.FIREWORK, x, y, z,
+                Math.max(1, Math.min(128, config.abilities.flashFireworkParticleCount)), 0.6, 0.7, 0.6, 0.12);
         world.playSound(null, x, y, z, SoundEvents.BLOCK_BEACON_POWER_SELECT,
                 SoundCategory.PLAYERS, 0.8f, 1.65f);
         world.playSound(null, x, y, z, SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST,
@@ -297,7 +302,8 @@ public final class MageAbilityService {
             return false;
         }
         world.spawnParticles(ParticleTypes.ENCHANT, bolt.getX(), bolt.getY(), bolt.getZ(),
-                12, 0.12, 0.12, 0.12, 0.3);
+                Math.max(1, Math.min(128, config.abilities.arcaneBoltLaunchParticleCount)),
+                0.12, 0.12, 0.12, 0.3);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_BREEZE_SHOOT, SoundCategory.PLAYERS, 0.8f, 1.35f);
         return true;
@@ -318,7 +324,8 @@ public final class MageAbilityService {
             return false;
         }
         world.spawnParticles(ParticleTypes.FLAME, fireball.getX(), fireball.getY(), fireball.getZ(),
-                10, 0.12, 0.12, 0.12, 0.025);
+                Math.max(1, Math.min(128, config.abilities.fireballLaunchParticleCount)),
+                0.12, 0.12, 0.12, 0.025);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 0.8f, 0.85f);
         return true;
@@ -338,7 +345,8 @@ public final class MageAbilityService {
             return false;
         }
         world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, bolt.getX(), bolt.getY(), bolt.getZ(),
-                18, 0.12, 0.12, 0.12, 0.035);
+                Math.max(1, Math.min(128, config.abilities.electricBoltLaunchParticleCount)),
+                0.12, 0.12, 0.12, 0.035);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_BREEZE_SHOOT, SoundCategory.PLAYERS, 0.75f, 1.8f);
         return true;
