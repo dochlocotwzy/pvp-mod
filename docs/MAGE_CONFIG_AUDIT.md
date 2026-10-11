@@ -18,12 +18,12 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 | `gale_step` | blink distance, departure/midpoint/arrival particle counts, mana, cooldown | Collision sampling step is configurable (`galeStepCollisionSampleStep`, clamped to 0.01–0.25 blocks). |
 | `runic_seal` | range, radius, duration, slowness/weakness amplifiers, glow duration, target/center particle counts, ring segments, mana, cooldown | Particle spread remains implementation-defined. |
 | `blessing` | duration, speed/regeneration amplifiers, target range, villager/end-rod particle counts, mana, cooldown | Particle spread remains implementation-defined. |
-| `gravity_sphere` | cast range, radius, duration, pull strength, particle multiplier, initial portal/end-rod counts, pulse/expiry counts, slowness duration/amplifier, mana, cooldown | Particle spread and two-tick pulse cadence remain implementation-defined. |
+| `gravity_sphere` | cast range, radius, duration, pull strength, particle multiplier, initial portal/end-rod counts, pulse/expiry counts, slowness duration/amplifier, mana, cooldown | Particle spread remains implementation-defined; pull pulse and status-effect/particle cadence are configurable. |
 | `fireball` | speed, range, lifetime, damage, ignition duration/radius, launch/trail/impact/target particle counts, mana, cooldown | Ground-impact splash only occurs on block collision; direct entity-hit behavior remains separate. |
 | `electric_bolt` | speed, range, lifetime, damage, launch/trail/impact counts, chain target limit/range/trail/jump-impact counts, spark cadence/count, slow duration/amplifier, mana, cooldown | Chain target uniqueness is enforced per cast. Confirm target count and cyan trail in-game. |
 | `ice_wall` | distance, width, height, duration, placement/removal particle counts, mana, cooldown | Placement rules and block effects need gameplay validation. |
 | `magic_doppelganger` | duration, spawn/idle/expiry particle counts, mana, cooldown | Placement search minimum, step, and attempt count are configurable. |
-| `gust_of_wind` | range, strength, cone angle, visual layers, particles per layer, target cloud/poof counts, mana, cooldown | One sweep particle per layer and particle spread remain implementation-defined. |
+| `gust_of_wind` | range, strength, cone angle, visual layers, particles per layer, target cloud/poof counts, mana, cooldown | Sweep particle count per layer is configurable; particle spread remains implementation-defined. |
 | `shadow_veil` | radius, duration, speed/slow/blindness durations and amplifiers, target smoke count, mana, cooldown | Potion particles are disabled for the caster's invisibility/speed effects; validate visibility and ally/enemy behavior in-game. |
 
 ## Changes made in this branch
