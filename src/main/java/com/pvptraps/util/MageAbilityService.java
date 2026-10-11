@@ -801,9 +801,11 @@ public final class MageAbilityService {
                     new SmokeVeilState(caster.getUuid(), serverTick + duration));
             // One-shot cast decoration only. The invisible player emits no ongoing particles.
             world.spawnParticles(ParticleTypes.SMOKE, target.getX(), target.getY() + 0.9, target.getZ(),
-                    18, 0.28, 0.55, 0.28, 0.015);
+                    Math.max(1, Math.min(128, config.abilities.smokeVeilCastSmokeParticleCount)),
+                    0.28, 0.55, 0.28, 0.015);
             world.spawnParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY() + 0.8, target.getZ(),
-                    6, 0.18, 0.35, 0.18, 0.005);
+                    Math.max(1, Math.min(128, config.abilities.smokeVeilCastLargeSmokeParticleCount)),
+                    0.18, 0.35, 0.18, 0.005);
             affected++;
         }
 
