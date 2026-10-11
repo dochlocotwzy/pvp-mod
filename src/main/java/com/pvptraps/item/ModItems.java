@@ -1,4 +1,4 @@
-package com.pvptraps.item;
+package com.pvpmage.item;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -13,7 +13,7 @@ public final class ModItems {
     }
 
     private static RegistryKey<Item> itemKey(String path) {
-        return RegistryKey.of(RegistryKeys.ITEM, Identifier.of("pvptraps", path));
+        return RegistryKey.of(RegistryKeys.ITEM, Identifier.of("pvpmage", path));
     }
 
     private static final RegistryKey<Item> MAGIC_BARRIER_KEY = itemKey("magic_barrier");
