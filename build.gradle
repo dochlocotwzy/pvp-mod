@@ -37,6 +37,7 @@ processResources {
 
 sourceSets.main.resources.srcDir("$buildDir/generated/resources/mageTextures")
 sourceSets.main.resources.srcDir("$buildDir/generated/resources/mageNamespace")
+sourceSets.main.java.exclude "com/pvptraps/config/ConfigManager.java", "com/pvptraps/config/TrapConfig.java", "com/pvptraps/entity/TrapEntity*.java", "com/pvptraps/util/TrapEffectScheduler.java", "com/pvptraps/util/TrapEffects.java"
 
 tasks.register("prepareMageNamespaceResources", Copy) {
     from("src/main/resources/assets/pvptraps") {
