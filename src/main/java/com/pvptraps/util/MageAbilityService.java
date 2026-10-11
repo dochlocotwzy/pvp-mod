@@ -23,7 +23,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 
 import java.util.HashMap;
@@ -353,7 +353,7 @@ public final class MageAbilityService {
         double range = Math.max(2.0, Math.min(32.0, config.abilities.runicSealRange));
         double radius = Math.max(1.0, Math.min(4.0, config.abilities.runicSealRadius));
         int duration = Math.max(20, Math.min(200, config.abilities.runicSealDurationTicks));
-        BlockHitResult hit = caster.raycast(range, 1.0f, false);
+        HitResult hit = caster.raycast(range, 1.0f, false);
         double cx = hit.getPos().x;
         double cy = hit.getPos().y + 0.15;
         double cz = hit.getPos().z;
