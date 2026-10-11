@@ -339,6 +339,88 @@ public class MageConfig implements ConfigData {
         public int fireballTargetFlameParticleCount = 8;
 
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int galeStepDepartureCloudParticleCount = 14;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int galeStepMidpointSparkParticleCount = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int galeStepArrivalCloudParticleCount = 16;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int runicSealTargetParticleCount = 16;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 8, max = 128)
+        public int runicSealRingSegments = 40;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int runicSealCenterParticleCount = 22;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int blessingVillagerParticleCount = 22;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int blessingEndRodParticleCount = 14;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 256)
+        public int gravitySphereInitialPortalParticleCount = 48;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 256)
+        public int gravitySphereInitialEndRodParticleCount = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int gravitySphereExpireParticleCount = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int healingRuneTargetHeartParticleCount = 4;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int healingRuneTargetVillagerParticleCount = 10;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 8, max = 128)
+        public int healingRuneRingSegments = 40;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int healingRuneCenterParticleCount = 24;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int frostNovaTargetCloudParticleCount = 8;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int frostNovaRingSnowflakeParticleCount = 2;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int frostNovaRingEndRodParticleCount = 1;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int iceWallPlacementParticleCount = 4;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int iceWallRemovalParticleCount = 3;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int doppelgangerSpawnPortalParticleCount = 28;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int doppelgangerSpawnEndRodParticleCount = 12;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 32)
+        public int doppelgangerIdleParticleCount = 2;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int doppelgangerExpireParticleCount = 16;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int gustOfWindTargetCloudParticleCount = 12;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int gustOfWindTargetPoofParticleCount = 6;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int shadowVeilTargetSmokeParticleCount = 12;
+
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int iceWallManaCost = 32;
         @ConfigEntry.Gui.Tooltip
