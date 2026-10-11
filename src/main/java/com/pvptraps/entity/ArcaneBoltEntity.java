@@ -53,8 +53,10 @@ public final class ArcaneBoltEntity extends SnowballEntity {
     public ItemStack getStack() {
         // FlyingItemEntityRenderer renders on the client. These variants must be tracked
         // over the network; ordinary Java fields remain at their defaults on remote clients.
-        if (getDataTracker().get(TRACKED_FIREBALL)) return net.minecraft.item.Items.FIRE_CHARGE.getDefaultStack();
-        if (getDataTracker().get(TRACKED_ELECTRIC_BOLT)) return ModItems.ELECTRIC_BOLT.getDefaultStack();
+        if (getDataTracker().get(TRACKED_FIREBALL)) return ModItems.FIREBALL.getDefaultStack();
+        // A slim white rod is only the projectile's body; the synced electric spark trail
+        // supplies the blue-white lightning look without reusing the purple spell icon.
+        if (getDataTracker().get(TRACKED_ELECTRIC_BOLT)) return net.minecraft.item.Items.END_ROD.getDefaultStack();
         return ModItems.ARCANE_BOLT.getDefaultStack();
     }
 
