@@ -1,6 +1,6 @@
-package com.pvptraps.network;
+package com.pvpmage.network;
 
-import com.pvptraps.PvpTraps;
+import com.pvpmage.PvpTraps;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
