@@ -7,6 +7,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
@@ -20,6 +23,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class ArcaneBoltEntity extends SnowballEntity {
+    private static final TrackedData<Boolean> TRACKED_FIREBALL =
+            DataTracker.registerData(ArcaneBoltEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Boolean> TRACKED_ELECTRIC_BOLT =
+            DataTracker.registerData(ArcaneBoltEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private double originX;
     private double originY;
     private double originZ;
@@ -36,15 +43,26 @@ public final class ArcaneBoltEntity extends SnowballEntity {
     }
 
     @Override
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(TRACKED_FIREBALL, false);
+        builder.add(TRACKED_ELECTRIC_BOLT, false);
+    }
+
+    @Override
     public ItemStack getStack() {
-        if (fireball) return ModItems.FIREBALL.getDefaultStack();
-        if (electricBolt) return ModItems.ELECTRIC_BOLT.getDefaultStack();
+        // FlyingItemEntityRenderer renders on the client. These variants must be tracked
+        // over the network; ordinary Java fields remain at their defaults on remote clients.
+        if (getDataTracker().get(TRACKED_FIREBALL)) return net.minecraft.item.Items.FIRE_CHARGE.getDefaultStack();
+        if (getDataTracker().get(TRACKED_ELECTRIC_BOLT)) return ModItems.ELECTRIC_BOLT.getDefaultStack();
         return ModItems.ARCANE_BOLT.getDefaultStack();
     }
 
     public void configure(double maxRange, int lifetimeTicks, float damage) {
         this.fireball = false;
         this.electricBolt = false;
+        getDataTracker().set(TRACKED_FIREBALL, false);
+        getDataTracker().set(TRACKED_ELECTRIC_BOLT, false);
         this.maxRange = Math.max(1.0, maxRange);
         this.lifetimeTicks = Math.max(1, lifetimeTicks);
         this.damage = Math.max(0.0f, damage);
@@ -57,12 +75,14 @@ public final class ArcaneBoltEntity extends SnowballEntity {
     public void configureFireball(double maxRange, int lifetimeTicks, float damage, int igniteSeconds) {
         configure(maxRange, lifetimeTicks, damage);
         this.fireball = true;
+        getDataTracker().set(TRACKED_FIREBALL, true);
         this.igniteSeconds = Math.max(1, Math.min(10, igniteSeconds));
     }
 
     public void configureElectricBolt(double maxRange, int lifetimeTicks, float damage) {
         configure(maxRange, lifetimeTicks, damage);
         this.electricBolt = true;
+        getDataTracker().set(TRACKED_ELECTRIC_BOLT, true);
     }
 
     @Override
