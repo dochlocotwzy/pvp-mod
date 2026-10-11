@@ -820,14 +820,16 @@ public final class MageAbilityService {
             world.spawnParticles(ParticleTypes.POOF,target.getX(),target.getY()+0.4,target.getZ(),6,0.18,0.2,0.18,0.02);
         }
         // Layered corkscrew gust: several expanding rings make the wind readable as a cone.
-        for (int layer = 1; layer <= 8; layer++) {
-            double progress = layer / 8.0;
+        int visualLayers = Math.max(2, Math.min(16, config.abilities.gustOfWindVisualLayers));
+        int particlesPerLayer = Math.max(4, Math.min(48, config.abilities.gustOfWindParticlesPerLayer));
+        for (int layer = 1; layer <= visualLayers; layer++) {
+            double progress = (double) layer / visualLayers;
             double step = range * progress;
             double ringRadius = 0.18 + progress * 0.9;
             Vec3d center = new Vec3d(caster.getX(), caster.getEyeY(), caster.getZ()).add(look.multiply(step));
             Vec3d side = new Vec3d(-horizontal.z, 0.0, horizontal.x);
-            for (int particle = 0; particle < 16; particle++) {
-                double angle = (Math.PI * 2.0 * particle / 16.0) + layer * 0.55;
+            for (int particle = 0; particle < particlesPerLayer; particle++) {
+                double angle = (Math.PI * 2.0 * particle / particlesPerLayer) + layer * 0.55;
                 double sideOffset = Math.cos(angle) * ringRadius;
                 double upOffset = Math.sin(angle) * ringRadius * 0.65;
                 world.spawnParticles(ParticleTypes.CLOUD,
