@@ -14,7 +14,7 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 | `energy_impulse` | radius, knockback power, mana, cooldown | Knockback now scales configured power into controlled velocity with a hard cap; shockwave segments and center/target particle counts are configurable. In-game distance must be measured. |
 | `frost_nova` | radius, duration, slowness/weakness amplifiers, ring segments, center/target snowflake counts, target cloud count, ring secondary particle counts, mana, cooldown | Particle spread remains implementation-defined. |
 | `healing_rune` | radius, heal amount, target heart/villager counts, ring segments, center particle count, mana, cooldown | Cast fails without spending mana/cooldown if nobody can be healed. |
-| `smoke_veil` | radius, duration, reveal smoke particle count, mana, cooldown | Invisibility effect particles are disabled; break/reveal particle count is configurable. |
+| `smoke_veil` | radius, duration, reveal radius, reveal smoke particle count, mana, cooldown | Invisibility effect particles are disabled; enemy proximity break radius and reveal particle count are configurable. |
 | `gale_step` | blink distance, departure/midpoint/arrival particle counts, mana, cooldown | Collision sampling step is configurable (`galeStepCollisionSampleStep`, clamped to 0.01–0.25 blocks). |
 | `runic_seal` | range, radius, duration, slowness/weakness amplifiers, glow duration, target/center particle counts, ring segments, mana, cooldown | Particle spread remains implementation-defined. |
 | `blessing` | duration, speed/regeneration amplifiers, target range, villager/end-rod particle counts, mana, cooldown | Particle spread remains implementation-defined. |
@@ -31,7 +31,7 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 - Added configurable status-effect amplifiers/durations for barrier, flash, frost nova, runic seal, blessing, gravity sphere, shadow veil, and electric bolt.
 - Scaled energy-impulse velocity rather than using the configured value directly as blocks/tick; retained distance falloff and a safety cap.
 - Expanded configurable particle counts for barrier, flash, projectile launch/trails/impacts, gale step, runic seal, blessing, gravity sphere, healing rune, frost nova, ice wall, doppelganger, gust of wind, and shadow/smoke veil.
-- Rechecked source/config field consistency across `MageAbilityService` and `ArcaneBoltEntity`; all referenced ability fields resolve to `MageConfig.AbilitySettings`; the refreshed static scan finds 177 unique config fields, including 64 particle-count/segment controls, with no duplicate field names or unused particle-count/segment controls (the static scan's only apparent missing name was the `MageConfigManager` class itself, not a config field).
+- Rechecked source/config field consistency across `MageAbilityService` and `ArcaneBoltEntity`; all referenced ability fields resolve to `MageConfig.AbilitySettings`; the refreshed static scan finds 178 unique config fields, including 64 particle-count/segment controls, with no duplicate field names or unused particle-count/segment controls (the static scan's only apparent missing name was the `MageConfigManager` class itself, not a config field).
 - Fixed electric bolt's direct-hit slowness to use `electricBoltSlowDurationTicks` and `electricBoltSlowAmplifier`, matching chained hits instead of silently hardcoding 30 ticks/amplifier 0.
 
 ## Required validation before closing the audit
