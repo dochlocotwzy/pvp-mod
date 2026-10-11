@@ -201,6 +201,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double gravitySpherePullStrength = 0.24;
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 20)
+        public int gravitySpherePullIntervalTicks = 2;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 40)
+        public int gravitySphereEffectIntervalTicks = 4;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 40)
         public int gravitySphereSlownessDurationTicks = 6;
         @ConfigEntry.Gui.Tooltip
@@ -487,6 +493,9 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 4, max = 48)
         public int gustOfWindParticlesPerLayer = 16;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+        public int gustOfWindSweepParticleCount = 1;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
