@@ -1,4 +1,4 @@
-package com.pvptraps.util;
+package com.pvpmage.util;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.Team;
