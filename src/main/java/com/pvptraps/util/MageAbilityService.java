@@ -1,13 +1,13 @@
-package com.pvptraps.util;
+package com.pvpmage.util;
 
-import com.pvptraps.config.MageConfig;
-import com.pvptraps.config.MageConfigManager;
-import com.pvptraps.entity.ArcaneBoltEntity;
-import com.pvptraps.entity.ModEntities;
-import com.pvptraps.item.MageAbilityItem;
-import com.pvptraps.network.MageCastPayload;
-import com.pvptraps.network.MageFeedbackPayload;
-import com.pvptraps.network.MageManaPayload;
+import com.pvpmage.config.MageConfig;
+import com.pvpmage.config.MageConfigManager;
+import com.pvpmage.entity.ArcaneBoltEntity;
+import com.pvpmage.entity.ModEntities;
+import com.pvpmage.item.MageAbilityItem;
+import com.pvpmage.network.MageCastPayload;
+import com.pvpmage.network.MageFeedbackPayload;
+import com.pvpmage.network.MageManaPayload;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
