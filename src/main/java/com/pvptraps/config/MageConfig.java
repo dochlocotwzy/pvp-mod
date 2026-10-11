@@ -248,6 +248,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 120)
         public int gustOfWindConeDegrees = 70;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 2, max = 16)
+        public int gustOfWindVisualLayers = 8;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 4, max = 48)
+        public int gustOfWindParticlesPerLayer = 16;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
