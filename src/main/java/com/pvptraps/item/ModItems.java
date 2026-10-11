@@ -44,6 +44,9 @@ public final class ModItems {
     private static final RegistryKey<Item> FROST_NOVA_KEY = itemKey("frost_nova");
     private static final RegistryKey<Item> HEALING_RUNE_KEY = itemKey("healing_rune");
     private static final RegistryKey<Item> SMOKE_VEIL_KEY = itemKey("smoke_veil");
+    private static final RegistryKey<Item> GALE_STEP_KEY = itemKey("gale_step");
+    private static final RegistryKey<Item> RUNIC_SEAL_KEY = itemKey("runic_seal");
+    private static final RegistryKey<Item> BLESSING_KEY = itemKey("blessing");
 
     public static final MageAbilityItem MAGIC_BARRIER = Registry.register(
             Registries.ITEM, MAGIC_BARRIER_KEY,
@@ -66,6 +69,15 @@ public final class ModItems {
     public static final MageAbilityItem SMOKE_VEIL = Registry.register(
             Registries.ITEM, SMOKE_VEIL_KEY,
             new MageAbilityItem(new Item.Settings().registryKey(SMOKE_VEIL_KEY).maxCount(1), "smoke_veil", false));
+    public static final MageAbilityItem GALE_STEP = Registry.register(
+            Registries.ITEM, GALE_STEP_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(GALE_STEP_KEY).maxCount(1), "gale_step", false));
+    public static final MageAbilityItem RUNIC_SEAL = Registry.register(
+            Registries.ITEM, RUNIC_SEAL_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(RUNIC_SEAL_KEY).maxCount(1), "runic_seal", false));
+    public static final MageAbilityItem BLESSING = Registry.register(
+            Registries.ITEM, BLESSING_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(BLESSING_KEY).maxCount(1), "blessing", true));
 
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
@@ -86,6 +98,9 @@ public final class ModItems {
                     entries.add(FROST_NOVA);
                     entries.add(HEALING_RUNE);
                     entries.add(SMOKE_VEIL);
+                    entries.add(GALE_STEP);
+                    entries.add(RUNIC_SEAL);
+                    entries.add(BLESSING);
                 });
     }
 }

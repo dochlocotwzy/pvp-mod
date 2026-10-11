@@ -23,6 +23,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.Box;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,7 +105,7 @@ public final class MageAbilityService {
         }
 
         PlayerEntity ally = null;
-        if ("magic_barrier".equals(id)) {
+        if ("magic_barrier".equals(id) || "blessing".equals(id)) {
             Entity candidate = ((ServerWorld) player.getEntityWorld()).getEntityById(payload.targetEntityId());
             if (!(candidate instanceof PlayerEntity target)
                     || !target.isAlive()
@@ -132,6 +134,9 @@ public final class MageAbilityService {
             case "frost_nova" -> applyFrostNova(player, config);
             case "healing_rune" -> applyHealingRune(player, config);
             case "smoke_veil" -> applySmokeVeil(player, config);
+            case "gale_step" -> applyGaleStep(player, config);
+            case "runic_seal" -> applyRunicSeal(player, config);
+            case "blessing" -> applyBlessing(player, ally, config);
             default -> false;
         };
         if (!applied) {
@@ -156,7 +161,8 @@ public final class MageAbilityService {
         return "magic_barrier".equals(id) || "flash_of_light".equals(id)
                 || "arcane_bolt".equals(id) || "energy_impulse".equals(id)
                 || "frost_nova".equals(id) || "healing_rune".equals(id)
-                || "smoke_veil".equals(id);
+                || "smoke_veil".equals(id) || "gale_step".equals(id)
+                || "runic_seal".equals(id) || "blessing".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -168,6 +174,9 @@ public final class MageAbilityService {
             case "frost_nova" -> config.abilities.frostNovaManaCost;
             case "healing_rune" -> config.abilities.healingRuneManaCost;
             case "smoke_veil" -> config.abilities.smokeVeilManaCost;
+            case "gale_step" -> config.abilities.galeStepManaCost;
+            case "runic_seal" -> config.abilities.runicSealManaCost;
+            case "blessing" -> config.abilities.blessingManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -181,6 +190,9 @@ public final class MageAbilityService {
             case "frost_nova" -> config.abilities.frostNovaCooldownTicks;
             case "healing_rune" -> config.abilities.healingRuneCooldownTicks;
             case "smoke_veil" -> config.abilities.smokeVeilCooldownTicks;
+            case "gale_step" -> config.abilities.galeStepCooldownTicks;
+            case "runic_seal" -> config.abilities.runicSealCooldownTicks;
+            case "blessing" -> config.abilities.blessingCooldownTicks;
             default -> 1;
         };
     }
@@ -288,6 +300,124 @@ public final class MageAbilityService {
                 SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.9f, 1.0f);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.25f, 1.65f);
+        return true;
+    }
+
+    /**
+     * Short horizontal blink. The full player box is sampled every 0.2 blocks;
+     * the destination is the last collision-free sample, so walls cannot be skipped.
+     */
+    private static boolean applyGaleStep(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double distance = Math.max(0.5, Math.min(8.0, config.abilities.galeStepDistance));
+        double yaw = Math.toRadians(caster.getYaw());
+        double dx = -Math.sin(yaw);
+        double dz = Math.cos(yaw);
+        Box originalBox = caster.getBoundingBox();
+        double safeDistance = 0.0;
+
+        for (double step = 0.2; step < distance + 1.0E-6; step += 0.2) {
+            double candidateDistance = Math.min(step, distance);
+            Box candidate = originalBox.offset(dx * candidateDistance, 0.0, dz * candidateDistance);
+            if (!world.isSpaceEmpty(caster, candidate)) {
+                break;
+            }
+            safeDistance = candidateDistance;
+            if (candidateDistance >= distance) {
+                break;
+            }
+        }
+        if (safeDistance < 0.4) {
+            return false;
+        }
+
+        double startX = caster.getX();
+        double startY = caster.getY();
+        double startZ = caster.getZ();
+        caster.requestTeleport(startX + dx * safeDistance, startY, startZ + dz * safeDistance);
+        world.spawnParticles(ParticleTypes.CLOUD, startX, startY + 0.8, startZ,
+                14, 0.22, 0.3, 0.22, 0.025);
+        world.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
+                startX + dx * safeDistance * 0.5, startY + 0.9, startZ + dz * safeDistance * 0.5,
+                18, 0.18, 0.25, 0.18, 0.04);
+        world.spawnParticles(ParticleTypes.CLOUD, caster.getX(), caster.getY() + 0.8, caster.getZ(),
+                16, 0.22, 0.3, 0.22, 0.025);
+        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                SoundEvents.ENTITY_BREEZE_WIND_BURST, SoundCategory.PLAYERS, 0.7f, 1.5f);
+        return true;
+    }
+
+    /** Server-raycast snare; allies and targets hidden behind solid blocks are excluded. */
+    private static boolean applyRunicSeal(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double range = Math.max(2.0, Math.min(32.0, config.abilities.runicSealRange));
+        double radius = Math.max(1.0, Math.min(4.0, config.abilities.runicSealRadius));
+        int duration = Math.max(20, Math.min(200, config.abilities.runicSealDurationTicks));
+        BlockHitResult hit = caster.raycast(range, 1.0f, false);
+        double cx = hit.getPos().x;
+        double cy = hit.getPos().y + 0.15;
+        double cz = hit.getPos().z;
+        double radiusSquared = radius * radius;
+        boolean affected = false;
+
+        Box area = new Box(cx - radius, cy - radius, cz - radius,
+                cx + radius, cy + radius, cz + radius);
+        for (LivingEntity target : world.getEntitiesByClass(LivingEntity.class, area,
+                entity -> entity.isAlive() && entity != caster && !entity.isSpectator())) {
+            if (target instanceof PlayerEntity ally && MageTeamAdapter.areAllies(caster, ally)) {
+                continue;
+            }
+            double tx = target.getX();
+            double ty = target.getY() + target.getHeight() * 0.5;
+            double tz = target.getZ();
+            double dx = tx - cx;
+            double dy = ty - cy;
+            double dz = tz - cz;
+            if (dx * dx + dy * dy + dz * dz > radiusSquared || !caster.canSee(target)) {
+                continue;
+            }
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, duration, 4, false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, duration, 0, false, true));
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Math.min(duration, 40), 0, false, true));
+            world.spawnParticles(ParticleTypes.WITCH, tx, target.getY() + 0.8, tz,
+                    16, 0.28, 0.45, 0.28, 0.03);
+            affected = true;
+        }
+        if (!affected) {
+            return false;
+        }
+        for (int i = 0; i < 40; i++) {
+            double angle = Math.PI * 2.0 * i / 40.0;
+            world.spawnParticles(ParticleTypes.ENCHANT,
+                    cx + Math.cos(angle) * radius, cy, cz + Math.sin(angle) * radius,
+                    1, 0.01, 0.04, 0.01, 0.0);
+        }
+        world.spawnParticles(ParticleTypes.END_ROD, cx, cy, cz, 22,
+                radius * 0.3, 0.12, radius * 0.3, 0.025);
+        world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,
+                SoundCategory.PLAYERS, 0.8f, 0.7f);
+        world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
+                SoundCategory.PLAYERS, 0.45f, 0.8f);
+        return true;
+    }
+
+    private static boolean applyBlessing(ServerPlayerEntity caster, PlayerEntity target, MageConfig config) {
+        if (target == null || !target.isAlive() || target.isSpectator()
+                || target.getEntityWorld() != caster.getEntityWorld()
+                || !MageTeamAdapter.areAllies(caster, target)) {
+            return false;
+        }
+        int duration = Math.max(20, Math.min(600, config.abilities.blessingDurationTicks));
+        target.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, duration, 0, false, true));
+        target.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, duration, 0, false, true));
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double x = target.getX(), y = target.getY() + target.getHeight() * 0.65, z = target.getZ();
+        world.spawnParticles(ParticleTypes.HAPPY_VILLAGER, x, y, z, 22,
+                0.35, 0.55, 0.35, 0.04);
+        world.spawnParticles(ParticleTypes.END_ROD, x, y, z, 14,
+                0.25, 0.5, 0.25, 0.025);
+        world.playSound(null, x, y, z, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
+                SoundCategory.PLAYERS, 0.75f, 1.55f);
         return true;
     }
 

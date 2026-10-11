@@ -105,5 +105,37 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 1200)
         public int smokeVeilDurationTicks = 240;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int galeStepManaCost = 18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int galeStepCooldownTicks = 100;
+        @ConfigEntry.Gui.Tooltip
+        public double galeStepDistance = 4.0;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int runicSealManaCost = 24;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int runicSealCooldownTicks = 180;
+        @ConfigEntry.Gui.Tooltip
+        public double runicSealRange = 12.0;
+        @ConfigEntry.Gui.Tooltip
+        public double runicSealRadius = 2.25;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
+        public int runicSealDurationTicks = 60;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int blessingManaCost = 22;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int blessingCooldownTicks = 240;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 600)
+        public int blessingDurationTicks = 160;
     }
 }

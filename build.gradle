@@ -54,7 +54,7 @@ tasks.register("generateMageTextures") {
         }
     }
 }
-def mageTextureNames = ["arcane_bolt", "magic_barrier", "flash_of_light", "energy_impulse", "frost_nova", "healing_rune"]
+def mageTextureNames = ["arcane_bolt", "magic_barrier", "flash_of_light", "energy_impulse", "frost_nova", "healing_rune", "smoke_veil", "gale_step", "runic_seal", "blessing"]
 
 tasks.register("validateMageTextures") {
     dependsOn("generateMageTextures")

@@ -66,5 +66,19 @@
   "item.pvptraps.weakening_trap": "Ослабляющая ловушка",
   "item.pvptraps.sticky_trap": "Липкая ловушка",
   "item.pvptraps.fire_trap": "Огненная ловушка",
-  "item.pvptraps.exhaustion_trap": "Ловушка истощения"
+  "item.pvptraps.exhaustion_trap": "Ловушка истощения",
+  "item.pvptraps.gale_step": "Рывок сквозь пространство",
+  "item.pvptraps.runic_seal": "Руническая печать",
+  "item.pvptraps.blessing": "Благословение",
+  "text.autoconfig.pvptraps_mage.option.abilities.galeStepManaCost": "Стоимость рывка",
+  "text.autoconfig.pvptraps_mage.option.abilities.galeStepCooldownTicks": "Перезарядка рывка (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.galeStepDistance": "Дальность рывка",
+  "text.autoconfig.pvptraps_mage.option.abilities.runicSealManaCost": "Стоимость рунической печати",
+  "text.autoconfig.pvptraps_mage.option.abilities.runicSealCooldownTicks": "Перезарядка рунической печати (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.runicSealRange": "Дальность рунической печати",
+  "text.autoconfig.pvptraps_mage.option.abilities.runicSealRadius": "Радиус рунической печати",
+  "text.autoconfig.pvptraps_mage.option.abilities.runicSealDurationTicks": "Длительность печати (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.blessingManaCost": "Стоимость благословения",
+  "text.autoconfig.pvptraps_mage.option.abilities.blessingCooldownTicks": "Перезарядка благословения (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.blessingDurationTicks": "Длительность благословения (тики)"
 }

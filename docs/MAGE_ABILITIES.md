@@ -8,6 +8,9 @@ The Mage abilities are implemented as standalone, reusable items in the `pvptrap
 - **Flash of Light** — grants brief Resistance to the caster.
 - **Arcane Bolt** — a visible, server-authoritative thrown projectile with configurable speed, range, lifetime, damage and size. The configured entity dimensions follow the visual size; impacts never edit blocks.
 - **Energy Impulse** — knocks back nearby non-allies without modifying terrain.
+- **Gale Step** — a short horizontal blink with server-side collision checks every 0.2 blocks. The destination is the last empty player bounding box; it stops before walls and does not edit blocks.
+- **Runic Seal** — a server-raycast snare at the look impact point; it slows and weakens visible enemies in a small radius, but never catches allies or targets through solid walls.
+- **Blessing** — opens the ally selector and grants the selected teammate Speed and Regeneration for a configurable duration.
 
 ## Shared rules
 
