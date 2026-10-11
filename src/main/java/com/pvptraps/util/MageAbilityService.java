@@ -30,6 +30,7 @@ import java.util.UUID;
 
 public final class MageAbilityService {
     private static final Map<UUID, ManaState> PLAYERS = new HashMap<>();
+    private static final Map<UUID, SmokeVeilState> SMOKE_VEIL_TARGETS = new HashMap<>();
     private static long serverTick;
 
     private MageAbilityService() {
@@ -54,10 +55,14 @@ public final class MageAbilityService {
                     ServerPlayNetworking.send(player, new MageManaPayload((int) Math.round(state.mana), (int) maxMana));
                 }
             }
+            tickSmokeVeil(server);
         });
 
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
-                PLAYERS.remove(handler.player.getUuid()));
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            PLAYERS.remove(handler.player.getUuid());
+            SMOKE_VEIL_TARGETS.remove(handler.player.getUuid());
+            SMOKE_VEIL_TARGETS.entrySet().removeIf(entry -> entry.getValue().ownerUuid.equals(handler.player.getUuid()));
+        });
 
         ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
             if (!alive && !MageConfigManager.get().mana.persistThroughDeath) {
@@ -126,6 +131,7 @@ public final class MageAbilityService {
             case "energy_impulse" -> applyEnergyImpulse(player, config);
             case "frost_nova" -> applyFrostNova(player, config);
             case "healing_rune" -> applyHealingRune(player, config);
+            case "smoke_veil" -> applySmokeVeil(player, config);
             default -> false;
         };
         if (!applied) {
@@ -149,7 +155,8 @@ public final class MageAbilityService {
     private static boolean isKnownAbility(String id) {
         return "magic_barrier".equals(id) || "flash_of_light".equals(id)
                 || "arcane_bolt".equals(id) || "energy_impulse".equals(id)
-                || "frost_nova".equals(id) || "healing_rune".equals(id);
+                || "frost_nova".equals(id) || "healing_rune".equals(id)
+                || "smoke_veil".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -160,6 +167,7 @@ public final class MageAbilityService {
             case "energy_impulse" -> config.abilities.energyImpulseManaCost;
             case "frost_nova" -> config.abilities.frostNovaManaCost;
             case "healing_rune" -> config.abilities.healingRuneManaCost;
+            case "smoke_veil" -> config.abilities.smokeVeilManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -172,6 +180,7 @@ public final class MageAbilityService {
             case "energy_impulse" -> config.abilities.energyImpulseCooldownTicks;
             case "frost_nova" -> config.abilities.frostNovaCooldownTicks;
             case "healing_rune" -> config.abilities.healingRuneCooldownTicks;
+            case "smoke_veil" -> config.abilities.smokeVeilCooldownTicks;
             default -> 1;
         };
     }
@@ -378,6 +387,107 @@ public final class MageAbilityService {
         world.playSound(null, cx, cy, cz, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME,
                 SoundCategory.PLAYERS, 0.55f, 0.7f);
         return true;
+    }
+
+    private static boolean applySmokeVeil(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        double radius = Math.max(1.0, Math.min(32.0, config.abilities.smokeVeilRadius));
+        int duration = Math.max(20, Math.min(1200, config.abilities.smokeVeilDurationTicks));
+        double radiusSquared = radius * radius;
+        int affected = 0;
+
+        for (ServerPlayerEntity target : world.getPlayers()) {
+            if (!target.isAlive() || target.isSpectator()
+                    || (target != caster && !MageTeamAdapter.areAllies(caster, target))) {
+                continue;
+            }
+            if (caster.squaredDistanceTo(target) > radiusSquared) {
+                continue;
+            }
+            target.addStatusEffect(new StatusEffectInstance(
+                    StatusEffects.INVISIBILITY, duration, 0, true, false, true));
+            SMOKE_VEIL_TARGETS.put(target.getUuid(),
+                    new SmokeVeilState(caster.getUuid(), serverTick + duration));
+            world.spawnParticles(ParticleTypes.LARGE_SMOKE,
+                    target.getX(), target.getY() + 1.0, target.getZ(), 18, 0.35, 0.65, 0.35, 0.015);
+            world.spawnParticles(ParticleTypes.PORTAL,
+                    target.getX(), target.getY() + 0.8, target.getZ(), 12, 0.35, 0.5, 0.35, 0.15);
+            affected++;
+        }
+
+        if (affected == 0) {
+            return false;
+        }
+        world.spawnParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                caster.getX(), caster.getY() + 0.4, caster.getZ(), 35,
+                radius * 0.35, 0.35, radius * 0.35, 0.015);
+        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 0.9f, 0.7f);
+        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                SoundEvents.ENTITY_PHANTOM_FLAP, SoundCategory.PLAYERS, 0.55f, 1.5f);
+        return true;
+    }
+
+    private static void tickSmokeVeil(net.minecraft.server.MinecraftServer server) {
+        if (SMOKE_VEIL_TARGETS.isEmpty()) {
+            return;
+        }
+        SMOKE_VEIL_TARGETS.entrySet().removeIf(entry -> {
+            UUID targetUuid = entry.getKey();
+            SmokeVeilState veil = entry.getValue();
+            ServerPlayerEntity target = server.getPlayerManager().getPlayer(targetUuid);
+            ServerPlayerEntity owner = server.getPlayerManager().getPlayer(veil.ownerUuid);
+            if (target == null || owner == null || !target.isAlive() || !owner.isAlive()
+                    || serverTick >= veil.expiresAtTick) {
+                return true;
+            }
+            if (target.getEntityWorld() != owner.getEntityWorld()) {
+                target.removeStatusEffect(StatusEffects.INVISIBILITY);
+                return true;
+            }
+
+            boolean exposed = nearEnemyPlayer(target) || nearEnemyPlayer(owner);
+            if (exposed) {
+                UUID ownerUuid = veil.ownerUuid;
+                for (Map.Entry<UUID, SmokeVeilState> linked : SMOKE_VEIL_TARGETS.entrySet()) {
+                    if (linked.getValue().ownerUuid.equals(ownerUuid)) {
+                        ServerPlayerEntity linkedPlayer = server.getPlayerManager().getPlayer(linked.getKey());
+                        if (linkedPlayer != null) {
+                            linkedPlayer.removeStatusEffect(StatusEffects.INVISIBILITY);
+                            ServerWorld linkedWorld = (ServerWorld) linkedPlayer.getEntityWorld();
+                            linkedWorld.spawnParticles(ParticleTypes.SMOKE,
+                                    linkedPlayer.getX(), linkedPlayer.getY() + 1.0, linkedPlayer.getZ(),
+                                    14, 0.3, 0.55, 0.3, 0.01);
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private static boolean nearEnemyPlayer(ServerPlayerEntity player) {
+        for (ServerPlayerEntity other : player.getEntityWorld().getPlayers()) {
+            if (other == player || !other.isAlive() || other.isSpectator()
+                    || MageTeamAdapter.areAllies(player, other)) {
+                continue;
+            }
+            if (player.squaredDistanceTo(other) <= 36.0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static final class SmokeVeilState {
+        private final UUID ownerUuid;
+        private final long expiresAtTick;
+
+        private SmokeVeilState(UUID ownerUuid, long expiresAtTick) {
+            this.ownerUuid = ownerUuid;
+            this.expiresAtTick = expiresAtTick;
+        }
     }
 
     private static void reject(ServerPlayerEntity player) {
