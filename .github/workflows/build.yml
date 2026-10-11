@@ -105,5 +105,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pvp-mage-jar
-          path: build/libs/*pvp-mage*.jar
+          path: |
+            build/libs/*pvp-mage*.jar
+            !build/libs/*-sources.jar
           if-no-files-found: error
