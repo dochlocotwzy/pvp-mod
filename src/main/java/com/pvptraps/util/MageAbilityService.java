@@ -1013,7 +1013,9 @@ public final class MageAbilityService {
                     || MageTeamAdapter.areAllies(player, other)) {
                 continue;
             }
-            if (player.squaredDistanceTo(other) <= 36.0) {
+            double revealRadius = Math.max(1.0, Math.min(32.0,
+                    MageConfigManager.get().abilities.smokeVeilRevealRadius));
+            if (player.squaredDistanceTo(other) <= revealRadius * revealRadius) {
                 return true;
             }
         }
