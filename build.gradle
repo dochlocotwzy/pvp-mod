@@ -185,3 +185,58 @@ tasks.named("jar") {
     exclude "data/pvptraps/**/*trap*"
     exclude "data/pvptraps/**/*Trap*"
 }
+
+tasks.register("verifyMageJarIsolation") {
+    dependsOn(tasks.named("jar"))
+    doLast {
+        def jarFile = tasks.named("jar").get().archiveFile.get().asFile
+        def zip = new java.util.zip.ZipFile(jarFile)
+        try {
+            def entries = Collections.list(zip.entries()).collect { it.name } as Set
+            def forbiddenNamespaces = entries.findAll {
+                it.startsWith("com/pvptraps/") ||
+                it.startsWith("assets/pvptraps/") ||
+                it.startsWith("data/pvptraps/")
+            }
+            if (!forbiddenNamespaces.isEmpty()) {
+                throw new GradleException("Mage JAR contains legacy traps namespace entries: " + forbiddenNamespaces.join(", "))
+            }
+
+            ["com/pvpmage/PvpTraps.class",
+             "com/pvpmage/config/MageConfig.class",
+             "com/pvpmage/item/ModItems.class",
+             "fabric.mod.json"].each { required ->
+                if (!entries.contains(required)) {
+                    throw new GradleException("Mage JAR is missing required entry: " + required)
+                }
+            }
+
+            def trapResources = entries.findAll {
+                (it.startsWith("assets/pvpmage/items/") || it.startsWith("assets/pvpmage/models/item/")) &&
+                it.toLowerCase(Locale.ROOT).contains("trap")
+            }
+            if (!trapResources.isEmpty()) {
+                throw new GradleException("Mage JAR contains trap-only item resources: " + trapResources.join(", "))
+            }
+
+            entries.findAll { it.startsWith("assets/pvpmage/") && it.endsWith(".json") }.each { entryName ->
+                def text = zip.getInputStream(zip.getEntry(entryName)).getText("UTF-8")
+                if (text.contains("pvptraps:")) {
+                    throw new GradleException("Mage resource still references the legacy namespace: " + entryName)
+                }
+            }
+
+            def metadata = new groovy.json.JsonSlurper().parseText(
+                zip.getInputStream(zip.getEntry("fabric.mod.json")).getText("UTF-8"))
+            if (metadata.id != "pvpmage") {
+                throw new GradleException("Unexpected mage mod id in JAR: " + metadata.id)
+            }
+        } finally {
+            zip.close()
+        }
+    }
+}
+
+tasks.named("build") {
+    dependsOn("verifyMageJarIsolation")
+}
