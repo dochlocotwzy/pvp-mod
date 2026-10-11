@@ -98,7 +98,40 @@ tasks.register("validateMageTextures") {
     }
 }
 
-tasks.named("processResources") { dependsOn("generateMageTextures", "validateMageTextures") }
+def customItemNames = [
+    "trap",
+    "spike_trap", "ice_trap", "poison_trap", "electric_trap", "smoke_trap",
+    "weakening_trap", "sticky_trap", "fire_trap", "exhaustion_trap",
+    "magic_barrier", "flash_of_light", "arcane_bolt", "energy_impulse",
+    "frost_nova", "healing_rune", "smoke_veil", "gale_step", "runic_seal",
+    "blessing", "gravity_sphere", "fireball", "electric_bolt", "ice_wall",
+    "magic_doppelganger", "gust_of_wind", "shadow_veil"
+]
+
+tasks.register("validateItemDefinitions") {
+    doLast {
+        def parser = new groovy.json.JsonSlurper()
+        customItemNames.each { name ->
+            def definitionFile = file("src/main/resources/assets/pvptraps/items/" + name + ".json")
+            if (!definitionFile.isFile()) {
+                throw new GradleException("Missing 1.21.11 item definition: " + definitionFile)
+            }
+            def definition = parser.parse(definitionFile)
+            def expectedModel = "pvptraps:item/" + name
+            if (definition.model?.type != "minecraft:model" || definition.model?.model != expectedModel) {
+                throw new GradleException("Item definition " + definitionFile.name + " must reference " + expectedModel)
+            }
+            def modelFile = file("src/main/resources/assets/pvptraps/models/item/" + name + ".json")
+            if (!modelFile.isFile()) {
+                throw new GradleException("Missing item model: " + modelFile)
+            }
+        }
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("generateMageTextures", "validateMageTextures", "validateItemDefinitions")
+}
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
