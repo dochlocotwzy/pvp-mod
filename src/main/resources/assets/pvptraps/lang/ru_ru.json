@@ -87,5 +87,20 @@
   "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRange": "Дальность сферы",
   "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRadius": "Радиус сферы",
   "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereDurationTicks": "Время жизни сферы (тики)",
-  "text.autoconfig.pvptraps_mage.option.abilities.gravitySpherePullStrength": "Сила притяжения сферы"
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySpherePullStrength": "Сила притяжения сферы",
+  "item.pvptraps.fireball": "Огненный шар",
+  "item.pvptraps.electric_bolt": "Электрический разряд",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballManaCost": "Стоимость огненного шара",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballCooldownTicks": "Перезарядка огненного шара (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballSpeed": "Скорость огненного шара",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballRange": "Дальность огненного шара",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballLifetimeTicks": "Время жизни огненного шара (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballDamage": "Урон огненного шара",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballIgniteSeconds": "Поджог при попадании (секунды)",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltManaCost": "Стоимость электрического разряда",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltCooldownTicks": "Перезарядка электрического разряда (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltSpeed": "Скорость электрического разряда",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltRange": "Дальность электрического разряда",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltLifetimeTicks": "Время жизни электрического разряда (тики)",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltDamage": "Урон электрического разряда"
 }

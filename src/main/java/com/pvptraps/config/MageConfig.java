@@ -152,5 +152,39 @@ public class MageConfig implements ConfigData {
         public int gravitySphereDurationTicks = 80;
         @ConfigEntry.Gui.Tooltip
         public double gravitySpherePullStrength = 0.18;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int fireballManaCost = 22;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int fireballCooldownTicks = 100;
+        @ConfigEntry.Gui.Tooltip
+        public double fireballSpeed = 1.45;
+        @ConfigEntry.Gui.Tooltip
+        public double fireballRange = 30.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 5, max = 200)
+        public int fireballLifetimeTicks = 55;
+        @ConfigEntry.Gui.Tooltip
+        public float fireballDamage = 7.0f;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 10)
+        public int fireballIgniteSeconds = 4;
+
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int electricBoltManaCost = 20;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int electricBoltCooldownTicks = 100;
+        @ConfigEntry.Gui.Tooltip
+        public double electricBoltSpeed = 1.9;
+        @ConfigEntry.Gui.Tooltip
+        public double electricBoltRange = 28.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 5, max = 200)
+        public int electricBoltLifetimeTicks = 50;
+        @ConfigEntry.Gui.Tooltip
+        public float electricBoltDamage = 6.0f;
     }
 }

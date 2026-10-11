@@ -87,5 +87,20 @@
   "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRange": "Gravity Sphere range",
   "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereRadius": "Gravity Sphere radius",
   "text.autoconfig.pvptraps_mage.option.abilities.gravitySphereDurationTicks": "Gravity Sphere lifetime (ticks)",
-  "text.autoconfig.pvptraps_mage.option.abilities.gravitySpherePullStrength": "Gravity Sphere pull strength"
+  "text.autoconfig.pvptraps_mage.option.abilities.gravitySpherePullStrength": "Gravity Sphere pull strength",
+  "item.pvptraps.fireball": "Fireball",
+  "item.pvptraps.electric_bolt": "Electric Bolt",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballManaCost": "Fireball mana cost",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballCooldownTicks": "Fireball cooldown (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballSpeed": "Fireball speed",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballRange": "Fireball range",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballLifetimeTicks": "Fireball lifetime (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballDamage": "Fireball damage",
+  "text.autoconfig.pvptraps_mage.option.abilities.fireballIgniteSeconds": "Ignition on hit (seconds)",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltManaCost": "Electric Bolt mana cost",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltCooldownTicks": "Electric Bolt cooldown (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltSpeed": "Electric Bolt speed",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltRange": "Electric Bolt range",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltLifetimeTicks": "Electric Bolt lifetime (ticks)",
+  "text.autoconfig.pvptraps_mage.option.abilities.electricBoltDamage": "Electric Bolt damage"
 }

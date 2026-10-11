@@ -12,6 +12,8 @@ The Mage abilities are implemented as standalone, reusable items in the `pvptrap
 - **Runic Seal** — a server-raycast snare at the look impact point; it slows and weakens visible enemies in a small radius, but never catches allies or targets through solid walls.
 - **Blessing** — opens the ally selector and grants the selected teammate Speed and Regeneration for a configurable duration.
 - **Gravity Sphere** — a temporary server-side field pulls non-allies toward a configurable point, briefly slowing them; it expires automatically and never edits blocks.
+- **Fireball** — a configurable projectile that damages and ignites a directly hit non-ally. It uses particles and sound for the impact but deliberately does not create a terrain-damaging explosion.
+- **Electric Bolt** — a single-target projectile that deals magic damage and briefly slows its target. It does not chain to other entities and does not summon lightning.
 
 ## Shared rules
 
@@ -28,4 +30,4 @@ The Mage abilities are implemented as standalone, reusable items in the `pvptrap
 - Read or set the built-in mana pool with `MageAbilityService.getMana(ServerPlayerEntity)` and `MageAbilityService.setMana(ServerPlayerEntity, double)`.
 - Install custom team rules with `MageTeamAdapter.install((first, second) -> ...)` on both logical sides.
 
-This is the first implementation slice. Please verify in a real client/server session, especially the ally GUI, camera transition, projectile scale/hitbox feel and cooldown/mana rejection feedback.
+This is an evolving implementation slice. Verify in a real client/server session, especially the ally GUI, collision-aware dash, projectile hitboxes and mana/cooldown rejection feedback.

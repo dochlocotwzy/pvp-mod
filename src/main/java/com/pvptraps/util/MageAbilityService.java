@@ -142,6 +142,8 @@ public final class MageAbilityService {
             case "runic_seal" -> applyRunicSeal(player, config);
             case "blessing" -> applyBlessing(player, ally, config);
             case "gravity_sphere" -> applyGravitySphere(player, config);
+            case "fireball" -> launchFireball(player, config);
+            case "electric_bolt" -> launchElectricBolt(player, config);
             default -> false;
         };
         if (!applied) {
@@ -168,7 +170,8 @@ public final class MageAbilityService {
                 || "frost_nova".equals(id) || "healing_rune".equals(id)
                 || "smoke_veil".equals(id) || "gale_step".equals(id)
                 || "runic_seal".equals(id) || "blessing".equals(id)
-                || "gravity_sphere".equals(id);
+                || "gravity_sphere".equals(id) || "fireball".equals(id)
+                || "electric_bolt".equals(id);
     }
 
     private static int manaCost(String id, MageConfig config) {
@@ -184,6 +187,8 @@ public final class MageAbilityService {
             case "runic_seal" -> config.abilities.runicSealManaCost;
             case "blessing" -> config.abilities.blessingManaCost;
             case "gravity_sphere" -> config.abilities.gravitySphereManaCost;
+            case "fireball" -> config.abilities.fireballManaCost;
+            case "electric_bolt" -> config.abilities.electricBoltManaCost;
             default -> Integer.MAX_VALUE;
         };
     }
@@ -201,6 +206,8 @@ public final class MageAbilityService {
             case "runic_seal" -> config.abilities.runicSealCooldownTicks;
             case "blessing" -> config.abilities.blessingCooldownTicks;
             case "gravity_sphere" -> config.abilities.gravitySphereCooldownTicks;
+            case "fireball" -> config.abilities.fireballCooldownTicks;
+            case "electric_bolt" -> config.abilities.electricBoltCooldownTicks;
             default -> 1;
         };
     }
@@ -265,6 +272,47 @@ public final class MageAbilityService {
                 12, 0.12, 0.12, 0.12, 0.3);
         world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
                 SoundEvents.ENTITY_BREEZE_SHOOT, SoundCategory.PLAYERS, 0.8f, 1.35f);
+        return true;
+    }
+
+    private static boolean launchFireball(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        ArcaneBoltEntity fireball = new ArcaneBoltEntity(ModEntities.ARCANE_BOLT, world);
+        fireball.setOwner(caster);
+        fireball.refreshPositionAndAngles(caster.getX(), caster.getEyeY() - 0.1, caster.getZ(),
+                caster.getYaw(), caster.getPitch());
+        fireball.configureFireball(config.abilities.fireballRange,
+                config.abilities.fireballLifetimeTicks, config.abilities.fireballDamage,
+                config.abilities.fireballIgniteSeconds);
+        fireball.setVelocity(caster, caster.getPitch(), caster.getYaw(), 0.0f,
+                (float) Math.max(0.1, Math.min(4.0, config.abilities.fireballSpeed)), 0.0f);
+        if (!world.spawnEntity(fireball)) {
+            return false;
+        }
+        world.spawnParticles(ParticleTypes.FLAME, fireball.getX(), fireball.getY(), fireball.getZ(),
+                10, 0.12, 0.12, 0.12, 0.025);
+        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 0.8f, 0.85f);
+        return true;
+    }
+
+    private static boolean launchElectricBolt(ServerPlayerEntity caster, MageConfig config) {
+        ServerWorld world = (ServerWorld) caster.getEntityWorld();
+        ArcaneBoltEntity bolt = new ArcaneBoltEntity(ModEntities.ARCANE_BOLT, world);
+        bolt.setOwner(caster);
+        bolt.refreshPositionAndAngles(caster.getX(), caster.getEyeY() - 0.1, caster.getZ(),
+                caster.getYaw(), caster.getPitch());
+        bolt.configureElectricBolt(config.abilities.electricBoltRange,
+                config.abilities.electricBoltLifetimeTicks, config.abilities.electricBoltDamage);
+        bolt.setVelocity(caster, caster.getPitch(), caster.getYaw(), 0.0f,
+                (float) Math.max(0.1, Math.min(4.0, config.abilities.electricBoltSpeed)), 0.0f);
+        if (!world.spawnEntity(bolt)) {
+            return false;
+        }
+        world.spawnParticles(ParticleTypes.ELECTRIC_SPARK, bolt.getX(), bolt.getY(), bolt.getZ(),
+                18, 0.12, 0.12, 0.12, 0.035);
+        world.playSound(null, caster.getX(), caster.getY(), caster.getZ(),
+                SoundEvents.ENTITY_BREEZE_SHOOT, SoundCategory.PLAYERS, 0.75f, 1.8f);
         return true;
     }
 

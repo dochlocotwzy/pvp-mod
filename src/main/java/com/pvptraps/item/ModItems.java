@@ -48,6 +48,8 @@ public final class ModItems {
     private static final RegistryKey<Item> RUNIC_SEAL_KEY = itemKey("runic_seal");
     private static final RegistryKey<Item> BLESSING_KEY = itemKey("blessing");
     private static final RegistryKey<Item> GRAVITY_SPHERE_KEY = itemKey("gravity_sphere");
+    private static final RegistryKey<Item> FIREBALL_KEY = itemKey("fireball");
+    private static final RegistryKey<Item> ELECTRIC_BOLT_KEY = itemKey("electric_bolt");
 
     public static final MageAbilityItem MAGIC_BARRIER = Registry.register(
             Registries.ITEM, MAGIC_BARRIER_KEY,
@@ -82,6 +84,12 @@ public final class ModItems {
     public static final MageAbilityItem GRAVITY_SPHERE = Registry.register(
             Registries.ITEM, GRAVITY_SPHERE_KEY,
             new MageAbilityItem(new Item.Settings().registryKey(GRAVITY_SPHERE_KEY).maxCount(1), "gravity_sphere", false));
+    public static final MageAbilityItem FIREBALL = Registry.register(
+            Registries.ITEM, FIREBALL_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(FIREBALL_KEY).maxCount(1), "fireball", false));
+    public static final MageAbilityItem ELECTRIC_BOLT = Registry.register(
+            Registries.ITEM, ELECTRIC_BOLT_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(ELECTRIC_BOLT_KEY).maxCount(1), "electric_bolt", false));
 
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
@@ -106,6 +114,8 @@ public final class ModItems {
                     entries.add(RUNIC_SEAL);
                     entries.add(BLESSING);
                     entries.add(GRAVITY_SPHERE);
+                    entries.add(FIREBALL);
+                    entries.add(ELECTRIC_BOLT);
                 });
     }
 }
