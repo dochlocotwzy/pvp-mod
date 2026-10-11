@@ -72,7 +72,7 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double energyImpulseRadius = 7.0;
         @ConfigEntry.Gui.Tooltip
-        public double energyImpulseKnockback = 1.8;
+        public double energyImpulseKnockback = 3.8;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int frostNovaManaCost = 30;
@@ -146,12 +146,12 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double gravitySphereRange = 24.0;
         @ConfigEntry.Gui.Tooltip
-        public double gravitySphereRadius = 5.0;
+        public double gravitySphereRadius = 10.0;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
-        public int gravitySphereDurationTicks = 80;
+        public int gravitySphereDurationTicks = 240;
         @ConfigEntry.Gui.Tooltip
-        public double gravitySpherePullStrength = 0.18;
+        public double gravitySpherePullStrength = 0.24;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int fireballManaCost = 22;
@@ -186,6 +186,20 @@ public class MageConfig implements ConfigData {
         public int electricBoltLifetimeTicks = 50;
         @ConfigEntry.Gui.Tooltip
         public float electricBoltDamage = 6.0f;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
+        public int electricBoltMaxJumps = 3;
+        @ConfigEntry.Gui.Tooltip
+        public double electricBoltJumpRange = 7.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int electricBoltChainParticleCount = 24;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
+        public int gravitySphereParticleMultiplier = 2;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 8)
+        public int fireballGroundIgniteRadius = 1;
 
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
