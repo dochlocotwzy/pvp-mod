@@ -138,7 +138,7 @@ tasks.register("validateItemDefinitions") {
     }
 }
 
-tasks.named("processResources") {
+tasks.named("sourcesJar") {\n    dependsOn("prepareMageNamespaceResources")\n}\n\ntasks.named("processResources") {
     dependsOn("generateMageTextures", "prepareMageNamespaceResources", "validateMageTextures", "validateItemDefinitions")
 }
 
