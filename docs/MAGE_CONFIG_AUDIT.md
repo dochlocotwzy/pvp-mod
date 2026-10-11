@@ -11,8 +11,8 @@ All 17 registered ability IDs are routed through `MageAbilityService` and have c
 | `magic_barrier` | target range, duration, resistance amplifier, mana, cooldown | Particle ring size/count and sound mix remain constants. |
 | `flash_of_light` | duration, resistance amplifier, mana, cooldown | Particle counts and sound mix remain constants. |
 | `arcane_bolt` | speed, range, lifetime, damage, size, mana, cooldown | Projectile trail and impact particle counts remain constants. |
-| `energy_impulse` | radius, knockback power, mana, cooldown | Knockback now scales configured power into controlled velocity with a hard cap; particle ring density remains constant. In-game distance must be measured. |
-| `frost_nova` | radius, duration, slowness/weakness amplifiers, mana, cooldown | Particle ring/target counts remain constants. |
+| `energy_impulse` | radius, knockback power, mana, cooldown | Knockback now scales configured power into controlled velocity with a hard cap; shockwave segments and center/target particle counts are configurable. In-game distance must be measured. |
+| `frost_nova` | radius, duration, slowness/weakness amplifiers, mana, cooldown | Ring segments and center/target snowflake counts are configurable; remaining secondary particle counts are constants. |
 | `healing_rune` | radius, heal amount, mana, cooldown | Particle counts remain constants. Cast fails without spending mana/cooldown if nobody can be healed. |
 | `smoke_veil` | radius, duration, mana, cooldown | Invisibility effect particles are disabled; break/reveal visuals remain constants. |
 | `gale_step` | blink distance, mana, cooldown | Collision sampling step and trail particles remain implementation constants. |
