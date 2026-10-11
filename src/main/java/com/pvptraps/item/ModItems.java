@@ -41,6 +41,7 @@ public final class ModItems {
     private static final RegistryKey<Item> FLASH_OF_LIGHT_KEY = itemKey("flash_of_light");
     private static final RegistryKey<Item> ARCANE_BOLT_KEY = itemKey("arcane_bolt");
     private static final RegistryKey<Item> ENERGY_IMPULSE_KEY = itemKey("energy_impulse");
+    private static final RegistryKey<Item> FROST_NOVA_KEY = itemKey("frost_nova");
 
     public static final MageAbilityItem MAGIC_BARRIER = Registry.register(
             Registries.ITEM, MAGIC_BARRIER_KEY,
@@ -54,6 +55,9 @@ public final class ModItems {
     public static final MageAbilityItem ENERGY_IMPULSE = Registry.register(
             Registries.ITEM, ENERGY_IMPULSE_KEY,
             new MageAbilityItem(new Item.Settings().registryKey(ENERGY_IMPULSE_KEY).maxCount(1), "energy_impulse", false));
+    public static final MageAbilityItem FROST_NOVA = Registry.register(
+            Registries.ITEM, FROST_NOVA_KEY,
+            new MageAbilityItem(new Item.Settings().registryKey(FROST_NOVA_KEY).maxCount(1), "frost_nova", false));
 
     public static void register() {
         net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
@@ -71,6 +75,7 @@ public final class ModItems {
                     entries.add(FLASH_OF_LIGHT);
                     entries.add(ARCANE_BOLT);
                     entries.add(ENERGY_IMPULSE);
+                    entries.add(FROST_NOVA);
                 });
     }
 }
