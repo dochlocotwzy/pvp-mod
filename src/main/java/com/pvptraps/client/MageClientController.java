@@ -1,8 +1,8 @@
-package com.pvptraps.client;
+package com.pvpmage.client;
 
-import com.pvptraps.item.MageAbilityItem;
-import com.pvptraps.network.MageCastPayload;
-import com.pvptraps.network.MageFeedbackPayload;
+import com.pvpmage.item.MageAbilityItem;
+import com.pvpmage.network.MageCastPayload;
+import com.pvpmage.network.MageFeedbackPayload;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
