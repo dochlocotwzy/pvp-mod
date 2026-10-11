@@ -1,8 +1,8 @@
-package com.pvptraps.entity;
+package com.pvpmage.entity;
 
-import com.pvptraps.config.MageConfigManager;
-import com.pvptraps.item.ModItems;
-import com.pvptraps.util.MageTeamAdapter;
+import com.pvpmage.config.MageConfigManager;
+import com.pvpmage.item.ModItems;
+import com.pvpmage.util.MageTeamAdapter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
