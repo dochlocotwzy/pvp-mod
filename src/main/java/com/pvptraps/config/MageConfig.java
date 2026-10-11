@@ -80,6 +80,15 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         public double energyImpulseKnockback = 8.0;
         @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 8, max = 128)
+        public int energyImpulseShockwaveSegments = 48;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 64)
+        public int energyImpulseTargetParticleCount = 8;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 128)
+        public int energyImpulseCenterParticleCount = 36;
+        @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int frostNovaManaCost = 30;
         @ConfigEntry.Gui.Tooltip
@@ -96,6 +105,15 @@ public class MageConfig implements ConfigData {
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 0, max = 4)
         public int frostNovaWeaknessAmplifier = 0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 8, max = 128)
+        public int frostNovaRingSegments = 64;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 256)
+        public int frostNovaCenterParticleCount = 80;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 64)
+        public int frostNovaTargetParticleCount = 22;
         @ConfigEntry.Gui.Tooltip
         @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
         public int healingRuneManaCost = 24;
