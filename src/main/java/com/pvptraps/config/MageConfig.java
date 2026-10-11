@@ -73,5 +73,16 @@ public class MageConfig implements ConfigData {
         public double energyImpulseRadius = 7.0;
         @ConfigEntry.Gui.Tooltip
         public double energyImpulseKnockback = 1.8;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 200)
+        public int frostNovaManaCost = 30;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 1200)
+        public int frostNovaCooldownTicks = 240;
+        @ConfigEntry.Gui.Tooltip
+        public double frostNovaRadius = 5.0;
+        @ConfigEntry.Gui.Tooltip
+        @ConfigEntry.BoundedDiscrete(min = 20, max = 200)
+        public int frostNovaDurationTicks = 80;
     }
 }
