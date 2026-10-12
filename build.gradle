@@ -154,6 +154,20 @@ tasks.register("validateMageLocalization") {
             "arcane_bolt", "energy_impulse", "frost_nova", "healing_rune", "smoke_veil", "gale_step",
             "runic_seal", "blessing", "gravity_sphere", "fireball", "electric_bolt", "ice_wall",
             "magic_doppelganger", "gust_of_wind", "shadow_veil"]
+        def configSource = file("src/main/java/com/pvptraps/config/MageConfig.java").readLines("UTF-8")
+        def optionKeys = []
+        def optionGroup = null
+        configSource.each { line ->
+            if (line.contains("class ManaSettings")) optionGroup = "mana"
+            if (line.contains("class AbilitySettings")) optionGroup = "abilities"
+            def fieldMatcher = (line =~ /^\\s*public\\s+(?:int|double|float|boolean|String)\\s+(\\w+)\\s*=/)
+            if (optionGroup != null && fieldMatcher.find()) {
+                optionKeys.add("text.autoconfig.pvpmage_mage.option." + optionGroup + "." + fieldMatcher.group(1))
+            }
+        }
+        if (optionKeys.size() != 180) {
+            throw new GradleException("Expected 180 Mage config option labels, found " + optionKeys.size())
+        }
         ["ru_ru.json", "en_us.json"].each { filename ->
             def langFile = new File(langDir, filename)
             if (!langFile.isFile()) throw new GradleException("Missing Mage language file: " + langFile)
@@ -178,6 +192,11 @@ tasks.register("validateMageLocalization") {
                 def key = "text.autoconfig.pvpmage_mage.category." + category
                 if (!parsed.containsKey(key) || !parsed[key]?.toString()?.trim()) {
                     throw new GradleException(filename + " is missing category translation: " + key)
+                }
+            }
+            optionKeys.each { key ->
+                if (!parsed.containsKey(key) || !parsed[key]?.toString()?.trim()) {
+                    throw new GradleException(filename + " is missing config option label: " + key)
                 }
             }
             if (!"PvP Mage".equals(parsed["itemGroup.pvptraps"])) {
