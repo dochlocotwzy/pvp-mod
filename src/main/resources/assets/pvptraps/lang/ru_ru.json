@@ -307,5 +307,19 @@
   "text.autoconfig.pvpmage_mage.option.abilities.shadowVeilBlindnessAmplifier": "Уровень слепоты",
   "text.autoconfig.pvpmage_mage.title": "Настройки способностей мага",
   "text.autoconfig.pvpmage_mage.category.mana": "Мана",
-  "text.autoconfig.pvpmage_mage.category.abilities": "Способности"
+  "text.autoconfig.pvpmage_mage.category.abilities": "Способности",
+  "item.pvptraps.tooltip.mana": "Стоимость маны: %s",
+  "item.pvptraps.tooltip.cooldown": "Перезарядка: %s сек.",
+  "item.pvptraps.tooltip.duration": "Длительность: %s сек.",
+  "item.pvptraps.tooltip.resistance": "Уровень сопротивления: %s",
+  "item.pvptraps.tooltip.damage": "Урон: %s",
+  "item.pvptraps.tooltip.range": "Дальность: %s блоков",
+  "item.pvptraps.tooltip.radius": "Радиус: %s блоков",
+  "item.pvptraps.tooltip.knockback": "Сила отбрасывания: %s",
+  "item.pvptraps.tooltip.heal": "Восстановление здоровья: %s",
+  "item.pvptraps.tooltip.ignite": "Поджог: %s сек.",
+  "item.pvptraps.tooltip.jumps": "Цепные переходы: %s",
+  "item.pvptraps.tooltip.wallSize": "Размер стены: %s × %s",
+  "item.pvptraps.tooltip.distance": "Дальность рывка: %s блоков",
+  "item.pvptraps.tooltip.strength": "Сила: %s"
 }
