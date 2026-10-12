@@ -321,5 +321,19 @@
   "item.pvptraps.tooltip.jumps": "Цепные переходы: %s",
   "item.pvptraps.tooltip.wallSize": "Размер стены: %s × %s",
   "item.pvptraps.tooltip.distance": "Дальность рывка: %s блоков",
-  "item.pvptraps.tooltip.strength": "Сила: %s"
+  "item.pvptraps.tooltip.strength": "Сила: %s",
+  "item.pvpmage.tooltip.mana": "Стоимость маны: %s",
+  "item.pvpmage.tooltip.cooldown": "Перезарядка: %s сек.",
+  "item.pvpmage.tooltip.duration": "Длительность: %s сек.",
+  "item.pvpmage.tooltip.resistance": "Уровень сопротивления: %s",
+  "item.pvpmage.tooltip.damage": "Урон: %s",
+  "item.pvpmage.tooltip.range": "Дальность: %s блоков",
+  "item.pvpmage.tooltip.radius": "Радиус: %s блоков",
+  "item.pvpmage.tooltip.knockback": "Сила отбрасывания: %s",
+  "item.pvpmage.tooltip.heal": "Восстановление здоровья: %s",
+  "item.pvpmage.tooltip.ignite": "Поджог: %s сек.",
+  "item.pvpmage.tooltip.jumps": "Цепные переходы: %s",
+  "item.pvpmage.tooltip.wallSize": "Размер стены: %s × %s",
+  "item.pvpmage.tooltip.distance": "Дальность рывка: %s блоков",
+  "item.pvpmage.tooltip.strength": "Сила: %s"
 }
