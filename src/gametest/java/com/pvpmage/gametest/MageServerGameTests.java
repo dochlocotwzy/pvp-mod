@@ -6,7 +6,6 @@ import com.pvpmage.config.MageConfigManager;
 import com.pvpmage.entity.ArcaneBoltEntity;
 import com.pvpmage.entity.ModEntities;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
@@ -19,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
  * and expand them only after the GameTest harness is confirmed working in CI.
  */
 public final class MageServerGameTests implements CustomTestMethodInvoker {
-    @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE, maxTicks = 40)
+    @GameTest(structure = "fabric-gametest-api-v1:empty", maxTicks = 40)
     public void mageConfigIsAvailable(TestContext context) {
         context.assertTrue(MageConfigManager.get() != null,
                 "MageConfigManager must be initialized before game tests run");
