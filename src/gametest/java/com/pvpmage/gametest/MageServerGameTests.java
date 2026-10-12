@@ -1,5 +1,6 @@
 package com.pvpmage.gametest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.pvpmage.config.MageConfigManager;
@@ -47,6 +48,22 @@ public final class MageServerGameTests implements CustomTestMethodInvoker {
 
     @Override
     public void invokeTestMethod(TestContext context, Method method) throws ReflectiveOperationException {
-        method.invoke(this, context);
+        try {
+            method.invoke(this, context);
+        } catch (InvocationTargetException invocationFailure) {
+            Throwable cause = invocationFailure.getCause();
+            System.err.println("GameTest method '" + method.getName() + "' threw:");
+            if (cause != null) {
+                cause.printStackTrace(System.err);
+                if (cause instanceof RuntimeException runtimeFailure) {
+                    throw runtimeFailure;
+                }
+                if (cause instanceof Error errorFailure) {
+                    throw errorFailure;
+                }
+                throw new RuntimeException("GameTest method '" + method.getName() + "' failed", cause);
+            }
+            throw invocationFailure;
+        }
     }
 }
