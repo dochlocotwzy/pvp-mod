@@ -146,8 +146,61 @@ tasks.register("validateItemDefinitions") {
     }
 }
 
+tasks.register("validateMageLocalization") {
+    doLast {
+        def parser = new groovy.json.JsonSlurper()
+        def langDir = file("src/main/resources/assets/pvptraps/lang")
+        def expectedCategories = ["mana", "abilities", "general", "magic_barrier", "flash_of_light",
+            "arcane_bolt", "energy_impulse", "frost_nova", "healing_rune", "smoke_veil", "gale_step",
+            "runic_seal", "blessing", "gravity_sphere", "fireball", "electric_bolt", "ice_wall",
+            "magic_doppelganger", "gust_of_wind", "shadow_veil"]
+        ["ru_ru.json", "en_us.json"].each { filename ->
+            def langFile = new File(langDir, filename)
+            if (!langFile.isFile()) throw new GradleException("Missing Mage language file: " + langFile)
+            def raw = langFile.getText("UTF-8")
+            def parsed
+            try {
+                parsed = parser.parseText(raw)
+            } catch (Exception e) {
+                throw new GradleException("Invalid JSON in " + filename + ": " + e.message)
+            }
+
+            def keyPattern = ~/^\s*"((?:[^"\\\\]|\\\\.)+)"\s*:/ 
+            def seen = new HashSet<String>()
+            raw.readLines().eachWithIndex { line, index ->
+                def matcher = (line =~ keyPattern)
+                if (matcher.find() && !seen.add(matcher.group(1))) {
+                    throw new GradleException("Duplicate localization key in " + filename + ":" + (index + 1) + ": " + matcher.group(1))
+                }
+            }
+
+            expectedCategories.each { category ->
+                def key = "text.autoconfig.pvpmage_mage.category." + category
+                if (!parsed.containsKey(key) || !parsed[key]?.toString()?.trim()) {
+                    throw new GradleException(filename + " is missing category translation: " + key)
+                }
+            }
+            if (!"PvP Mage".equals(parsed["itemGroup.pvptraps"])) {
+                throw new GradleException(filename + " must label the item group as PvP Mage")
+            }
+            if (!parsed.containsKey("item.pvptraps.fireball") || parsed.containsKey("item.pvptraps.Fireball")) {
+                throw new GradleException(filename + " must use the lowercase fireball item translation key")
+            }
+            if (parsed["screen.pvptraps.config.title"]?.toString()?.toLowerCase(Locale.ROOT)?.contains("traps")) {
+                throw new GradleException(filename + " still labels the config screen as traps")
+            }
+            ["spike_trap", "ice_trap", "poison_trap", "electric_trap", "smoke_trap",
+             "weakening_trap", "sticky_trap", "fire_trap", "exhaustion_trap"].each { trapId ->
+                if (parsed.containsKey("item.pvptraps." + trapId)) {
+                    throw new GradleException(filename + " still contains obsolete trap item translation: " + trapId)
+                }
+            }
+        }
+    }
+}
+
 tasks.named("processResources") {
-    dependsOn("generateMageTextures", "prepareMageNamespaceResources", "validateMageTextures", "validateItemDefinitions")
+    dependsOn("generateMageTextures", "prepareMageNamespaceResources", "validateMageTextures", "validateItemDefinitions", "validateMageLocalization")
 }
 
 tasks.withType(JavaCompile).configureEach {
