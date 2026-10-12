@@ -25,7 +25,7 @@ public final class MageServerGameTests implements CustomTestMethodInvoker {
         context.complete();
     }
 
-    @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE, maxTicks = 40)
+    @GameTest(structure = "fabric-gametest-api-v1:empty", maxTicks = 40)
     public void arcaneBoltCanSpawnAndExpire(TestContext context) {
         ServerWorld world = context.getWorld();
         Identifier expectedId = Identifier.of("pvpmage", "arcane_bolt");
