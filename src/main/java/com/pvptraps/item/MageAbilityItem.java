@@ -5,10 +5,11 @@ import com.pvpmage.config.MageConfigManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public final class MageAbilityItem extends Item {
     private final String abilityId;
@@ -29,11 +30,11 @@ public final class MageAbilityItem extends Item {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> tooltip, TooltipType type) {
+        super.appendTooltip(stack, context, displayComponent, tooltip, type);
         MageConfig config = MageConfigManager.get();
         MageConfig.AbilitySettings a = config.abilities;
-        tooltip.add(Text.translatable("item.pvpmage.tooltip.mana", manaCost(a)).formatted(Formatting.AQUA));
+        tooltip.accept(Text.translatable("item.pvpmage.tooltip.mana", manaCost(a)).formatted(Formatting.AQUA));
         tooltip.add(Text.translatable("item.pvpmage.tooltip.cooldown", seconds(cooldown(a))).formatted(Formatting.GRAY));
         switch (abilityId) {
             case "magic_barrier" -> {
