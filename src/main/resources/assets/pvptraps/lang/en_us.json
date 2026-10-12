@@ -321,5 +321,19 @@
   "item.pvptraps.tooltip.jumps": "Chain jumps: %s",
   "item.pvptraps.tooltip.wallSize": "Wall size: %s × %s",
   "item.pvptraps.tooltip.distance": "Dash distance: %s blocks",
-  "item.pvptraps.tooltip.strength": "Strength: %s"
+  "item.pvptraps.tooltip.strength": "Strength: %s",
+  "item.pvpmage.tooltip.mana": "Mana cost: %s",
+  "item.pvpmage.tooltip.cooldown": "Cooldown: %s sec",
+  "item.pvpmage.tooltip.duration": "Duration: %s sec",
+  "item.pvpmage.tooltip.resistance": "Resistance level: %s",
+  "item.pvpmage.tooltip.damage": "Damage: %s",
+  "item.pvpmage.tooltip.range": "Range: %s blocks",
+  "item.pvpmage.tooltip.radius": "Radius: %s blocks",
+  "item.pvpmage.tooltip.knockback": "Knockback strength: %s",
+  "item.pvpmage.tooltip.heal": "Health restored: %s",
+  "item.pvpmage.tooltip.ignite": "Ignition: %s sec",
+  "item.pvpmage.tooltip.jumps": "Chain jumps: %s",
+  "item.pvpmage.tooltip.wallSize": "Wall size: %s × %s",
+  "item.pvpmage.tooltip.distance": "Dash distance: %s blocks",
+  "item.pvpmage.tooltip.strength": "Strength: %s"
 }
