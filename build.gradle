@@ -365,3 +365,16 @@ tasks.register("verifyMageJarIsolation") {
 tasks.named("build") {
     dependsOn("verifyMageJarIsolation")
 }
+
+
+// Isolated server-side Minecraft GameTests. These run in a real Minecraft test server
+// as part of Gradle's build task; they do not affect the published PvP Mage JAR.
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "pvpmage-test"
+        enableGameTests = true
+        enableClientGameTests = false
+        eula = true
+    }
+}
