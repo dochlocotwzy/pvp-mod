@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "pvpmage-test",
+  "version": "1.0.0",
+  "name": "PvP Mage GameTests",
+  "description": "Isolated server-side integration tests for PvP Mage.",
+  "environment": "server",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.pvpmage.gametest.MageServerGameTests"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*",
+    "pvpmage": "*"
+  }
+}
