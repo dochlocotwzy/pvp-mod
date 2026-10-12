@@ -160,9 +160,9 @@ tasks.register("validateMageLocalization") {
         configSource.each { line ->
             if (line.contains("class ManaSettings")) optionGroup = "mana"
             if (line.contains("class AbilitySettings")) optionGroup = "abilities"
-            def fieldMatcher = (line =~ /^\\s*public\\s+(?:int|double|float|boolean|String)\\s+(\\w+)\\s*=/)
+            def fieldMatcher = (line.trim() =~ /^public +(int|double|float|boolean|String) +([A-Za-z0-9_]+) +=/)
             if (optionGroup != null && fieldMatcher.find()) {
-                optionKeys.add("text.autoconfig.pvpmage_mage.option." + optionGroup + "." + fieldMatcher.group(1))
+                optionKeys.add("text.autoconfig.pvpmage_mage.option." + optionGroup + "." + fieldMatcher.group(2))
             }
         }
         if (optionKeys.size() != 180) {
