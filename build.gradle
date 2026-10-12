@@ -66,6 +66,12 @@ tasks.register("generateMageTextures") {
             out.parentFile.mkdirs()
             javax.imageio.ImageIO.write(im, "png", out)
         }
+        // Copy authored mage textures that are not generated from pixel maps.
+        fileTree("src/main/resources/assets/pvptraps/textures/item") { include "*.png" }.files.each { source ->
+            def out = file("$buildDir/generated/resources/mageTextures/assets/pvpmage/textures/item/" + source.name)
+            out.parentFile.mkdirs()
+            out.bytes = source.bytes
+        }
     }
 }
 def mageTextureNames = ["arcane_bolt", "magic_barrier", "flash_of_light", "energy_impulse", "frost_nova", "healing_rune", "smoke_veil", "gale_step", "runic_seal", "blessing", "gravity_sphere", "fireball", "electric_bolt", "ice_wall", "magic_doppelganger", "gust_of_wind", "shadow_veil"]
