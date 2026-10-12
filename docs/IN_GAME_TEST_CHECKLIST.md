@@ -15,11 +15,16 @@ Target: Minecraft 1.21.11. Do not mark gameplay checks complete based on compila
 - [ ] Check the Electric Bolt item icon in hand/hotbar separately; it must remain unchanged.
 - [ ] Confirm Arcane Bolt retains its own purple/enchantment-style trail and is visually distinguishable from both variants.
 
+## Mana HUD tag visibility
+- [ ] Leave `hudVisibleTags` empty and confirm the mana HUD remains visible to everyone (backwards-compatible default).
+- [ ] Set `hudVisibleTags` to `mage,magic_user`; add `/tag <player> add mage` to one player and confirm only tagged players see the HUD.
+- [ ] Remove the tag and confirm the HUD disappears on the next mana update; confirm mana regeneration and spell casting still work regardless of HUD visibility.
+
 ## Energy Impulse
 - [ ] In a flat test area, place a zombie at a measured distance (for example 3 blocks) from the caster and record initial coordinates.
 - [ ] Cast Energy Impulse and record horizontal displacement and vertical displacement after 5, 10, and 20 ticks.
 - [ ] Repeat at near, middle, and edge of the configured radius; verify knockback falls off with distance and horizontal shove remains stronger than vertical lift.
-- [ ] Repeat with a non-ally player on a test server and with an ally; confirm allies are not knocked back.
+- [ ] Repeat with a non-ally player on a test server and with an ally; confirm velocity is synced to non-ally players and allies are not knocked back.
 
 ## Gravity Sphere
 - [ ] Cast at a fixed point and confirm the visible field appears at the aimed location.

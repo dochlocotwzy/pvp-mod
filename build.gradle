@@ -172,8 +172,8 @@ tasks.register("validateMageLocalization") {
                 }
             }
         }
-        if (optionKeys.size() != 180) {
-            throw new GradleException("Expected 180 Mage config option labels, found " + optionKeys.size())
+        if (optionKeys.size() != 181) {
+            throw new GradleException("Expected 181 Mage config option labels, found " + optionKeys.size())
         }
         ["ru_ru.json", "en_us.json"].each { filename ->
             def langFile = new File(langDir, filename)

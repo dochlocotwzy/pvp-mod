@@ -24,6 +24,7 @@
   "text.autoconfig.pvpmage_mage.option.mana.maxMana": "Максимум маны",
   "text.autoconfig.pvpmage_mage.option.mana.regenPerSecond": "Восстановление маны в секунду",
   "text.autoconfig.pvpmage_mage.option.mana.persistThroughDeath": "Сохранять ману после смерти",
+  "text.autoconfig.pvpmage_mage.option.mana.hudVisibleTags": "Теги для отображения манапула (через запятую; пусто — всем)",
   "text.autoconfig.pvpmage_mage.option.abilities.targetRangeBlocks": "Дальность выбора цели (блоки)",
   "text.autoconfig.pvpmage_mage.option.abilities.barrierManaCost": "Магический барьер — Стоимость маны",
   "text.autoconfig.pvpmage_mage.option.abilities.barrierCooldownTicks": "Магический барьер — Перезарядка (тики)",

@@ -22,6 +22,8 @@ public class MageConfig implements ConfigData {
         public double regenPerSecond = 4.0;
         @ConfigEntry.Gui.Tooltip
         public boolean persistThroughDeath = true;
+        @ConfigEntry.Gui.Tooltip
+        public String hudVisibleTags = "";
     }
 
     public static class AbilitySettings {

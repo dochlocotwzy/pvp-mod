@@ -23,6 +23,7 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -68,7 +69,7 @@ public final class MageAbilityService {
                 ManaState state = stateFor(player);
                 state.mana = Math.min(maxMana, state.mana + regenPerTick);
                 if (serverTick % 5 == 0) {
-                    ServerPlayNetworking.send(player, new MageManaPayload((int) Math.round(state.mana), (int) maxMana));
+                    ServerPlayNetworking.send(player, new MageManaPayload((int) Math.round(state.mana), (int) maxMana, shouldShowManaHud(player, config)));
                 }
             }
             tickSmokeVeil(server);
@@ -90,6 +91,21 @@ public final class MageAbilityService {
                 PLAYERS.put(newPlayer.getUuid(), new ManaState(MageConfigManager.get().mana.maxMana));
             }
         });
+    }
+
+    private static boolean shouldShowManaHud(ServerPlayerEntity player, MageConfig config) {
+        String configuredTags = config.mana.hudVisibleTags;
+        if (configuredTags == null || configuredTags.isBlank()) {
+            // Backwards-compatible default: an empty list keeps the HUD visible to everyone.
+            return true;
+        }
+        for (String configuredTag : configuredTags.split(",")) {
+            String tag = configuredTag.trim();
+            if (!tag.isEmpty() && player.getCommandTags().contains(tag)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static double getMana(ServerPlayerEntity player) {
@@ -387,6 +403,10 @@ public final class MageAbilityService {
             target.addVelocity(dx / horizontalDistance * strength,
                     0.12 + Math.min(0.28, strength * 0.12),
                     dz / horizontalDistance * strength);
+            // Explicitly sync player velocity; mobs already move from their server-side velocity.
+            if (target instanceof ServerPlayerEntity playerTarget) {
+                playerTarget.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(playerTarget));
+            }
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     Math.max(1, Math.min(64, config.abilities.energyImpulseTargetParticleCount)),
                     0.18, 0.25, 0.18, 0.04);

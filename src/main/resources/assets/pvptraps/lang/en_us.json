@@ -23,6 +23,7 @@
   "text.autoconfig.pvpmage_mage.option.mana.maxMana": "max Mana",
   "text.autoconfig.pvpmage_mage.option.mana.regenPerSecond": "regen Per Second",
   "text.autoconfig.pvpmage_mage.option.mana.persistThroughDeath": "persist Through Death",
+  "text.autoconfig.pvpmage_mage.option.mana.hudVisibleTags": "Tags allowed to see mana HUD (comma-separated; empty = everyone)",
   "text.autoconfig.pvpmage_mage.option.abilities.targetRangeBlocks": "Target selection range (blocks)",
   "text.autoconfig.pvpmage_mage.option.abilities.barrierManaCost": "Barrier Mana Cost",
   "text.autoconfig.pvpmage_mage.option.abilities.barrierCooldownTicks": "Barrier Cooldown (ticks)",
