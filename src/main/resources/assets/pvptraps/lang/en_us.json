@@ -307,5 +307,19 @@
   "text.autoconfig.pvpmage_mage.option.abilities.shadowVeilBlindnessAmplifier": "shadow Veil Blindness  amplifier",
   "text.autoconfig.pvpmage_mage.title": "Mage ability settings",
   "text.autoconfig.pvpmage_mage.category.mana": "Mana",
-  "text.autoconfig.pvpmage_mage.category.abilities": "Abilities"
+  "text.autoconfig.pvpmage_mage.category.abilities": "Abilities",
+  "item.pvptraps.tooltip.mana": "Mana cost: %s",
+  "item.pvptraps.tooltip.cooldown": "Cooldown: %s sec",
+  "item.pvptraps.tooltip.duration": "Duration: %s sec",
+  "item.pvptraps.tooltip.resistance": "Resistance level: %s",
+  "item.pvptraps.tooltip.damage": "Damage: %s",
+  "item.pvptraps.tooltip.range": "Range: %s blocks",
+  "item.pvptraps.tooltip.radius": "Radius: %s blocks",
+  "item.pvptraps.tooltip.knockback": "Knockback strength: %s",
+  "item.pvptraps.tooltip.heal": "Health restored: %s",
+  "item.pvptraps.tooltip.ignite": "Ignition: %s sec",
+  "item.pvptraps.tooltip.jumps": "Chain jumps: %s",
+  "item.pvptraps.tooltip.wallSize": "Wall size: %s × %s",
+  "item.pvptraps.tooltip.distance": "Dash distance: %s blocks",
+  "item.pvptraps.tooltip.strength": "Strength: %s"
 }
