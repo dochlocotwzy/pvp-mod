@@ -182,8 +182,8 @@ tasks.named("jar") {
     exclude "assets/pvptraps/**"
     exclude "assets/pvpmage/**/*trap*"
     exclude "assets/pvptraps/**/*Trap*"
-    exclude "data/pvptraps/**/*trap*"
-    exclude "data/pvptraps/**/*Trap*"
+    // The mage mod does not own any data under the legacy traps namespace.
+    exclude "data/pvptraps/**"
 }
 
 tasks.register("verifyMageJarIsolation") {
