@@ -1,13 +1,13 @@
-package com.pvptraps.util;
+package com.pvpmage.util;
 
-import com.pvptraps.config.MageConfig;
-import com.pvptraps.config.MageConfigManager;
-import com.pvptraps.entity.ArcaneBoltEntity;
-import com.pvptraps.entity.ModEntities;
-import com.pvptraps.item.MageAbilityItem;
-import com.pvptraps.network.MageCastPayload;
-import com.pvptraps.network.MageFeedbackPayload;
-import com.pvptraps.network.MageManaPayload;
+import com.pvpmage.config.MageConfig;
+import com.pvpmage.config.MageConfigManager;
+import com.pvpmage.entity.ArcaneBoltEntity;
+import com.pvpmage.entity.ModEntities;
+import com.pvpmage.item.MageAbilityItem;
+import com.pvpmage.network.MageCastPayload;
+import com.pvpmage.network.MageFeedbackPayload;
+import com.pvpmage.network.MageManaPayload;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -23,6 +23,7 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -43,6 +44,7 @@ import java.util.UUID;
 public final class MageAbilityService {
     private static final Map<UUID, ManaState> PLAYERS = new HashMap<>();
     private static final Map<UUID, SmokeVeilState> SMOKE_VEIL_TARGETS = new HashMap<>();
+    private static final Map<UUID, Long> SHADOW_VEIL_TRAILS = new HashMap<>();
     private static final Map<UUID, GravitySphereState> GRAVITY_SPHERES = new HashMap<>();
     private static final List<IceWallState> ICE_WALLS = new ArrayList<>();
     private static final List<DecoyState> DOPPELGANGERS = new ArrayList<>();
@@ -67,10 +69,11 @@ public final class MageAbilityService {
                 ManaState state = stateFor(player);
                 state.mana = Math.min(maxMana, state.mana + regenPerTick);
                 if (serverTick % 5 == 0) {
-                    ServerPlayNetworking.send(player, new MageManaPayload((int) Math.round(state.mana), (int) maxMana));
+                    ServerPlayNetworking.send(player, new MageManaPayload((int) Math.round(state.mana), (int) maxMana, shouldShowManaHud(player, config)));
                 }
             }
             tickSmokeVeil(server);
+            tickShadowVeilTrails(server);
             tickGravitySpheres(server);
             tickTemporaryAbilities();
         });
@@ -78,6 +81,7 @@ public final class MageAbilityService {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             PLAYERS.remove(handler.player.getUuid());
             SMOKE_VEIL_TARGETS.remove(handler.player.getUuid());
+            SHADOW_VEIL_TRAILS.remove(handler.player.getUuid());
             GRAVITY_SPHERES.remove(handler.player.getUuid());
             SMOKE_VEIL_TARGETS.entrySet().removeIf(entry -> entry.getValue().ownerUuid.equals(handler.player.getUuid()));
         });
@@ -87,6 +91,21 @@ public final class MageAbilityService {
                 PLAYERS.put(newPlayer.getUuid(), new ManaState(MageConfigManager.get().mana.maxMana));
             }
         });
+    }
+
+    private static boolean shouldShowManaHud(ServerPlayerEntity player, MageConfig config) {
+        String configuredTags = config.mana.hudVisibleTags;
+        if (configuredTags == null || configuredTags.isBlank()) {
+            // Backwards-compatible default: an empty list keeps the HUD visible to everyone.
+            return true;
+        }
+        for (String configuredTag : configuredTags.split(",")) {
+            String tag = configuredTag.trim();
+            if (!tag.isEmpty() && player.getCommandTags().contains(tag)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static double getMana(ServerPlayerEntity player) {
@@ -369,14 +388,25 @@ public final class MageAbilityService {
             if (distance > radius) {
                 continue;
             }
-            // Treat the configured value as impulse power, not raw blocks/tick. Raw values like 8.0
-            // create extreme velocities in Minecraft; this scale targets a readable ~4-5 block shove
-            // near the center while retaining a distance falloff and a hard safety cap.
-            double strength = Math.min(1.35, knockback * 0.16 * (1.0 - distance / (radius + 0.01)));
-            double horizontalDistance = Math.max(0.1, Math.sqrt(dx * dx + dz * dz));
-            target.addVelocity(dx / horizontalDistance * strength, 0.32 + Math.max(0.0, dy / distance) * strength * 0.55
-                    + strength * 0.28, dz / horizontalDistance * strength);
-            target.velocityModified = true;
+            // Strong horizontal blast with distance falloff. Keep the vertical component
+            // deliberately smaller so this reads as a shove rather than a jump.
+            double falloff = Math.max(0.0, 1.0 - distance / (radius + 0.01));
+            double strength = Math.min(2.4, knockback * 0.30 * falloff);
+            double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
+            if (horizontalDistance < 0.15) {
+                // If caster and target overlap horizontally, push away from the caster's facing.
+                double yaw = Math.toRadians(caster.getYaw());
+                dx = -Math.sin(yaw);
+                dz = Math.cos(yaw);
+                horizontalDistance = 1.0;
+            }
+            target.addVelocity(dx / horizontalDistance * strength,
+                    0.12 + Math.min(0.28, strength * 0.12),
+                    dz / horizontalDistance * strength);
+            // Explicitly sync player velocity; mobs already move from their server-side velocity.
+            if (target instanceof ServerPlayerEntity playerTarget) {
+                playerTarget.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(playerTarget));
+            }
             world.spawnParticles(ParticleTypes.POOF, target.getX(), target.getY() + 0.5, target.getZ(),
                     Math.max(1, Math.min(64, config.abilities.energyImpulseTargetParticleCount)),
                     0.18, 0.25, 0.18, 0.04);
@@ -792,7 +822,13 @@ public final class MageAbilityService {
                     StatusEffects.INVISIBILITY, duration, 0, true, false, true));
             SMOKE_VEIL_TARGETS.put(target.getUuid(),
                     new SmokeVeilState(caster.getUuid(), serverTick + duration));
-            // Do not emit particles from an entity that has just become invisible.
+            // One-shot cast decoration only. The invisible player emits no ongoing particles.
+            world.spawnParticles(ParticleTypes.SMOKE, target.getX(), target.getY() + 0.9, target.getZ(),
+                    Math.max(1, Math.min(128, config.abilities.smokeVeilCastSmokeParticleCount)),
+                    0.28, 0.55, 0.28, 0.015);
+            world.spawnParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY() + 0.8, target.getZ(),
+                    Math.max(1, Math.min(128, config.abilities.smokeVeilCastLargeSmokeParticleCount)),
+                    0.18, 0.35, 0.18, 0.005);
             affected++;
         }
 
@@ -924,6 +960,7 @@ public final class MageAbilityService {
     private static boolean applyShadowVeil(ServerPlayerEntity caster, MageConfig config) {
         ServerWorld world=(ServerWorld)caster.getEntityWorld();
         int duration=Math.max(20,Math.min(240,config.abilities.shadowVeilDurationTicks));
+        SHADOW_VEIL_TRAILS.put(caster.getUuid(), serverTick + duration);
         double radius=Math.max(1.5,Math.min(8.0,config.abilities.shadowVeilRadius));
         caster.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY,duration,0,true,false,true));
         caster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSpeedDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSpeedAmplifier)),false,true));
@@ -932,13 +969,26 @@ public final class MageAbilityService {
             if(caster.squaredDistanceTo(target)>radius*radius||!caster.canSee(target))continue;
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSlowDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSlowAmplifier)),false,true));
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilBlindnessDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilBlindnessAmplifier)),false,true));
-            world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),
-                    Math.max(1, Math.min(128, config.abilities.shadowVeilTargetSmokeParticleCount)),
-                    0.25,0.4,0.25,0.015);
         }
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.45f,1.6f);
         return true;
+    }
+
+    private static void tickShadowVeilTrails(net.minecraft.server.MinecraftServer server) {
+        SHADOW_VEIL_TRAILS.entrySet().removeIf(entry -> {
+            ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
+            if (player == null || !player.isAlive() || serverTick >= entry.getValue()) return true;
+            if (serverTick % 2 == 0) {
+                ServerWorld world = (ServerWorld) player.getEntityWorld();
+                int smoke = Math.max(1, Math.min(64, MageConfigManager.get().abilities.shadowVeilTargetSmokeParticleCount));
+                world.spawnParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 0.9, player.getZ(),
+                        smoke, 0.32, 0.45, 0.32, 0.006);
+                world.spawnParticles(ParticleTypes.REVERSE_PORTAL, player.getX(), player.getY() + 0.8, player.getZ(),
+                        Math.max(1, smoke / 3), 0.28, 0.45, 0.28, 0.025);
+            }
+            return false;
+        });
     }
 
     private static void tickTemporaryAbilities() {

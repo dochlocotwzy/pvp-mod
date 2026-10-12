@@ -1,6 +1,6 @@
-package com.pvptraps.entity;
+package com.pvpmage.entity;
 
-import com.pvptraps.config.MageConfigManager;
+import com.pvpmage.config.MageConfigManager;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;

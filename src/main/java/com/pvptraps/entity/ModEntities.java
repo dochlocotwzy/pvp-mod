@@ -1,6 +1,5 @@
-package com.pvptraps.entity;
+package com.pvpmage.entity;
 
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -15,18 +14,8 @@ public final class ModEntities {
     private ModEntities() {
     }
 
-    private static final RegistryKey<EntityType<?>> TRAP_KEY =
-            RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("pvptraps", "trap"));
     private static final RegistryKey<EntityType<?>> ARCANE_BOLT_KEY =
-            RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("pvptraps", "arcane_bolt"));
-
-    public static final EntityType<TrapEntity> TRAP = Registry.register(
-            Registries.ENTITY_TYPE, TRAP_KEY,
-            FabricEntityTypeBuilder.createMob()
-                    .entityFactory(TrapEntity::new)
-                    .spawnGroup(SpawnGroup.MISC)
-                    .dimensions(EntityDimensions.fixed(0.9f, 0.15f))
-                    .build(TRAP_KEY));
+            RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of("pvpmage", "arcane_bolt"));
 
     public static final EntityType<ArcaneBoltEntity> ARCANE_BOLT = Registry.register(
             Registries.ENTITY_TYPE, ARCANE_BOLT_KEY,
@@ -35,8 +24,4 @@ public final class ModEntities {
                     .trackRangeBlocks(64)
                     .trackedUpdateRate(1)
                     .build(ARCANE_BOLT_KEY));
-
-    public static void registerAttributes() {
-        FabricDefaultAttributeRegistry.register(TRAP, TrapEntity.createTrapAttributes());
-    }
 }

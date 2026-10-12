@@ -104,6 +104,8 @@ jobs:
       - name: Upload built jar
         uses: actions/upload-artifact@v4
         with:
-          name: pvp-traps-jar
-          path: build/libs/*.jar
+          name: pvp-mage-jar
+          path: |
+            build/libs/*pvp-mage*.jar
+            !build/libs/*-sources.jar
           if-no-files-found: error

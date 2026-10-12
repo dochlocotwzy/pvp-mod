@@ -1,6 +1,6 @@
-package com.pvptraps.client;
+package com.pvpmage.client;
 
-import com.pvptraps.network.MageManaPayload;
+import com.pvpmage.network.MageManaPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 public final class MageHud {
     private static int mana = 100;
     private static int maxMana = 100;
+    private static boolean hudVisible = true;
 
     private MageHud() {}
 
@@ -18,10 +19,11 @@ public final class MageHud {
                 context.client().execute(() -> {
                     mana = Math.max(0, payload.current());
                     maxMana = Math.max(1, payload.maximum());
+                    hudVisible = payload.hudVisible();
                 }));
-        HudElementRegistry.addLast(Identifier.of("pvptraps", "mana_hud"), (drawContext, tickCounter) -> {
+        HudElementRegistry.addLast(Identifier.of("pvpmage", "mana_hud"), (drawContext, tickCounter) -> {
             MinecraftClient client = MinecraftClient.getInstance();
-            if (client.player == null || client.options.hudHidden) {
+            if (client.player == null || client.options.hudHidden || !hudVisible) {
                 return;
             }
             int x = 10;
