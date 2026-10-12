@@ -43,6 +43,7 @@ import java.util.UUID;
 public final class MageAbilityService {
     private static final Map<UUID, ManaState> PLAYERS = new HashMap<>();
     private static final Map<UUID, SmokeVeilState> SMOKE_VEIL_TARGETS = new HashMap<>();
+    private static final Map<UUID, Long> SHADOW_VEIL_TRAILS = new HashMap<>();
     private static final Map<UUID, GravitySphereState> GRAVITY_SPHERES = new HashMap<>();
     private static final List<IceWallState> ICE_WALLS = new ArrayList<>();
     private static final List<DecoyState> DOPPELGANGERS = new ArrayList<>();
@@ -71,6 +72,7 @@ public final class MageAbilityService {
                 }
             }
             tickSmokeVeil(server);
+            tickShadowVeilTrails(server);
             tickGravitySpheres(server);
             tickTemporaryAbilities();
         });
@@ -78,6 +80,7 @@ public final class MageAbilityService {
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             PLAYERS.remove(handler.player.getUuid());
             SMOKE_VEIL_TARGETS.remove(handler.player.getUuid());
+            SHADOW_VEIL_TRAILS.remove(handler.player.getUuid());
             GRAVITY_SPHERES.remove(handler.player.getUuid());
             SMOKE_VEIL_TARGETS.entrySet().removeIf(entry -> entry.getValue().ownerUuid.equals(handler.player.getUuid()));
         });
@@ -937,6 +940,7 @@ public final class MageAbilityService {
     private static boolean applyShadowVeil(ServerPlayerEntity caster, MageConfig config) {
         ServerWorld world=(ServerWorld)caster.getEntityWorld();
         int duration=Math.max(20,Math.min(240,config.abilities.shadowVeilDurationTicks));
+        SHADOW_VEIL_TRAILS.put(caster.getUuid(), serverTick + duration);
         double radius=Math.max(1.5,Math.min(8.0,config.abilities.shadowVeilRadius));
         caster.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY,duration,0,true,false,true));
         caster.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSpeedDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSpeedAmplifier)),false,true));
@@ -952,6 +956,22 @@ public final class MageAbilityService {
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.45f,1.6f);
         return true;
+    }
+
+    private static void tickShadowVeilTrails(net.minecraft.server.MinecraftServer server) {
+        SHADOW_VEIL_TRAILS.entrySet().removeIf(entry -> {
+            ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
+            if (player == null || !player.isAlive() || serverTick >= entry.getValue()) return true;
+            if (serverTick % 2 == 0) {
+                ServerWorld world = (ServerWorld) player.getEntityWorld();
+                int smoke = Math.max(1, Math.min(64, MageConfigManager.get().abilities.shadowVeilTargetSmokeParticleCount));
+                world.spawnParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 0.9, player.getZ(),
+                        smoke, 0.32, 0.45, 0.32, 0.006);
+                world.spawnParticles(ParticleTypes.REVERSE_PORTAL, player.getX(), player.getY() + 0.8, player.getZ(),
+                        Math.max(1, smoke / 3), 0.28, 0.45, 0.28, 0.025);
+            }
+            return false;
+        });
     }
 
     private static void tickTemporaryAbilities() {
