@@ -35,65 +35,65 @@ public final class MageAbilityItem extends Item {
         MageConfig config = MageConfigManager.get();
         MageConfig.AbilitySettings a = config.abilities;
         tooltip.accept(Text.translatable("item.pvpmage.tooltip.mana", manaCost(a)).formatted(Formatting.AQUA));
-        tooltip.add(Text.translatable("item.pvpmage.tooltip.cooldown", seconds(cooldown(a))).formatted(Formatting.GRAY));
+        tooltip.accept(Text.translatable("item.pvpmage.tooltip.cooldown", seconds(cooldown(a))).formatted(Formatting.GRAY));
         switch (abilityId) {
             case "magic_barrier" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.barrierDurationTicks)));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.resistance", a.barrierResistanceAmplifier + 1));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.barrierDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.resistance", a.barrierResistanceAmplifier + 1));
             }
-            case "flash_of_light" -> tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.flashDurationTicks)));
+            case "flash_of_light" -> tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.flashDurationTicks)));
             case "arcane_bolt" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.damage", a.arcaneBoltDamage));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.range", a.arcaneBoltRange));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.damage", a.arcaneBoltDamage));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.range", a.arcaneBoltRange));
             }
             case "energy_impulse" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.radius", a.energyImpulseRadius));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.knockback", a.energyImpulseKnockback));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.radius", a.energyImpulseRadius));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.knockback", a.energyImpulseKnockback));
             }
             case "frost_nova" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.radius", a.frostNovaRadius));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.frostNovaDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.radius", a.frostNovaRadius));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.frostNovaDurationTicks)));
             }
             case "healing_rune" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.radius", a.healingRuneRadius));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.heal", a.healingRuneHealAmount));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.radius", a.healingRuneRadius));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.heal", a.healingRuneHealAmount));
             }
             case "smoke_veil" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.radius", a.smokeVeilRadius));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.smokeVeilDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.radius", a.smokeVeilRadius));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.smokeVeilDurationTicks)));
             }
-            case "gale_step" -> tooltip.add(Text.translatable("item.pvpmage.tooltip.distance", a.galeStepDistance));
+            case "gale_step" -> tooltip.accept(Text.translatable("item.pvpmage.tooltip.distance", a.galeStepDistance));
             case "runic_seal" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.range", a.runicSealRange));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.runicSealDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.range", a.runicSealRange));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.runicSealDurationTicks)));
             }
-            case "blessing" -> tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.blessingDurationTicks)));
+            case "blessing" -> tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.blessingDurationTicks)));
             case "gravity_sphere" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.radius", a.gravitySphereRadius));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.gravitySphereDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.radius", a.gravitySphereRadius));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.gravitySphereDurationTicks)));
             }
             case "fireball" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.damage", a.fireballDamage));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.range", a.fireballRange));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.ignite", a.fireballIgniteSeconds));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.damage", a.fireballDamage));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.range", a.fireballRange));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.ignite", a.fireballIgniteSeconds));
             }
             case "electric_bolt" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.damage", a.electricBoltDamage));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.range", a.electricBoltRange));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.jumps", a.electricBoltMaxJumps));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.damage", a.electricBoltDamage));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.range", a.electricBoltRange));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.jumps", a.electricBoltMaxJumps));
             }
             case "ice_wall" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.wallSize", a.iceWallWidth, a.iceWallHeight));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.iceWallDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.wallSize", a.iceWallWidth, a.iceWallHeight));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.iceWallDurationTicks)));
             }
-            case "magic_doppelganger" -> tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.magicDoppelgangerDurationTicks)));
+            case "magic_doppelganger" -> tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.magicDoppelgangerDurationTicks)));
             case "gust_of_wind" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.range", a.gustOfWindRange));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.strength", a.gustOfWindStrength));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.range", a.gustOfWindRange));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.strength", a.gustOfWindStrength));
             }
             case "shadow_veil" -> {
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.radius", a.shadowVeilRadius));
-                tooltip.add(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.shadowVeilDurationTicks)));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.radius", a.shadowVeilRadius));
+                tooltip.accept(Text.translatable("item.pvpmage.tooltip.duration", seconds(a.shadowVeilDurationTicks)));
             }
         }
     }
