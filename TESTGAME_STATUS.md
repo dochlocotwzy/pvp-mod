@@ -1,13 +1,13 @@
 # TESTGAME status
 
-Checked 2026-10-12 UTC. Branch: `experiment/testgame-gametest`. Current tested head: `2381276412ffd388e1f3f997cefa1f9777f7c414`. Minecraft 1.21.11, Fabric API 0.141.3+1.21.11, Loader 0.16.10, Java 21.
+Checked 2026-10-12 UTC. Branch: `experiment/testgame-gametest`. Latest verified branch head: `4befd390babc76563c805f3a5531f8d5457d854f`. Minecraft 1.21.11, Fabric API 0.141.3+1.21.11, Loader 0.16.10, Java 21.
 
 ## Verified runtime result
 
-- [CI run #521](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38308850813), job `build`, commit `2381276412ffd388e1f3f997cefa1f9777f7c414`: success.
-- [CI run #520](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38308539769), commit `f5b582b8f4f6a53ea1f0531c55b7a08acced16d9`: success.
-- Both logs show `FabricGameTestRunner: Starting test server`, `Started game test server`, `3 GAME TESTS COMPLETE`, `All 3 required tests passed :)`, and `BUILD SUCCESSFUL`. This is confirmed server GameTest runtime execution, not compile-only evidence.
-- Current CI job runs `gradle build --no-daemon`; Loom runs server GameTests during `build`. To run locally: `gradle runGameTest --no-daemon` or `gradle build --no-daemon`, using JDK 21.
+- [CI run #522](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38312527002), job `build`, commit `4befd390babc76563c805f3a5531f8d5457d854f`: success.
+- [CI run #521](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38308850813) and [#520](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38308539769): also successful.
+- Run #522's log explicitly shows `FabricGameTestRunner: Starting test server`, `Started game test server`, `3 tests are now running`, `3 GAME TESTS COMPLETE`, `All 3 required tests passed :)`, and `BUILD SUCCESSFUL`. This is confirmed server GameTest runtime execution, not compile-only evidence.
+- CI runs `gradle build --no-daemon`; Loom runs server GameTests during `build`. To run locally: `gradle runGameTest --no-daemon` or `gradle build --no-daemon`, using JDK 21.
 
 ## Architecture
 
@@ -20,7 +20,7 @@ Checked 2026-10-12 UTC. Branch: `experiment/testgame-gametest`. Current tested h
 
 - [#515](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38305506335), [#516](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38305511157), [#517](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38305698789): GameTest compile errors; `FabricGameTest` and annotation property `templateName` do not exist in the selected Fabric API. Switched to `@GameTest(structure = "fabric-gametest-api-v1:empty", ...)`.
 - [#518](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38305905230) and [#519](https://github.com/dochlocotwzy/pvp-mod/actions/runs/38308261345): test server crashed on first access to `ModEntities`, with `IllegalStateException: This registry can't create intrusive holders` after registry freeze.
-- Fix: force `ModEntities` class initialization during mod initialization by calling `ModEntities.register()`. This changes registration timing only; no spell mechanics were changed for the tests. Runs #520 and #521 pass.
+- Fix: force `ModEntities` class initialization during mod initialization by calling `ModEntities.register()`. This changes registration timing only; no spell mechanics were changed for the tests. Runs #520–#522 pass.
 
 ## Limitations / warnings
 
