@@ -24,4 +24,12 @@ public final class ModEntities {
                     .trackRangeBlocks(64)
                     .trackedUpdateRate(1)
                     .build(ARCANE_BOLT_KEY));
+
+    /**
+     * Forces this class to initialize while Fabric is still registering mod content.
+     * The EntityType is registered by the static initializer above.
+     */
+    public static void register() {
+        // Intentionally empty.
+    }
 }

@@ -15,6 +15,7 @@ public class PvpTraps implements ModInitializer {
     @Override
     public void onInitialize() {
         MageConfigManager.init();
+        ModEntities.register();
         ModItems.register();
         MageAbilityService.register();
         LOGGER.info("PvP Mage: инициализация завершена");
