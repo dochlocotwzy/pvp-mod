@@ -949,9 +949,6 @@ public final class MageAbilityService {
             if(caster.squaredDistanceTo(target)>radius*radius||!caster.canSee(target))continue;
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilSlowDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilSlowAmplifier)),false,true));
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS,Math.min(duration,Math.max(1,Math.min(240,config.abilities.shadowVeilBlindnessDurationTicks))),Math.max(0,Math.min(4,config.abilities.shadowVeilBlindnessAmplifier)),false,true));
-            world.spawnParticles(ParticleTypes.SMOKE,target.getX(),target.getY()+0.9,target.getZ(),
-                    Math.max(1, Math.min(128, config.abilities.shadowVeilTargetSmokeParticleCount)),
-                    0.25,0.4,0.25,0.015);
         }
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.BLOCK_FIRE_EXTINGUISH,SoundCategory.PLAYERS,0.8f,0.8f);
         world.playSound(null,caster.getX(),caster.getY(),caster.getZ(),SoundEvents.ENTITY_ENDERMAN_TELEPORT,SoundCategory.PLAYERS,0.45f,1.6f);
