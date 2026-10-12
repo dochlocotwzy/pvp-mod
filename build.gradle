@@ -231,6 +231,46 @@ tasks.register("verifyMageJarIsolation") {
             if (metadata.id != "pvpmage") {
                 throw new GradleException("Unexpected mage mod id in JAR: " + metadata.id)
             }
+
+            metadata.entrypoints.each { group, definitions ->
+                definitions.each { definition ->
+                    def className = definition instanceof String ? definition : definition.value
+                    def classEntry = className.replace(".", "/") + ".class"
+                    if (!entries.contains(classEntry)) {
+                        throw new GradleException("Mage entrypoint does not exist in JAR: " + group + " -> " + className)
+                    }
+                }
+            }
+
+            entries.findAll { it.startsWith("assets/pvpmage/items/") && it.endsWith(".json") }.each { entryName ->
+                def definition = new groovy.json.JsonSlurper().parseText(
+                    zip.getInputStream(zip.getEntry(entryName)).getText("UTF-8"))
+                def modelRef = definition.model?.model
+                if (modelRef == null) {
+                    throw new GradleException("Mage item definition has no model reference: " + entryName)
+                }
+                def modelParts = modelRef.split(":", 2)
+                def modelNamespace = modelParts.length == 2 ? modelParts[0] : "minecraft"
+                def modelPath = modelParts.length == 2 ? modelParts[1] : modelParts[0]
+                def modelEntry = "assets/" + modelNamespace + "/models/" + modelPath + ".json"
+                if (!entries.contains(modelEntry)) {
+                    throw new GradleException("Mage item definition references a missing model: " + entryName + " -> " + modelRef)
+                }
+            }
+
+            entries.findAll { it.startsWith("assets/pvpmage/models/") && it.endsWith(".json") }.each { entryName ->
+                def model = new groovy.json.JsonSlurper().parseText(
+                    zip.getInputStream(zip.getEntry(entryName)).getText("UTF-8"))
+                (model.textures ?: [:]).each { layer, textureRef ->
+                    def textureParts = textureRef.toString().split(":", 2)
+                    if (textureParts.length == 2 && textureParts[0] == "pvpmage") {
+                        def textureEntry = "assets/pvpmage/textures/" + textureParts[1] + ".png"
+                        if (!entries.contains(textureEntry)) {
+                            throw new GradleException("Mage model references a missing texture: " + entryName + " -> " + textureRef)
+                        }
+                    }
+                }
+            }
         } finally {
             zip.close()
         }
