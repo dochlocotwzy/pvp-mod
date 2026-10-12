@@ -19,7 +19,7 @@ public final class AllySelectionScreen extends Screen {
     private boolean noAlliesReported;
 
     public AllySelectionScreen(String abilityId) {
-        super(Text.translatable("screen.pvptraps.mage.select_ally"));
+        super(Text.translatable("screen.pvpmage.mage.select_ally"));
         this.abilityId = abilityId;
     }
 
@@ -79,7 +79,7 @@ public final class AllySelectionScreen extends Screen {
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, panelTop + 12, 0xFFFFFFFF);
         if (allies.isEmpty()) {
             context.drawCenteredTextWithShadow(textRenderer,
-                    Text.translatable("screen.pvptraps.mage.no_allies"),
+                    Text.translatable("screen.pvpmage.mage.no_allies"),
                     width / 2, panelTop + 42, 0xFFFFC9C9);
         }
         super.render(context, mouseX, mouseY, delta);
