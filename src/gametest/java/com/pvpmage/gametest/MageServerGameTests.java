@@ -117,6 +117,33 @@ public final class MageServerGameTests implements CustomTestMethodInvoker {
         context.complete();
     }
 
+    @GameTest(structure = "fabric-gametest-api-v1:empty", maxTicks = 40)
+    public void automaticFlightCollisionDamagesTarget(TestContext context) {
+        ServerWorld world = context.getWorld();
+        BlockPos pos = context.getAbsolutePos(new BlockPos(1, 2, 1));
+        var target = EntityType.ZOMBIE.create(world, SpawnReason.TRIGGERED);
+        context.assertTrue(target != null, "A zombie target should be constructible in the test world");
+        target.refreshPositionAndAngles(pos.getX() + 4.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        context.assertTrue(world.spawnEntity(target), "The target should spawn in the test world");
+        target.setAiDisabled(true);
+
+        ArcaneBoltEntity bolt = new ArcaneBoltEntity(ModEntities.ARCANE_BOLT, world);
+        bolt.refreshPositionAndAngles(pos.getX() + 1.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        bolt.configure(64.0, 60, 6.0f);
+        bolt.setVelocity(1.0, 0.0, 0.0);
+        context.assertTrue(world.spawnEntity(bolt), "The moving arcane bolt should spawn");
+        float healthBefore = target.getHealth();
+
+        // Do not call onCollision here: normal entity ticks must discover the hit.
+        context.waitAndRun(8, () -> {
+            context.assertTrue(target.getHealth() < healthBefore,
+                    "A flying arcane bolt should automatically collide with and damage the target");
+            context.assertTrue(bolt.isRemoved(),
+                    "The projectile should be discarded by its automatically detected impact");
+            context.complete();
+        });
+    }
+
     @Override
     public void invokeTestMethod(TestContext context, Method method) throws ReflectiveOperationException {
         try {
