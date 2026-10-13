@@ -81,6 +81,42 @@ public final class MageServerGameTests implements CustomTestMethodInvoker {
         context.complete();
     }
 
+    @GameTest(structure = "fabric-gametest-api-v1:empty", maxTicks = 40)
+    public void electricBoltImpactSlowsAndChainsDamage(TestContext context)
+            throws ReflectiveOperationException {
+        ServerWorld world = context.getWorld();
+        BlockPos pos = context.getAbsolutePos(new BlockPos(1, 2, 1));
+        var firstTarget = EntityType.ZOMBIE.create(world, SpawnReason.TRIGGERED);
+        var secondTarget = EntityType.ZOMBIE.create(world, SpawnReason.TRIGGERED);
+        context.assertTrue(firstTarget != null && secondTarget != null,
+                "Both lightning targets should be constructible in the test world");
+        firstTarget.refreshPositionAndAngles(pos.getX() + 2.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        secondTarget.refreshPositionAndAngles(pos.getX() + 3.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        context.assertTrue(world.spawnEntity(firstTarget), "First lightning target should spawn");
+        context.assertTrue(world.spawnEntity(secondTarget), "Second lightning target should spawn");
+        float firstHealthBefore = firstTarget.getHealth();
+        float secondHealthBefore = secondTarget.getHealth();
+
+        ArcaneBoltEntity electricBolt = new ArcaneBoltEntity(ModEntities.ARCANE_BOLT, world);
+        electricBolt.refreshPositionAndAngles(pos.getX() + 1.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        electricBolt.configureElectricBolt(64.0, 60, 5.0f);
+        context.assertTrue(world.spawnEntity(electricBolt), "Electric bolt projectile should spawn");
+
+        Method collisionHandler = ArcaneBoltEntity.class.getDeclaredMethod("onCollision", HitResult.class);
+        collisionHandler.setAccessible(true);
+        collisionHandler.invoke(electricBolt, new EntityHitResult(firstTarget));
+
+        context.assertTrue(firstTarget.getHealth() < firstHealthBefore,
+                "Electric bolt impact should damage the first target");
+        context.assertTrue(firstTarget.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.SLOWNESS),
+                "Electric bolt impact should apply slowness to the first target");
+        context.assertTrue(secondTarget.getHealth() < secondHealthBefore,
+                "Chain lightning should damage a nearby second target");
+        context.assertTrue(electricBolt.isRemoved(),
+                "Electric bolt should be discarded after collision handling");
+        context.complete();
+    }
+
     @Override
     public void invokeTestMethod(TestContext context, Method method) throws ReflectiveOperationException {
         try {
