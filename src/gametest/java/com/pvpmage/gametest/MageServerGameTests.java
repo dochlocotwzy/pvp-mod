@@ -9,9 +9,13 @@ import com.pvpmage.entity.ModEntities;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.registry.Registries;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -44,6 +48,37 @@ public final class MageServerGameTests implements CustomTestMethodInvoker {
                     "Arcane bolt should expire after its configured lifetime without crashing the server");
             context.complete();
         });
+    }
+
+    @GameTest(structure = "fabric-gametest-api-v1:empty", maxTicks = 40)
+    public void fireballEntityCollisionDamagesAndIgnitesTarget(TestContext context)
+            throws ReflectiveOperationException {
+        ServerWorld world = context.getWorld();
+        BlockPos pos = context.getAbsolutePos(new BlockPos(1, 2, 1));
+        var target = EntityType.ZOMBIE.create(world, SpawnReason.TRIGGERED);
+        context.assertTrue(target != null, "A zombie target should be constructible in the test world");
+        target.refreshPositionAndAngles(pos.getX() + 2.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        context.assertTrue(world.spawnEntity(target), "The target should spawn in the test world");
+
+        ArcaneBoltEntity fireball = new ArcaneBoltEntity(ModEntities.ARCANE_BOLT, world);
+        fireball.refreshPositionAndAngles(pos.getX() + 1.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.0f, 0.0f);
+        fireball.configureFireball(64.0, 60, 6.0f, 4);
+        context.assertTrue(world.spawnEntity(fireball), "The fireball projectile should spawn");
+        float healthBefore = target.getHealth();
+
+        // Invoke the real server-side collision handler directly. This isolates impact
+        // behavior from projectile trajectory/physics and tests damage + ignition together.
+        Method collisionHandler = ArcaneBoltEntity.class.getDeclaredMethod("onCollision", HitResult.class);
+        collisionHandler.setAccessible(true);
+        collisionHandler.invoke(fireball, new EntityHitResult(target));
+
+        context.assertTrue(target.getHealth() < healthBefore,
+                "Fireball entity impact should reduce the target's health");
+        context.assertTrue(target.isOnFire(),
+                "Fireball entity impact should ignite the target");
+        context.assertTrue(fireball.isRemoved(),
+                "Fireball should be discarded after collision handling");
+        context.complete();
     }
 
     @Override
